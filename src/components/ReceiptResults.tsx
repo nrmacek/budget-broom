@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, Store, Calendar, DollarSign, Receipt } from 'lucide-react';
+import { Download, Store, Calendar, DollarSign, Receipt, ChevronDown, ChevronRight } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface LineItem {
@@ -29,6 +29,19 @@ interface ReceiptResultsProps {
 
 export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps) {
   const [items] = useState<LineItem[]>(receiptData.lineItems);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(category)) {
+        newSet.delete(category);
+      } else {
+        newSet.add(category);
+      }
+      return newSet;
+    });
+  };
 
   const exportToCSV = () => {
     const headers = ['Description', 'Quantity', 'Unit Price', 'Total', 'Category'];
@@ -164,56 +177,77 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
             <h2 className="text-2xl font-semibold mb-4">Spending by Category</h2>
             
             <div className="grid gap-6">
-              {getCategorizedItems().map(({ category, items: categoryItems, total }) => (
-                <Card key={category} className="overflow-hidden">
-                  {/* Category Header */}
-                  <div className="p-6 bg-gradient-subtle border-b">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{categoryIcons[category] || categoryIcons['Other']}</span>
-                        <div>
-                          <h3 className="text-xl font-semibold">{category}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {categoryItems.length} item{categoryItems.length !== 1 ? 's' : ''}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-primary">${total.toFixed(2)}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {((total / receiptData.total) * 100).toFixed(1)}% of total
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Category Items */}
-                  <div className="p-6">
-                    <div className="space-y-3">
-                      {categoryItems.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3">
-                              <p className="font-medium">{item.description}</p>
-                              {item.confidence < 0.9 && (
-                                <Badge variant="outline" className="text-xs bg-warning/10 text-warning border-warning/20">
-                                  Low confidence
-                                </Badge>
-                              )}
-                            </div>
+              {getCategorizedItems().map(({ category, items: categoryItems, total }) => {
+                const isExpanded = expandedCategories.has(category);
+                return (
+                  <Card key={category} className="overflow-hidden">
+                    {/* Category Header - Clickable */}
+                    <button 
+                      onClick={() => toggleCategory(category)}
+                      className="w-full p-6 bg-gradient-subtle hover:bg-gradient-subtle/80 transition-colors text-left"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{categoryIcons[category] || categoryIcons['Other']}</span>
+                          <div>
+                            <h3 className="text-xl font-semibold">{category}</h3>
                             <p className="text-sm text-muted-foreground">
-                              Qty: {item.quantity} × ${item.unitPrice.toFixed(2)} each
+                              {categoryItems.length} item{categoryItems.length !== 1 ? 's' : ''}
                             </p>
                           </div>
+                        </div>
+                        <div className="flex items-center gap-4">
                           <div className="text-right">
-                            <p className="font-semibold text-lg">${item.total.toFixed(2)}</p>
+                            <p className="text-2xl font-bold text-primary">${total.toFixed(2)}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {((total / receiptData.total) * 100).toFixed(1)}% of total
+                            </p>
+                          </div>
+                          {isExpanded ? (
+                            <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform" />
+                          ) : (
+                            <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform" />
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                    
+                    {/* Category Items - Collapsible */}
+                    {isExpanded && (
+                      <div className="border-t animate-fade-in">
+                        <div className="p-6">
+                          <div className="space-y-3">
+                            {categoryItems.map((item, index) => (
+                              <div 
+                                key={item.id} 
+                                className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0 animate-fade-in"
+                                style={{ animationDelay: `${index * 50}ms` }}
+                              >
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-3">
+                                    <p className="font-medium">{item.description}</p>
+                                    {item.confidence < 0.9 && (
+                                      <Badge variant="outline" className="text-xs bg-warning/10 text-warning border-warning/20">
+                                        Low confidence
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">
+                                    Qty: {item.quantity} × ${item.unitPrice.toFixed(2)} each
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-semibold text-lg">${item.total.toFixed(2)}</p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                      </div>
+                    )}
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </div>
