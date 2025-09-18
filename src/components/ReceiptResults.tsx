@@ -186,7 +186,7 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                       onClick={() => toggleCategory(category)}
                       className="w-full p-6 bg-gradient-subtle hover:bg-gradient-subtle/80 transition-colors text-left"
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
                           <span className="text-2xl">{categoryIcons[category] || categoryIcons['Other']}</span>
                           <div>
@@ -209,6 +209,16 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                             <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform" />
                           )}
                         </div>
+                      </div>
+                      
+                      {/* Progress Bar */}
+                      <div className="w-full bg-muted/30 rounded-full h-2 overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500 ease-out"
+                          style={{ 
+                            width: `${((total / receiptData.total) * 100)}%` 
+                          }}
+                        />
                       </div>
                     </button>
                     
