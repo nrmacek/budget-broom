@@ -120,25 +120,6 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <button 
-            onClick={onStartOver}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <div className="p-2 rounded-lg bg-gradient-hero">
-              <Receipt className="h-6 w-6 text-white" />
-            </div>
-            <h1 className="text-xl font-bold">ReceiptParser</h1>
-          </button>
-          
-          <Button variant="outline">
-            Sign In
-          </Button>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="max-w-6xl mx-auto p-4">
         <div className="space-y-6">

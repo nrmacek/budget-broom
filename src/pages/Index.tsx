@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Receipt, Zap, Shield, Download, ArrowRight } from 'lucide-react';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
 import { ReceiptUpload } from '@/components/ReceiptUpload';
 import { ProcessingProgress } from '@/components/ProcessingProgress';
 import { ReceiptResults } from '@/components/ReceiptResults';
@@ -46,29 +48,42 @@ const Index = () => {
     setAppState('landing');
   };
 
+  const handleNewReceipt = () => {
+    setUploadedFile(null);
+    setAppState('uploading');
+  };
+
   if (appState === 'processing' && uploadedFile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <ProcessingProgress 
-            fileName={uploadedFile.name}
-            onComplete={handleProcessingComplete}
-          />
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar onNewReceipt={handleNewReceipt} />
+          <div className="flex-1 bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4">
+            <div className="w-full max-w-md">
+              <ProcessingProgress 
+                fileName={uploadedFile.name}
+                onComplete={handleProcessingComplete}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      </SidebarProvider>
     );
   }
 
   if (appState === 'results') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 p-4">
-        <div className="max-w-6xl mx-auto">
-          <ReceiptResults 
-            receiptData={mockReceiptData}
-            onStartOver={handleStartOver}
-          />
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar onNewReceipt={handleNewReceipt} />
+          <div className="flex-1">
+            <ReceiptResults 
+              receiptData={mockReceiptData}
+              onStartOver={handleStartOver}
+            />
+          </div>
         </div>
-      </div>
+      </SidebarProvider>
     );
   }
 
@@ -150,17 +165,24 @@ const Index = () => {
 
       {/* Upload Section */}
       {appState === 'uploading' && (
-        <section className="py-12 px-4">
-          <div className="max-w-2xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-4">Upload Your Receipt</h2>
-              <p className="text-muted-foreground">
-                Support for images (JPG, PNG, WebP), PDFs, and CSV files up to 10MB
-              </p>
+        <SidebarProvider>
+          <div className="min-h-screen flex w-full">
+            <AppSidebar onNewReceipt={handleNewReceipt} />
+            <div className="flex-1 bg-gradient-to-br from-background to-muted/20">
+              <section className="py-12 px-4">
+                <div className="max-w-2xl mx-auto">
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold mb-4">Upload Your Receipt</h2>
+                    <p className="text-muted-foreground">
+                      Support for images (JPG, PNG, WebP), PDFs, and CSV files up to 10MB
+                    </p>
+                  </div>
+                  <ReceiptUpload onFileSelect={handleFileSelect} />
+                </div>
+              </section>
             </div>
-            <ReceiptUpload onFileSelect={handleFileSelect} />
           </div>
-        </section>
+        </SidebarProvider>
       )}
 
       {/* Features Section */}
