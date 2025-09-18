@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, Store, Calendar, DollarSign, Receipt, ChevronDown, ChevronRight } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -28,7 +29,7 @@ interface ReceiptResultsProps {
 }
 
 export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps) {
-  const [items] = useState<LineItem[]>(receiptData.lineItems);
+  const [items, setItems] = useState<LineItem[]>(receiptData.lineItems);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const toggleCategory = (category: string) => {
@@ -40,6 +41,21 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
         newSet.add(category);
       }
       return newSet;
+    });
+  };
+
+  const handleCategoryChange = (itemId: string, newCategory: string) => {
+    setItems(prevItems => 
+      prevItems.map(item => 
+        item.id === itemId 
+          ? { ...item, category: newCategory }
+          : item
+      )
+    );
+    
+    toast({
+      title: "Category updated",
+      description: `Item moved to ${newCategory}`,
     });
   };
 
@@ -99,6 +115,8 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
     'Entertainment': '🎬',
     'Other': '📦'
   };
+
+  const availableCategories = Object.keys(categoryIcons);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
@@ -233,20 +251,40 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                                 className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0 animate-fade-in"
                                 style={{ animationDelay: `${index * 50}ms` }}
                               >
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-3">
-                                    <p className="font-medium">{item.description}</p>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <p className="font-medium truncate">{item.description}</p>
                                     {item.confidence < 0.9 && (
-                                      <Badge variant="outline" className="text-xs bg-warning/10 text-warning border-warning/20">
+                                      <Badge variant="outline" className="text-xs bg-warning/10 text-warning border-warning/20 shrink-0">
                                         Low confidence
                                       </Badge>
                                     )}
                                   </div>
-                                  <p className="text-sm text-muted-foreground">
-                                    Qty: {item.quantity} × ${item.unitPrice.toFixed(2)} each
-                                  </p>
+                                  <div className="flex items-center gap-4">
+                                    <p className="text-sm text-muted-foreground">
+                                      Qty: {item.quantity} × ${item.unitPrice.toFixed(2)} each
+                                    </p>
+                                    <Select
+                                      value={item.category}
+                                      onValueChange={(newCategory) => handleCategoryChange(item.id, newCategory)}
+                                    >
+                                      <SelectTrigger className="w-40 h-8 text-xs">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent className="z-50 bg-popover border shadow-lg">
+                                        {availableCategories.map((cat) => (
+                                          <SelectItem key={cat} value={cat} className="text-xs">
+                                            <span className="flex items-center gap-2">
+                                              <span>{categoryIcons[cat]}</span>
+                                              <span>{cat}</span>
+                                            </span>
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
                                 </div>
-                                <div className="text-right">
+                                <div className="text-right ml-4 shrink-0">
                                   <p className="font-semibold text-lg">${item.total.toFixed(2)}</p>
                                 </div>
                               </div>
