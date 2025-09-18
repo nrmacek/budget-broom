@@ -29,7 +29,7 @@ const mockReceiptData = {
 };
 
 const Index = () => {
-  const [appState, setAppState] = useState<AppState>('landing');
+  const [appState, setAppState] = useState<AppState>('results');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const handleFileSelect = (file: File) => {
