@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, Store, Calendar, DollarSign } from 'lucide-react';
+import { Download, Store, Calendar, DollarSign, Receipt } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface LineItem {
@@ -88,113 +88,136 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
   };
 
   return (
-    <div className="space-y-6">
-      {/* Receipt Header */}
-      <Card className="p-6 bg-gradient-card">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Receipt Parsed Successfully</h1>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={onStartOver}>
-              Parse Another Receipt
-            </Button>
-            <Button onClick={exportToCSV} className="bg-gradient-accent hover:scale-105 transition-transform">
-              <Download className="h-4 w-4 mr-2" />
-              Export CSV
-            </Button>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-full bg-primary/10">
-              <Store className="h-5 w-5 text-primary" />
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+      {/* Header */}
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <button 
+            onClick={onStartOver}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="p-2 rounded-lg bg-gradient-hero">
+              <Receipt className="h-6 w-6 text-white" />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Store</p>
-              <p className="font-semibold text-lg">{receiptData.storeName}</p>
-            </div>
-          </div>
+            <h1 className="text-xl font-bold">ReceiptParser</h1>
+          </button>
           
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-full bg-accent/10">
-              <Calendar className="h-5 w-5 text-accent" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Date</p>
-              <p className="font-semibold text-lg">{receiptData.date}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-full bg-success/10">
-              <DollarSign className="h-5 w-5 text-success" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Total</p>
-              <p className="font-bold text-2xl">${receiptData.total.toFixed(2)}</p>
-            </div>
-          </div>
+          <Button variant="outline">
+            Sign In
+          </Button>
         </div>
-      </Card>
+      </header>
 
-      {/* Category Buckets */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold mb-4">Spending by Category</h2>
-        
-        <div className="grid gap-6">
-          {getCategorizedItems().map(({ category, items: categoryItems, total }) => (
-            <Card key={category} className="overflow-hidden">
-              {/* Category Header */}
-              <div className="p-6 bg-gradient-subtle border-b">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{categoryIcons[category] || categoryIcons['Other']}</span>
-                    <div>
-                      <h3 className="text-xl font-semibold">{category}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {categoryItems.length} item{categoryItems.length !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-primary">${total.toFixed(2)}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {((total / receiptData.total) * 100).toFixed(1)}% of total
-                    </p>
-                  </div>
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto p-4">
+        <div className="space-y-6">
+          {/* Receipt Header */}
+          <Card className="p-6 bg-gradient-card">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-3xl font-bold">Receipt Parsed Successfully</h1>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={onStartOver}>
+                  Parse Another Receipt
+                </Button>
+                <Button onClick={exportToCSV} className="bg-gradient-accent hover:scale-105 transition-transform">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-primary/10">
+                  <Store className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Store</p>
+                  <p className="font-semibold text-lg">{receiptData.storeName}</p>
                 </div>
               </div>
               
-              {/* Category Items */}
-              <div className="p-6">
-                <div className="space-y-3">
-                  {categoryItems.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                          <p className="font-medium">{item.description}</p>
-                          {item.confidence < 0.9 && (
-                            <Badge variant="outline" className="text-xs bg-warning/10 text-warning border-warning/20">
-                              Low confidence
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          Qty: {item.quantity} × ${item.unitPrice.toFixed(2)} each
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-lg">${item.total.toFixed(2)}</p>
-                      </div>
-                    </div>
-                  ))}
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-accent/10">
+                  <Calendar className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Date</p>
+                  <p className="font-semibold text-lg">{receiptData.date}</p>
                 </div>
               </div>
-            </Card>
-          ))}
+              
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-success/10">
+                  <DollarSign className="h-5 w-5 text-success" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Total</p>
+                  <p className="font-bold text-2xl">${receiptData.total.toFixed(2)}</p>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Category Buckets */}
+          <div className="space-y-4">
+            <h2 className="text-2xl font-semibold mb-4">Spending by Category</h2>
+            
+            <div className="grid gap-6">
+              {getCategorizedItems().map(({ category, items: categoryItems, total }) => (
+                <Card key={category} className="overflow-hidden">
+                  {/* Category Header */}
+                  <div className="p-6 bg-gradient-subtle border-b">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{categoryIcons[category] || categoryIcons['Other']}</span>
+                        <div>
+                          <h3 className="text-xl font-semibold">{category}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {categoryItems.length} item{categoryItems.length !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-primary">${total.toFixed(2)}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {((total / receiptData.total) * 100).toFixed(1)}% of total
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Category Items */}
+                  <div className="p-6">
+                    <div className="space-y-3">
+                      {categoryItems.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3">
+                              <p className="font-medium">{item.description}</p>
+                              {item.confidence < 0.9 && (
+                                <Badge variant="outline" className="text-xs bg-warning/10 text-warning border-warning/20">
+                                  Low confidence
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              Qty: {item.quantity} × ${item.unitPrice.toFixed(2)} each
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold text-lg">${item.total.toFixed(2)}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-
     </div>
   );
 }
