@@ -127,3 +127,129 @@ All colors MUST be HSL.
     font-variant-numeric: tabular-nums;
   }
 }
+
+/* Preview Theme - Financial Confidence Design System */
+.preview-theme {
+  /* Financial Confidence Color Palette */
+  --background: 252 252 251; /* Warm white */
+  --foreground: 23 23 23; /* Rich charcoal */
+
+  --card: 255 255 255; /* Pure white */
+  --card-foreground: 23 23 23;
+
+  --popover: 255 255 255;
+  --popover-foreground: 23 23 23;
+
+  --primary: 156 163 175; /* Professional sage green */
+  --primary-foreground: 255 255 255;
+
+  --secondary: 248 250 252; /* Soft paper */
+  --secondary-foreground: 71 85 105;
+
+  --muted: 248 250 252;
+  --muted-foreground: 100 116 139;
+
+  --accent: 34 197 94; /* Confident green */
+  --accent-foreground: 255 255 255;
+
+  --destructive: 239 68 68; /* Warm red */
+  --destructive-foreground: 255 255 255;
+
+  --border: 226 232 240; /* Subtle silver */
+  --input: 226 232 240;
+  --ring: 34 197 94;
+
+  --success: 34 197 94; /* Success green */
+  --success-foreground: 255 255 255;
+
+  --warning: 245 158 11; /* Warm amber */
+  --warning-foreground: 255 255 255;
+
+  /* Receipt-inspired gradients */
+  --gradient-hero: linear-gradient(135deg, hsl(156 39% 54%), hsl(142 76% 36%));
+  --gradient-card: linear-gradient(145deg, hsl(255 255 255), hsl(248 250 252));
+  --gradient-accent: linear-gradient(135deg, hsl(34 197 94), hsl(22 163 74));
+  --gradient-subtle: linear-gradient(180deg, hsl(248 250 252), hsl(241 245 249));
+  --gradient-receipt: linear-gradient(180deg, hsl(255 255 255), hsl(249 250 251));
+
+  /* Paper-inspired shadows */
+  --shadow-soft: 0 1px 3px 0 hsl(0 0% 0% / 0.05), 0 1px 2px -1px hsl(0 0% 0% / 0.05);
+  --shadow-medium: 0 4px 6px -1px hsl(0 0% 0% / 0.07), 0 2px 4px -2px hsl(0 0% 0% / 0.07);
+  --shadow-large: 0 10px 15px -3px hsl(0 0% 0% / 0.08), 0 4px 6px -4px hsl(0 0% 0% / 0.08);
+  --shadow-glow: 0 0 0 1px hsl(34 197 94 / 0.05), 0 4px 16px hsl(34 197 94 / 0.08);
+  --shadow-receipt: 0 2px 8px -2px hsl(0 0% 0% / 0.12), 0 4px 16px -4px hsl(0 0% 0% / 0.08);
+
+  /* Smooth, confident transitions */
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-elegant: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --radius: 0.75rem; /* More generous rounded corners */
+
+  /* Sidebar colors for preview theme */
+  --sidebar-background: 249 250 251;
+  --sidebar-foreground: 71 85 105;
+  --sidebar-primary: 34 197 94;
+  --sidebar-primary-foreground: 255 255 255;
+  --sidebar-accent: 243 244 246;
+  --sidebar-accent-foreground: 55 65 81;
+  --sidebar-border: 229 231 235;
+  --sidebar-ring: 34 197 94;
+}
+
+.preview-theme.dark {
+  /* Dark mode for Financial Confidence theme */
+  --background: 15 23 42; /* Deep midnight */
+  --foreground: 241 245 249; /* Soft white */
+
+  --card: 30 41 59; /* Charcoal card */
+  --card-foreground: 241 245 249;
+
+  --popover: 30 41 59;
+  --popover-foreground: 241 245 249;
+
+  --primary: 34 197 94; /* Keep green prominent in dark */
+  --primary-foreground: 15 23 42;
+
+  --secondary: 51 65 85; /* Muted slate */
+  --secondary-foreground: 203 213 225;
+
+  --muted: 51 65 85;
+  --muted-foreground: 148 163 184;
+
+  --accent: 34 197 94;
+  --accent-foreground: 15 23 42;
+
+  --destructive: 248 113 113;
+  --destructive-foreground: 15 23 42;
+
+  --border: 71 85 105;
+  --input: 71 85 105;
+  --ring: 34 197 94;
+
+  --success: 34 197 94;
+  --success-foreground: 15 23 42;
+
+  --warning: 251 191 36;
+  --warning-foreground: 15 23 42;
+
+  /* Dark gradients */
+  --gradient-hero: linear-gradient(135deg, hsl(34 197 94), hsl(22 163 74));
+  --gradient-card: linear-gradient(145deg, hsl(30 41 59), hsl(51 65 85));
+  --gradient-accent: linear-gradient(135deg, hsl(34 197 94), hsl(16 185 129));
+  --gradient-receipt: linear-gradient(180deg, hsl(30 41 59), hsl(15 23 42));
+
+  /* Dark shadows with green tint */
+  --shadow-glow: 0 0 0 1px hsl(34 197 94 / 0.2), 0 4px 16px hsl(34 197 94 / 0.15);
+  --shadow-receipt: 0 2px 8px -2px hsl(0 0% 0% / 0.3), 0 4px 16px -4px hsl(0 0% 0% / 0.2);
+
+  /* Dark sidebar */
+  --sidebar-background: 15 23 42;
+  --sidebar-foreground: 203 213 225;
+  --sidebar-primary: 34 197 94;
+  --sidebar-primary-foreground: 15 23 42;
+  --sidebar-accent: 51 65 85;
+  --sidebar-accent-foreground: 203 213 225;
+  --sidebar-border: 71 85 105;
+  --sidebar-ring: 34 197 94;
+}

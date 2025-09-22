@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 type AppState = 'uploading' | 'processing' | 'results';
 
@@ -180,6 +181,7 @@ const Dashboard = () => {
                 </div>
                 
                 <div className="flex items-center gap-2">
+                  <ThemeToggle />
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <User className="h-4 w-4" />
                     {user?.email}
@@ -223,6 +225,7 @@ const Dashboard = () => {
                 </div>
                 
                 <div className="flex items-center gap-2">
+                  <ThemeToggle />
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <User className="h-4 w-4" />
                     {user?.email}
@@ -260,6 +263,7 @@ const Dashboard = () => {
               </div>
               
               <div className="flex items-center gap-2">
+                <ThemeToggle />
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
                   {user?.email}
