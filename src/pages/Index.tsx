@@ -152,6 +152,29 @@ const Index = () => {
     );
   }
 
+  if (appState === 'uploading') {
+    return (
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar onNewReceipt={handleNewReceipt} />
+          <div className="flex-1 bg-gradient-to-br from-background to-muted/20">
+            <section className="py-12 px-4">
+              <div className="max-w-2xl mx-auto">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold mb-4">Upload Your Receipt</h2>
+                  <p className="text-muted-foreground">
+                    Support for images (JPG, PNG, WebP), PDFs, and CSV files up to 10MB
+                  </p>
+                </div>
+                <ReceiptUpload onFileSelect={handleFileSelect} />
+              </div>
+            </section>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       {/* Header */}
@@ -234,28 +257,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      {/* Upload Section */}
-      {appState === 'uploading' && (
-        <SidebarProvider>
-          <div className="min-h-screen flex w-full">
-            <AppSidebar onNewReceipt={handleNewReceipt} />
-            <div className="flex-1 bg-gradient-to-br from-background to-muted/20">
-              <section className="py-12 px-4">
-                <div className="max-w-2xl mx-auto">
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold mb-4">Upload Your Receipt</h2>
-                    <p className="text-muted-foreground">
-                      Support for images (JPG, PNG, WebP), PDFs, and CSV files up to 10MB
-                    </p>
-                  </div>
-                  <ReceiptUpload onFileSelect={handleFileSelect} />
-                </div>
-              </section>
-            </div>
-          </div>
-        </SidebarProvider>
-      )}
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-muted/20">
