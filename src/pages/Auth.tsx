@@ -116,15 +116,15 @@ const Auth = () => {
           </TabsList>
 
           <TabsContent value="signin">
-            <Card className="border-0 shadow-large bg-gradient-card">
+            <Card className="border-0 shadow-large bg-gradient-card min-h-[420px]">
               <CardHeader>
                 <CardTitle>Sign In</CardTitle>
                 <CardDescription>
                   Enter your credentials to access your account
                 </CardDescription>
               </CardHeader>
-              <form onSubmit={handleSignIn}>
-                <CardContent className="space-y-4">
+              <form onSubmit={handleSignIn} className="flex flex-col h-full">
+                <CardContent className="space-y-4 flex-1">
                   <div className="space-y-2">
                     <Label htmlFor="signin-email">Email</Label>
                     <Input
@@ -147,6 +147,8 @@ const Auth = () => {
                       disabled={isSubmitting}
                     />
                   </div>
+                  {/* Spacer to match Sign Up form height */}
+                  <div className="h-16"></div>
                 </CardContent>
                 <CardFooter>
                   <Button
@@ -162,15 +164,15 @@ const Auth = () => {
           </TabsContent>
 
           <TabsContent value="signup">
-            <Card className="border-0 shadow-large bg-gradient-card">
+            <Card className="border-0 shadow-large bg-gradient-card min-h-[420px]">
               <CardHeader>
                 <CardTitle>Sign Up</CardTitle>
                 <CardDescription>
                   Create a new account to start processing receipts
                 </CardDescription>
               </CardHeader>
-              <form onSubmit={handleSignUp}>
-                <CardContent className="space-y-4">
+              <form onSubmit={handleSignUp} className="flex flex-col h-full">
+                <CardContent className="space-y-4 flex-1">
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <Input
