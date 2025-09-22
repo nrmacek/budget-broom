@@ -66,6 +66,10 @@ const Index = () => {
       setReceiptData(data);
       setAppState('results');
       
+      // Debug logging
+      console.log('Setting appState to results, receiptData:', data);
+      console.log('Data has lineItems:', data?.lineItems?.length);
+      
       toast({
         title: "Receipt processed successfully!",
         description: `Found ${data.lineItems.length} items from ${data.storeName}`,
@@ -118,6 +122,8 @@ const Index = () => {
     }
   };
 
+  console.log('Current appState:', appState, 'receiptData exists:', !!receiptData);
+
   if (appState === 'processing' && uploadedFile) {
     return (
       <SidebarProvider>
@@ -137,6 +143,7 @@ const Index = () => {
   }
 
   if (appState === 'results' && receiptData) {
+    console.log('Rendering results page with receiptData:', receiptData);
     return (
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
@@ -150,6 +157,10 @@ const Index = () => {
         </div>
       </SidebarProvider>
     );
+  }
+
+  if (appState === 'results' && !receiptData) {
+    console.log('AppState is results but receiptData is missing!');
   }
 
   if (appState === 'uploading') {
