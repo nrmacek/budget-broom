@@ -62,13 +62,8 @@ const Index = () => {
         throw new Error(data.error);
       }
 
-      console.log('Receipt parsed successfully:', data);
       setReceiptData(data);
       setAppState('results');
-      
-      // Debug logging
-      console.log('Setting appState to results, receiptData:', data);
-      console.log('Data has lineItems:', data?.lineItems?.length);
       
       toast({
         title: "Receipt processed successfully!",
@@ -77,9 +72,32 @@ const Index = () => {
 
     } catch (error) {
       console.error('Error processing receipt:', error);
+      
+      // Extract more specific error messages
+      let errorMessage = "Failed to process receipt. Please try again.";
+      
+      if (error && typeof error === 'object' && 'message' in error) {
+        const message = (error as any).message;
+        if (message.includes('OpenAI API key')) {
+          errorMessage = "Service configuration error. Please contact support.";
+        } else if (message.includes('Failed to parse receipt data')) {
+          errorMessage = "Could not extract data from the receipt. Please try a clearer image or different file.";
+        } else if (message.includes('Unsupported file type')) {
+          errorMessage = "Unsupported file type. Please use JPG, PNG, WebP, or CSV files.";
+        } else if (message.includes('File too large')) {
+          errorMessage = "File is too large. Please use a file smaller than 10MB.";
+        } else if (message.includes('No file provided')) {
+          errorMessage = "No file was uploaded. Please select a file to process.";
+        } else if (message.includes('non-2xx status code')) {
+          errorMessage = "Service error occurred. Please try again in a moment.";
+        } else {
+          errorMessage = message; // Use the actual error message if it's informative
+        }
+      }
+      
       toast({
         title: "Processing failed",
-        description: error.message || "Failed to process receipt. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
       setAppState('uploading');
@@ -143,7 +161,6 @@ const Index = () => {
   }
 
   if (appState === 'results' && receiptData) {
-    console.log('Rendering results page with receiptData:', receiptData);
     return (
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
@@ -157,10 +174,6 @@ const Index = () => {
         </div>
       </SidebarProvider>
     );
-  }
-
-  if (appState === 'results' && !receiptData) {
-    console.log('AppState is results but receiptData is missing!');
   }
 
   if (appState === 'uploading') {

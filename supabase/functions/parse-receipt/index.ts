@@ -162,7 +162,23 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
   const content = result.choices[0].message.content;
 
   try {
-    const parsedData = JSON.parse(content);
+    // Clean the content by removing markdown code block formatting
+    let cleanContent = content.trim();
+    
+    // Remove markdown code blocks if present
+    if (cleanContent.startsWith('```json')) {
+      cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (cleanContent.startsWith('```')) {
+      cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+    
+    console.log('Parsing cleaned content:', cleanContent);
+    const parsedData = JSON.parse(cleanContent);
+    
+    // Validate required fields
+    if (!parsedData.storeName || !parsedData.lineItems || !Array.isArray(parsedData.lineItems)) {
+      throw new Error('Invalid receipt data structure from AI response');
+    }
     
     // Add unique IDs if missing
     parsedData.lineItems = parsedData.lineItems.map((item: any, index: number) => ({
@@ -172,8 +188,9 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
 
     return parsedData;
   } catch (parseError) {
-    console.error('Failed to parse OpenAI response as JSON:', content);
-    throw new Error('Failed to parse receipt data from AI response');
+    console.error('Failed to parse OpenAI response as JSON. Raw content:', content);
+    console.error('Parse error:', parseError);
+    throw new Error('Failed to parse receipt data from AI response - the AI response was not valid JSON');
   }
 }
 
