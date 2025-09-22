@@ -85,6 +85,30 @@ const Dashboard = () => {
       setReceiptData(data);
       setAppState('results');
       
+      // Save receipt to database
+      try {
+        const { error: saveError } = await supabase
+          .from('receipts')
+          .insert({
+            user_id: user?.id,
+            store_name: data.storeName,
+            date: data.date,
+            subtotal: data.subtotal,
+            total: data.total,
+            discounts: data.discounts || [],
+            taxes: data.taxes || [],
+            additional_charges: data.additionalCharges || [],
+            line_items: data.lineItems,
+            original_filename: file.name,
+          });
+
+        if (saveError) {
+          console.error('Error saving receipt:', saveError);
+        }
+      } catch (saveError) {
+        console.error('Error saving receipt to database:', saveError);
+      }
+      
       toast({
         title: "Receipt processed successfully!",
         description: `Found ${data.lineItems.length} items from ${data.storeName}`,

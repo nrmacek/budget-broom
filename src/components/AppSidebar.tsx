@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Receipt, Search, FileText, Settings, Plus, History } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import {
   Sidebar,
@@ -15,7 +16,7 @@ import {
 } from '@/components/ui/sidebar';
 
 const menuItems = [
-  { title: 'New Receipt', url: '/new', icon: Plus },
+  { title: 'New Receipt', url: '/dashboard', icon: Plus },
   { title: 'Receipt History', url: '/history', icon: History },
   { title: 'Search Receipts', url: '/search', icon: Search },
   { title: 'Categories', url: '/categories', icon: FileText },
@@ -31,14 +32,22 @@ interface AppSidebarProps {
 
 export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
   const { state } = useSidebar();
+  const navigate = useNavigate();
+  const location = useLocation();
   const isCollapsed = state === 'collapsed';
 
-  const handleMenuClick = (title: string) => {
+  const handleMenuClick = (title: string, url: string) => {
     console.log('Menu item clicked:', title);
     if (title === 'New Receipt') {
       console.log('Calling onNewReceipt function');
       onNewReceipt();
+    } else {
+      navigate(url);
     }
+  };
+
+  const isActiveRoute = (url: string) => {
+    return location.pathname === url;
   };
 
   return (
@@ -72,11 +81,13 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     asChild
-                    className="hover:bg-accent/50 transition-colors"
+                    className={`hover:bg-accent/50 transition-colors ${
+                      isActiveRoute(item.url) ? 'bg-accent text-accent-foreground' : ''
+                    }`}
                   >
                     <button 
                       className="flex items-center gap-3 w-full"
-                      onClick={() => handleMenuClick(item.title)}
+                      onClick={() => handleMenuClick(item.title, item.url)}
                     >
                       <item.icon className="h-4 w-4 shrink-0" />
                       {!isCollapsed && <span className="truncate">{item.title}</span>}

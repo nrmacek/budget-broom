@@ -38,6 +38,57 @@ export type Database = {
         }
         Relationships: []
       }
+      receipts: {
+        Row: {
+          additional_charges: Json | null
+          created_at: string
+          date: string
+          discounts: Json | null
+          id: string
+          line_items: Json
+          original_filename: string | null
+          processed_at: string
+          store_name: string
+          subtotal: number
+          taxes: Json | null
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          additional_charges?: Json | null
+          created_at?: string
+          date: string
+          discounts?: Json | null
+          id?: string
+          line_items?: Json
+          original_filename?: string | null
+          processed_at?: string
+          store_name: string
+          subtotal: number
+          taxes?: Json | null
+          total: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          additional_charges?: Json | null
+          created_at?: string
+          date?: string
+          discounts?: Json | null
+          id?: string
+          line_items?: Json
+          original_filename?: string | null
+          processed_at?: string
+          store_name?: string
+          subtotal?: number
+          taxes?: Json | null
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
