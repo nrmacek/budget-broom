@@ -71,9 +71,11 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
                   <SidebarMenuButton 
                     asChild
                     className="hover:bg-accent/50 transition-colors"
-                    onClick={() => handleMenuClick(item.title)}
                   >
-                    <button className="flex items-center gap-3 w-full">
+                    <button 
+                      className="flex items-center gap-3 w-full"
+                      onClick={() => handleMenuClick(item.title)}
+                    >
                       <item.icon className="h-4 w-4 shrink-0" />
                       {!isCollapsed && <span className="truncate">{item.title}</span>}
                     </button>
