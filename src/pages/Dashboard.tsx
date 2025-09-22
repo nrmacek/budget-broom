@@ -195,6 +195,7 @@ const Dashboard = () => {
               <div className="w-full max-w-md">
                 <ProcessingProgress 
                   fileName={uploadedFile.name}
+                  isProcessing={isProcessing}
                   onComplete={handleProcessingComplete}
                 />
               </div>

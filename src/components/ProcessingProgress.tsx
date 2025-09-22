@@ -13,10 +13,11 @@ interface ProcessingStep {
 
 interface ProcessingProgressProps {
   fileName: string;
+  isProcessing: boolean;
   onComplete: () => void;
 }
 
-export function ProcessingProgress({ fileName, onComplete }: ProcessingProgressProps) {
+export function ProcessingProgress({ fileName, isProcessing, onComplete }: ProcessingProgressProps) {
   const [steps, setSteps] = useState<ProcessingStep[]>([
     {
       id: 'upload',
@@ -51,48 +52,44 @@ export function ProcessingProgress({ fileName, onComplete }: ProcessingProgressP
   const [progress, setProgress] = useState(25);
 
   useEffect(() => {
-    const processSteps = async () => {
-      // Simulate OCR processing
-      setTimeout(() => {
-        setSteps(prev => prev.map(step => 
-          step.id === 'ocr' 
-            ? { ...step, completed: true, active: false }
-            : step.id === 'parsing'
-            ? { ...step, active: true }
-            : step
-        ));
-        setProgress(50);
-      }, 2000);
+    if (!isProcessing) return;
 
-      // Simulate parsing
-      setTimeout(() => {
-        setSteps(prev => prev.map(step => 
-          step.id === 'parsing' 
-            ? { ...step, completed: true, active: false }
-            : step.id === 'categorization'
-            ? { ...step, active: true }
-            : step
-        ));
-        setProgress(75);
-      }, 4000);
-
-      // Simulate categorization
-      setTimeout(() => {
-        setSteps(prev => prev.map(step => 
-          step.id === 'categorization' 
-            ? { ...step, completed: true, active: false }
-            : step
-        ));
-        setProgress(100);
+    // Advance through steps every 2-3 seconds while processing
+    const stepInterval = setInterval(() => {
+      setSteps(prev => {
+        const activeStepIndex = prev.findIndex(step => step.active);
+        const nextIncompleteIndex = prev.findIndex(step => !step.completed && !step.active);
         
-        setTimeout(() => {
-          onComplete();
-        }, 1000);
-      }, 6000);
-    };
+        if (nextIncompleteIndex === -1) return prev; // All steps completed or active
+        
+        return prev.map((step, index) => {
+          if (index === activeStepIndex) {
+            return { ...step, completed: true, active: false };
+          } else if (index === nextIncompleteIndex) {
+            return { ...step, active: true };
+          }
+          return step;
+        });
+      });
+      
+      setProgress(prev => Math.min(prev + 15, 90)); // Progress up to 90%, then wait for completion
+    }, 2500);
 
-    processSteps();
-  }, [onComplete]);
+    return () => clearInterval(stepInterval);
+  }, [isProcessing]);
+
+  // Handle completion when processing finishes
+  useEffect(() => {
+    if (!isProcessing && progress > 0) {
+      // Complete all steps and progress
+      setSteps(prev => prev.map(step => ({ ...step, completed: true, active: false })));
+      setProgress(100);
+      
+      setTimeout(() => {
+        onComplete();
+      }, 500);
+    }
+  }, [isProcessing, onComplete, progress]);
 
   return (
     <Card className="p-8">
