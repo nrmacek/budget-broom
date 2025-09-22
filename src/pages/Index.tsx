@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Receipt, Zap, Shield, Download, ArrowRight } from 'lucide-react';
+import { Receipt, Zap, Shield, Download, ArrowRight, LogOut, User } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ReceiptUpload } from '@/components/ReceiptUpload';
 import { ProcessingProgress } from '@/components/ProcessingProgress';
 import { ReceiptResults } from '@/components/ReceiptResults';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import heroImage from '@/assets/hero-receipt-parser.jpg';
 
 type AppState = 'landing' | 'uploading' | 'processing' | 'results';
@@ -31,7 +33,9 @@ const mockReceiptData = {
 };
 
 const Index = () => {
-  const [appState, setAppState] = useState<AppState>('results');
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+  const [appState, setAppState] = useState<AppState>('landing');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const handleFileSelect = (file: File) => {
@@ -51,6 +55,22 @@ const Index = () => {
   const handleNewReceipt = () => {
     setUploadedFile(null);
     setAppState('uploading');
+  };
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        title: "Sign out failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Signed out successfully",
+        description: "You have been signed out of your account.",
+      });
+    }
   };
 
   if (appState === 'processing' && uploadedFile) {
@@ -99,9 +119,16 @@ const Index = () => {
             <h1 className="text-xl font-bold">ReceiptParser</h1>
           </div>
           
-          <Button variant="outline">
-            Sign In
-          </Button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <User className="h-4 w-4" />
+              {user?.email}
+            </div>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
