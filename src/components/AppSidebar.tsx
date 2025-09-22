@@ -16,8 +16,8 @@ import {
 
 const menuItems = [
   { title: 'New Receipt', url: '/new', icon: Plus },
-  { title: 'Search Receipts', url: '/search', icon: Search },
   { title: 'Receipt History', url: '/history', icon: History },
+  { title: 'Search Receipts', url: '/search', icon: Search },
   { title: 'Categories', url: '/categories', icon: FileText },
 ];
 
