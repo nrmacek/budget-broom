@@ -116,7 +116,7 @@ const Auth = () => {
           </TabsList>
 
           <TabsContent value="signin">
-            <Card className="border-0 shadow-large bg-gradient-card min-h-[420px]">
+            <Card className="border-0 shadow-large bg-gradient-card h-[480px]">
               <CardHeader>
                 <CardTitle>Sign In</CardTitle>
                 <CardDescription>
@@ -124,7 +124,7 @@ const Auth = () => {
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleSignIn} className="flex flex-col h-full">
-                <CardContent className="space-y-4 flex-1">
+                <CardContent className="space-y-4 flex-1 flex flex-col justify-center">
                   <div className="space-y-2">
                     <Label htmlFor="signin-email">Email</Label>
                     <Input
@@ -147,8 +147,6 @@ const Auth = () => {
                       disabled={isSubmitting}
                     />
                   </div>
-                  {/* Spacer to match Sign Up form height */}
-                  <div className="h-16"></div>
                 </CardContent>
                 <CardFooter>
                   <Button
@@ -164,7 +162,7 @@ const Auth = () => {
           </TabsContent>
 
           <TabsContent value="signup">
-            <Card className="border-0 shadow-large bg-gradient-card min-h-[420px]">
+            <Card className="border-0 shadow-large bg-gradient-card h-[480px]">
               <CardHeader>
                 <CardTitle>Sign Up</CardTitle>
                 <CardDescription>
