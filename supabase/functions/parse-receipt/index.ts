@@ -81,9 +81,18 @@ serve(async (req) => {
 });
 
 async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptData> {
-  // Convert image to base64
+  // Convert image to base64 using a more efficient method
   const arrayBuffer = await file.arrayBuffer();
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+  const bytes = new Uint8Array(arrayBuffer);
+  
+  // Use a chunk-based approach to avoid stack overflow
+  let binary = '';
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.slice(i, i + chunkSize);
+    binary += String.fromCharCode.apply(null, Array.from(chunk));
+  }
+  const base64 = btoa(binary);
   const mimeType = file.type;
 
   // Call OpenAI Vision API to extract receipt data
