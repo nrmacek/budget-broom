@@ -121,4 +121,9 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+
+  .font-mono {
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+    font-variant-numeric: tabular-nums;
+  }
 }
