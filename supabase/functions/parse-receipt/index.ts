@@ -16,9 +16,29 @@ interface LineItem {
   confidence: number;
 }
 
+interface Discount {
+  description: string;
+  amount: number;
+}
+
+interface Tax {
+  description: string;
+  rate?: number;
+  amount: number;
+}
+
+interface AdditionalCharge {
+  description: string;
+  amount: number;
+}
+
 interface ReceiptData {
   storeName: string;
   date: string;
+  subtotal: number;
+  discounts?: Discount[];
+  taxes?: Tax[];
+  additionalCharges?: AdditionalCharge[];
   total: number;
   lineItems: LineItem[];
 }
@@ -108,31 +128,58 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
       messages: [
         {
           role: 'system',
-          content: `You are a receipt parser that extracts structured data from receipt images. 
+          content: `You are a receipt parser that extracts comprehensive structured data from receipt images. 
           
-          Analyze the receipt and return ONLY a valid JSON object with this exact structure:
+          Analyze the receipt carefully and return ONLY a valid JSON object with this exact structure:
           {
             "storeName": "store name from receipt",
             "date": "YYYY-MM-DD format",
-            "total": number (total amount),
+            "subtotal": number (sum of all line items before discounts/taxes),
+            "discounts": [
+              {
+                "description": "discount description (e.g., Store Card 5%, Coupon, Sale)",
+                "amount": number (positive number representing discount amount)
+              }
+            ],
+            "taxes": [
+              {
+                "description": "tax description (e.g., Sales Tax, VAT)",
+                "rate": number (optional tax rate as decimal, e.g., 0.0725 for 7.25%),
+                "amount": number (tax amount)
+              }
+            ],
+            "additionalCharges": [
+              {
+                "description": "additional charge description (e.g., Delivery Fee, Service Charge)",
+                "amount": number
+              }
+            ],
+            "total": number (final total amount paid),
             "lineItems": [
               {
-                "id": "unique_id",
+                "id": "unique_id or item code from receipt",
                 "description": "item description",
                 "quantity": number,
-                "unitPrice": number,
-                "total": number,
+                "unitPrice": number (price per unit),
+                "total": number (quantity * unitPrice),
                 "category": "category_name",
                 "confidence": number (0.0 to 1.0)
               }
             ]
           }
           
-          Categories should be one of: Groceries, Electronics, Clothing, Personal Care, Household, Entertainment, Food & Drink, Transportation, Health, Other.
+          IMPORTANT INSTRUCTIONS:
+          - Parse ALL sections of the receipt: line items, subtotal, discounts, taxes, and final total
+          - For discounts array: only include if discounts are present, otherwise omit the field
+          - For taxes array: only include if taxes are present, otherwise omit the field  
+          - For additionalCharges array: only include if additional charges are present, otherwise omit the field
+          - Subtotal should be the sum of all line items before any discounts or taxes
+          - Total should match the final amount paid on the receipt
+          - Categories should be one of: Groceries, Electronics, Clothing, Personal Care, Household, Entertainment, Food & Drink, Transportation, Health, Stationery & Office Supplies, Other
+          - If you cannot clearly read certain values, use reasonable defaults and set confidence accordingly (lower confidence for unclear items)
+          - Ensure the math is consistent: subtotal - discounts + taxes + additionalCharges = total
           
-          If you cannot clearly read certain values, use reasonable defaults and set confidence accordingly (lower confidence for unclear items).
-          
-          Return ONLY the JSON object, no additional text or formatting.`
+          Return ONLY the JSON object, no additional text, markdown formatting, or explanations.`
         },
         {
           role: 'user',
@@ -176,9 +223,19 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
     const parsedData = JSON.parse(cleanContent);
     
     // Validate required fields
-    if (!parsedData.storeName || !parsedData.lineItems || !Array.isArray(parsedData.lineItems)) {
+    if (!parsedData.storeName || !parsedData.lineItems || !Array.isArray(parsedData.lineItems) || typeof parsedData.total !== 'number') {
       throw new Error('Invalid receipt data structure from AI response');
     }
+
+    // Calculate subtotal if not provided
+    if (typeof parsedData.subtotal !== 'number') {
+      parsedData.subtotal = parsedData.lineItems.reduce((sum: number, item: any) => sum + (item.total || 0), 0);
+    }
+
+    // Ensure arrays exist for optional fields
+    parsedData.discounts = parsedData.discounts || [];
+    parsedData.taxes = parsedData.taxes || [];
+    parsedData.additionalCharges = parsedData.additionalCharges || [];
     
     // Add unique IDs if missing
     parsedData.lineItems = parsedData.lineItems.map((item: any, index: number) => ({
@@ -226,6 +283,7 @@ async function processCsvReceipt(file: File): Promise<ReceiptData> {
   return {
     storeName: 'CSV Import',
     date: new Date().toISOString().split('T')[0],
+    subtotal: total,
     total,
     lineItems
   };

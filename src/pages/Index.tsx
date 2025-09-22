@@ -24,9 +24,29 @@ interface LineItem {
   confidence: number;
 }
 
+interface Discount {
+  description: string;
+  amount: number;
+}
+
+interface Tax {
+  description: string;
+  rate?: number;
+  amount: number;
+}
+
+interface AdditionalCharge {
+  description: string;
+  amount: number;
+}
+
 interface ReceiptData {
   storeName: string;
   date: string;
+  subtotal: number;
+  discounts?: Discount[];
+  taxes?: Tax[];
+  additionalCharges?: AdditionalCharge[];
   total: number;
   lineItems: LineItem[];
 }
