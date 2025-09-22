@@ -204,16 +204,16 @@ const Auth = () => {
                       disabled={isSubmitting}
                     />
                   </div>
+                  <div className="pt-4">
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-hero hover:scale-105 transition-transform"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Creating account..." : "Sign Up"}
+                    </Button>
+                  </div>
                 </CardContent>
-                <CardFooter>
-                  <Button
-                    type="submit"
-                    className="w-full bg-gradient-hero hover:scale-105 transition-transform"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Creating account..." : "Sign Up"}
-                  </Button>
-                </CardFooter>
               </form>
             </Card>
           </TabsContent>
