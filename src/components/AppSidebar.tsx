@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Receipt, Search, FileText, Settings, Plus, History } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 

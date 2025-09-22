@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Receipt, LogOut, User } from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
