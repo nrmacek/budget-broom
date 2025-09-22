@@ -9,51 +9,95 @@ import { ProcessingProgress } from '@/components/ProcessingProgress';
 import { ReceiptResults } from '@/components/ReceiptResults';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import heroImage from '@/assets/hero-receipt-parser.jpg';
 
 type AppState = 'landing' | 'uploading' | 'processing' | 'results';
 
-// Mock data for demo
-const mockReceiptData = {
-  storeName: "Target Store #1423",
-  date: "2024-01-15",
-  total: 127.84,
-  lineItems: [
-    { id: '1', description: 'Organic Bananas', quantity: 2, unitPrice: 1.99, total: 3.98, category: 'Groceries', confidence: 0.95 },
-    { id: '2', description: 'Whole Grain Bread', quantity: 1, unitPrice: 3.49, total: 3.49, category: 'Groceries', confidence: 0.98 },
-    { id: '3', description: 'Greek Yogurt 32oz', quantity: 1, unitPrice: 5.99, total: 5.99, category: 'Groceries', confidence: 0.92 },
-    { id: '4', description: 'Bluetooth Headphones', quantity: 1, unitPrice: 34.99, total: 34.99, category: 'Electronics', confidence: 0.97 },
-    { id: '5', description: 'Phone Charging Cable', quantity: 1, unitPrice: 12.99, total: 12.99, category: 'Electronics', confidence: 0.94 },
-    { id: '6', description: 'Cotton T-Shirt', quantity: 2, unitPrice: 9.99, total: 19.98, category: 'Clothing', confidence: 0.91 },
-    { id: '7', description: 'Jeans', quantity: 1, unitPrice: 24.99, total: 24.99, category: 'Clothing', confidence: 0.96 },
-    { id: '8', description: 'Shampoo & Conditioner', quantity: 1, unitPrice: 8.99, total: 8.99, category: 'Personal Care', confidence: 0.88 },
-    { id: '9', description: 'Toothpaste', quantity: 1, unitPrice: 4.99, total: 4.99, category: 'Personal Care', confidence: 0.93 },
-    { id: '10', description: 'Laundry Detergent', quantity: 1, unitPrice: 7.99, total: 7.99, category: 'Household', confidence: 0.89 }
-  ]
-};
+interface LineItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+  category: string;
+  confidence: number;
+}
+
+interface ReceiptData {
+  storeName: string;
+  date: string;
+  total: number;
+  lineItems: LineItem[];
+}
 
 const Index = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const [appState, setAppState] = useState<AppState>('landing');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (file: File) => {
     setUploadedFile(file);
     setAppState('processing');
+    setIsProcessing(true);
+    
+    try {
+      // Create form data to send to edge function
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Call the Supabase edge function
+      const { data, error } = await supabase.functions.invoke('parse-receipt', {
+        body: formData,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      console.log('Receipt parsed successfully:', data);
+      setReceiptData(data);
+      setAppState('results');
+      
+      toast({
+        title: "Receipt processed successfully!",
+        description: `Found ${data.lineItems.length} items from ${data.storeName}`,
+      });
+
+    } catch (error) {
+      console.error('Error processing receipt:', error);
+      toast({
+        title: "Processing failed",
+        description: error.message || "Failed to process receipt. Please try again.",
+        variant: "destructive",
+      });
+      setAppState('uploading');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleProcessingComplete = () => {
+    // This is now handled in handleFileSelect
     setAppState('results');
   };
 
   const handleStartOver = () => {
     setUploadedFile(null);
+    setReceiptData(null);
     setAppState('landing');
   };
 
   const handleNewReceipt = () => {
     setUploadedFile(null);
+    setReceiptData(null);
     setAppState('uploading');
   };
 
@@ -91,14 +135,14 @@ const Index = () => {
     );
   }
 
-  if (appState === 'results') {
+  if (appState === 'results' && receiptData) {
     return (
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
           <AppSidebar onNewReceipt={handleNewReceipt} />
           <div className="flex-1">
             <ReceiptResults 
-              receiptData={mockReceiptData}
+              receiptData={receiptData}
               onStartOver={handleStartOver}
             />
           </div>
