@@ -96,6 +96,7 @@ const Index = () => {
   };
 
   const handleNewReceipt = () => {
+    console.log('handleNewReceipt called, changing state to uploading');
     setUploadedFile(null);
     setReceiptData(null);
     setAppState('uploading');
