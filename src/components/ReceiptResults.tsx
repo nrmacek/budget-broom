@@ -205,78 +205,6 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
             </div>
           </Card>
 
-          {/* Receipt Breakdown */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Receipt className="h-5 w-5" />
-              Receipt Breakdown
-            </h2>
-            
-            <div className="space-y-3">
-              {/* Line Items Subtotal */}
-              <div className="flex justify-between items-center py-2 border-b border-dashed border-border/50">
-                <span className="text-muted-foreground">Line Items Subtotal</span>
-                <span className="font-mono">${calculatedSubtotal.toFixed(2)}</span>
-              </div>
-
-              {/* Discounts */}
-              {receiptData.discounts && receiptData.discounts.length > 0 && (
-                <>
-                  {receiptData.discounts.map((discount, index) => (
-                    <div key={index} className="flex justify-between items-center py-2 text-green-600">
-                      <span>- {discount.description}</span>
-                      <span className="font-mono">-${discount.amount.toFixed(2)}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-
-              {/* Taxes */}
-              {receiptData.taxes && receiptData.taxes.length > 0 && (
-                <>
-                  {receiptData.taxes.map((tax, index) => (
-                    <div key={index} className="flex justify-between items-center py-2">
-                      <span>
-                        {tax.description}
-                        {tax.rate && ` (${(tax.rate * 100).toFixed(2)}%)`}
-                      </span>
-                      <span className="font-mono">${tax.amount.toFixed(2)}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-
-              {/* Additional Charges */}
-              {receiptData.additionalCharges && receiptData.additionalCharges.length > 0 && (
-                <>
-                  {receiptData.additionalCharges.map((charge, index) => (
-                    <div key={index} className="flex justify-between items-center py-2">
-                      <span>{charge.description}</span>
-                      <span className="font-mono">${charge.amount.toFixed(2)}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-
-              {/* Total */}
-              <div className="flex justify-between items-center py-3 border-t-2 border-primary/20 text-lg font-semibold">
-                <span>Total</span>
-                <span className="font-mono">${receiptData.total.toFixed(2)}</span>
-              </div>
-
-              {/* Validation Warning */}
-              {hasDiscrepancy && (
-                <div className="mt-4 p-3 bg-warning/10 border border-warning/20 rounded-md">
-                  <p className="text-sm text-warning">
-                    <strong>Note:</strong> There's a ${totalDiscrepancy.toFixed(2)} discrepancy between the calculated total (${calculatedTotal.toFixed(2)}) 
-                    and the receipt total (${receiptData.total.toFixed(2)}). This might be due to rounding differences, 
-                    additional fees not captured, or parsing accuracy.
-                  </p>
-                </div>
-              )}
-            </div>
-          </Card>
-
           {/* Category Buckets */}
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold mb-4">Spending by Category</h2>
@@ -385,6 +313,85 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
               })}
             </div>
           </div>
+
+          {/* Taxes, Discounts, and Fees - Only show if there are any */}
+          {((receiptData.discounts && receiptData.discounts.length > 0) || 
+            (receiptData.taxes && receiptData.taxes.length > 0) || 
+            (receiptData.additionalCharges && receiptData.additionalCharges.length > 0)) && (
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <Receipt className="h-5 w-5" />
+                Taxes, Discounts, and Fees
+              </h2>
+              
+              <div className="space-y-4">
+                {/* Line Items Subtotal */}
+                <div className="flex justify-between items-center py-2 border-b border-dashed border-border/50">
+                  <span className="text-muted-foreground">Line Items Subtotal</span>
+                  <span className="font-mono">${calculatedSubtotal.toFixed(2)}</span>
+                </div>
+
+                {/* Discounts Section */}
+                {receiptData.discounts && receiptData.discounts.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Discounts</h3>
+                    {receiptData.discounts.map((discount, index) => (
+                      <div key={index} className="flex justify-between items-center py-2 text-green-600">
+                        <span>- {discount.description}</span>
+                        <span className="font-mono">-${discount.amount.toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Taxes Section */}
+                {receiptData.taxes && receiptData.taxes.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Taxes</h3>
+                    {receiptData.taxes.map((tax, index) => (
+                      <div key={index} className="flex justify-between items-center py-2">
+                        <span>
+                          {tax.description}
+                          {tax.rate && ` (${(tax.rate * 100).toFixed(2)}%)`}
+                        </span>
+                        <span className="font-mono">${tax.amount.toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Additional Fees Section */}
+                {receiptData.additionalCharges && receiptData.additionalCharges.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Additional Fees</h3>
+                    {receiptData.additionalCharges.map((charge, index) => (
+                      <div key={index} className="flex justify-between items-center py-2">
+                        <span>{charge.description}</span>
+                        <span className="font-mono">${charge.amount.toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Total */}
+                <div className="flex justify-between items-center py-3 border-t-2 border-primary/20 text-lg font-semibold">
+                  <span>Total</span>
+                  <span className="font-mono">${receiptData.total.toFixed(2)}</span>
+                </div>
+
+                {/* Validation Warning */}
+                {hasDiscrepancy && (
+                  <div className="mt-4 p-3 bg-warning/10 border border-warning/20 rounded-md">
+                    <p className="text-sm text-warning">
+                      <strong>Note:</strong> There's a ${totalDiscrepancy.toFixed(2)} discrepancy between the calculated total (${calculatedTotal.toFixed(2)}) 
+                      and the receipt total (${receiptData.total.toFixed(2)}). This might be due to rounding differences, 
+                      additional fees not captured, or parsing accuracy.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     </div>
