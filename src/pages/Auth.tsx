@@ -124,7 +124,7 @@ const Auth = () => {
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleSignIn} className="flex flex-col h-full">
-                <CardContent className="space-y-4 flex-1 flex flex-col justify-center">
+                <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signin-email">Email</Label>
                     <Input
@@ -147,16 +147,16 @@ const Auth = () => {
                       disabled={isSubmitting}
                     />
                   </div>
+                  <div className="pt-4">
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-hero hover:scale-105 transition-transform"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Signing in..." : "Sign In"}
+                    </Button>
+                  </div>
                 </CardContent>
-                <CardFooter>
-                  <Button
-                    type="submit"
-                    className="w-full bg-gradient-hero hover:scale-105 transition-transform"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Signing in..." : "Sign In"}
-                  </Button>
-                </CardFooter>
               </form>
             </Card>
           </TabsContent>
