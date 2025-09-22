@@ -328,7 +328,7 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                 {/* Line Items Subtotal */}
                 <div className="flex justify-between items-center py-2 border-b border-dashed border-border/50">
                   <span className="text-muted-foreground">Line Items Subtotal</span>
-                  <span className="font-mono">${calculatedSubtotal.toFixed(2)}</span>
+                  <span className="font-semibold">${calculatedSubtotal.toFixed(2)}</span>
                 </div>
 
                 {/* Discounts Section */}
@@ -338,7 +338,7 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                     {receiptData.discounts.map((discount, index) => (
                       <div key={index} className="flex justify-between items-center py-2 text-green-600">
                         <span>- {discount.description}</span>
-                        <span className="font-mono">-${discount.amount.toFixed(2)}</span>
+                        <span>-${discount.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -354,7 +354,7 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                           {tax.description}
                           {tax.rate && ` (${(tax.rate * 100).toFixed(2)}%)`}
                         </span>
-                        <span className="font-mono">${tax.amount.toFixed(2)}</span>
+                        <span>${tax.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -367,7 +367,7 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                     {receiptData.additionalCharges.map((charge, index) => (
                       <div key={index} className="flex justify-between items-center py-2">
                         <span>{charge.description}</span>
-                        <span className="font-mono">${charge.amount.toFixed(2)}</span>
+                        <span>${charge.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -376,7 +376,7 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                 {/* Total */}
                 <div className="flex justify-between items-center py-3 border-t-2 border-primary/20 text-lg font-semibold">
                   <span>Total</span>
-                  <span className="font-mono">${receiptData.total.toFixed(2)}</span>
+                  <span>${receiptData.total.toFixed(2)}</span>
                 </div>
 
                 {/* Validation Warning */}
