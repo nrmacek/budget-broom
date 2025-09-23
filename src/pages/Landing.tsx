@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { 
   Receipt, 
   Zap, 
@@ -20,6 +23,8 @@ import {
 import { Link } from 'react-router-dom';
 
 const Landing = () => {
+  const [isYearly, setIsYearly] = useState(false);
+
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -164,90 +169,170 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing Section - Upfront */}
+      {/* Pricing Section - Updated */}
       <section id="pricing" className="py-20 px-4 bg-gradient-subtle">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
-            <p className="text-xl text-muted-foreground">
+            <h2 className="text-4xl font-bold mb-4">Simple plans. No hidden costs.</h2>
+            <p className="text-xl text-muted-foreground mb-8">
               Choose the plan that fits your needs
             </p>
+            
+            {/* Monthly/Yearly Toggle */}
+            <div className="flex items-center justify-center gap-4 mb-12">
+              <span className={`text-sm font-medium ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+                Monthly
+              </span>
+              <Switch
+                checked={isYearly}
+                onCheckedChange={setIsYearly}
+              />
+              <span className={`text-sm font-medium ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+                Yearly
+              </span>
+              {isYearly && (
+                <Badge variant="secondary" className="ml-2 bg-success/10 text-success">
+                  Save 20%
+                </Badge>
+              )}
+            </div>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Starter Plan */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {/* Basic Plan */}
             <Card className="p-8 bg-white border border-border shadow-medium hover:shadow-large transition-all">
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold mb-2">Starter</h3>
+                  <h3 className="text-2xl font-bold mb-2">Basic</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold">$0</span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
-                  <p className="text-muted-foreground">Perfect for trying ReceiptParser</p>
+                  <p className="text-muted-foreground">Free / Entry</p>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span>5 receipts per month</span>
+                    <span>3 receipts / month</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span>Basic categorization</span>
+                    <span>View parsed line items + categories on screen</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span>Free trial included</span>
+                    <span>No exports</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="h-5 w-5 text-success" />
+                    <span>Email support</span>
                   </div>
                 </div>
                 
                 <Link to="/auth" className="block">
                   <Button className="w-full rounded-full font-semibold" variant="outline">
-                    Start Free Trial
+                    Get Started Free
                   </Button>
                 </Link>
               </div>
             </Card>
 
-            {/* Pro Plan */}
-            <Card className="p-8 bg-gradient-hero text-white shadow-glow relative overflow-hidden border-0">
+            {/* Standard Plan - Featured */}
+            <Card className="p-8 bg-gradient-hero text-white shadow-glow relative overflow-hidden border-0 scale-105">
               <div className="absolute top-0 right-0 bg-warning text-warning-foreground px-3 py-1 text-sm font-semibold rounded-bl-lg">
                 Most Popular
               </div>
               
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold mb-2">Pro</h3>
+                  <h3 className="text-2xl font-bold mb-2">Standard</h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold">$19</span>
-                    <span className="text-white/80">/month</span>
+                    <span className="text-4xl font-bold">
+                      ${isYearly ? '7.20' : '9'}
+                    </span>
+                    <span className="text-white/80">/{isYearly ? 'month' : 'month'}</span>
+                    {isYearly && (
+                      <div className="text-sm text-white/80 mt-1">
+                        Billed annually (${(7.20 * 12).toFixed(0)}/year)
+                      </div>
+                    )}
                   </div>
-                  <p className="text-white/80">Unlimited processing + CSV export</p>
+                  <p className="text-white/80">Plus Tier</p>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
-                    <span>Unlimited receipts</span>
+                    <span>50 receipts / month</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
-                    <span>Advanced AI categorization</span>
+                    <span>CSV export</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
-                    <span>CSV export for QuickBooks</span>
+                    <span>Category totals & spend summaries</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
-                    <span>Priority support</span>
+                    <span>Email support</span>
                   </div>
                 </div>
                 
                 <Link to="/auth" className="block">
                   <Button className="w-full bg-white text-primary hover:bg-white/90 rounded-full font-semibold">
-                    Start Pro Trial
+                    Start Standard Plan
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+
+            {/* Enterprise Plan */}
+            <Card className="p-8 bg-white border border-border shadow-medium hover:shadow-large transition-all">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-2xl font-bold mb-2">Enterprise</h3>
+                  <div className="mb-4">
+                    <span className="text-4xl font-bold">
+                      ${isYearly ? '23.20' : '29'}
+                    </span>
+                    <span className="text-muted-foreground">/{isYearly ? 'month' : 'month'}</span>
+                    {isYearly && (
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Billed annually (${(23.20 * 12).toFixed(0)}/year)
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-muted-foreground">Pro Tier</p>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Check className="h-5 w-5 text-success" />
+                    <span>500 receipts / month</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="h-5 w-5 text-success" />
+                    <span>CSV + QuickBooks/Xero/Expensify exports</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="h-5 w-5 text-success" />
+                    <span>Bulk upload support (PDFs, ZIPs)</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="h-5 w-5 text-success" />
+                    <span>Advanced analytics dashboard</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="h-5 w-5 text-success" />
+                    <span>Priority support</span>
+                  </div>
+                </div>
+                
+                <Link to="/auth" className="block">
+                  <Button className="w-full rounded-full font-semibold">
+                    Start Enterprise Plan
                   </Button>
                 </Link>
               </div>
