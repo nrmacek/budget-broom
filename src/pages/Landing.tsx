@@ -192,7 +192,7 @@ const Landing = () => {
               </span>
               {isYearly && (
                 <Badge variant="secondary" className="ml-2 bg-success/10 text-success">
-                  Save 20%
+                  2 months free!
                 </Badge>
               )}
             </div>
@@ -218,11 +218,11 @@ const Landing = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span>View parsed line items + categories on screen</span>
+                    <span>View parsed line items & categories</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span>No exports</span>
+                    <span>On-screen totals only (no exports)</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
@@ -249,12 +249,12 @@ const Landing = () => {
                   <h3 className="text-2xl font-bold mb-2">Standard</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold">
-                      ${isYearly ? '7.20' : '9'}
+                      ${isYearly ? '90' : '9'}
                     </span>
-                    <span className="text-white/80">/{isYearly ? 'month' : 'month'}</span>
+                    <span className="text-white/80">/{isYearly ? 'yr' : 'mo'}</span>
                     {isYearly && (
                       <div className="text-sm text-white/80 mt-1">
-                        Billed annually (${(7.20 * 12).toFixed(0)}/year)
+                        2 months free!
                       </div>
                     )}
                   </div>
@@ -268,7 +268,7 @@ const Landing = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
-                    <span>CSV export</span>
+                    <span>CSV export included</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
@@ -295,12 +295,12 @@ const Landing = () => {
                   <h3 className="text-2xl font-bold mb-2">Enterprise</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold">
-                      ${isYearly ? '23.20' : '29'}
+                      ${isYearly ? '290' : '29'}
                     </span>
-                    <span className="text-muted-foreground">/{isYearly ? 'month' : 'month'}</span>
+                    <span className="text-muted-foreground">/{isYearly ? 'yr' : 'mo'}</span>
                     {isYearly && (
                       <div className="text-sm text-muted-foreground mt-1">
-                        Billed annually (${(23.20 * 12).toFixed(0)}/year)
+                        2 months free!
                       </div>
                     )}
                   </div>
@@ -318,15 +318,15 @@ const Landing = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span>Bulk upload support (PDFs, ZIPs)</span>
+                    <span>Bulk upload (PDFs & ZIPs)</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span>Advanced analytics dashboard</span>
+                    <span>Advanced spend analytics dashboard</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span>Priority support</span>
+                    <span>Priority email support</span>
                   </div>
                 </div>
                 
