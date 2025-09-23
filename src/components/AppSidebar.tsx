@@ -47,6 +47,8 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
   };
 
   const isActiveRoute = (url: string) => {
+    // Don't highlight "New Receipt" as active, only other routes
+    if (url === '/dashboard') return false;
     return location.pathname === url;
   };
 

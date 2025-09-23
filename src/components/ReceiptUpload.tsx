@@ -82,14 +82,16 @@ export function ReceiptUpload({ onFileSelect }: ReceiptUploadProps) {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-hero shadow-glow">
+        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-hero shadow-glow">
           <Upload className="h-10 w-10 text-white" />
         </div>
         
-        <h3 className="mb-4 text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Upload Your Receipt</h3>
-        <p className="mb-8 text-muted-foreground text-lg">
-          Drag and drop your receipt here, or click to browse
-        </p>
+        <div className="mb-2 flex justify-center">
+          <span className="inline-flex items-center rounded-full bg-gradient-hero/10 px-3 py-1 text-sm font-medium text-primary border border-primary/20">
+            AI-Powered Receipt Parsing
+          </span>
+        </div>
+        <h3 className="mb-6 text-xl font-semibold text-foreground">Upload receipts and instantly get itemized, categorized results.</h3>
         
         <div className="mb-8 flex justify-center gap-6">
           <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gradient-subtle/50 px-3 py-2 rounded-full">
@@ -126,7 +128,7 @@ export function ReceiptUpload({ onFileSelect }: ReceiptUploadProps) {
         </Button>
         
         <p className="mt-4 text-xs text-muted-foreground">
-          Maximum file size: 10MB
+          Images, PDFs, CSVs up to 10MB · Secure & private.
         </p>
       </div>
     </Card>
