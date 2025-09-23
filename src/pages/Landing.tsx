@@ -26,18 +26,20 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-background">
-      {/* Header - Dark Pill Navigation */}
+      {/* Header - Logo Outside Pill Navigation */}
       <header className="py-4 px-4 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto">
-          <nav className="bg-foreground/95 backdrop-blur-sm rounded-full px-8 py-4 flex items-center justify-between shadow-glow">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-hero">
-                <Receipt className="h-5 w-5 text-white" />
-              </div>
-              <h1 className="text-lg font-bold text-white">ReceiptParser</h1>
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Logo - Outside Pill */}
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-gradient-hero">
+              <Receipt className="h-5 w-5 text-white" />
             </div>
-            
-            <div className="hidden md:flex items-center gap-8">
+            <h1 className="text-lg font-bold">ReceiptParser</h1>
+          </div>
+          
+          {/* Center Pill Navigation */}
+          <nav className="bg-foreground/95 backdrop-blur-sm rounded-full px-8 py-4 shadow-glow">
+            <div className="flex items-center gap-8">
               <button onClick={() => scrollToSection('pricing')} className="text-white/80 hover:text-white transition-colors text-sm font-medium">
                 Pricing
               </button>
@@ -47,21 +49,18 @@ const Landing = () => {
               <button onClick={() => scrollToSection('faq')} className="text-white/80 hover:text-white transition-colors text-sm font-medium">
                 FAQs
               </button>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Link to="/auth">
-                <Button variant="ghost" className="text-white hover:bg-white/10 hover:text-white">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button className="bg-white text-foreground hover:bg-white/90 font-medium rounded-full">
-                  Get Started Free
-                </Button>
-              </Link>
+              <button onClick={() => scrollToSection('final-cta')} className="text-white/80 hover:text-white transition-colors text-sm font-medium">
+                Get Started Free
+              </button>
             </div>
           </nav>
+          
+          {/* Sign In - Outside Pill */}
+          <Link to="/auth">
+            <Button variant="outline" className="rounded-full font-medium">
+              Sign In
+            </Button>
+          </Link>
         </div>
       </header>
 
@@ -452,7 +451,7 @@ const Landing = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 px-4">
+      <section id="final-cta" className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gradient-hero rounded-3xl p-12 text-white shadow-glow">
             <h2 className="text-4xl font-bold mb-6">
