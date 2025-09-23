@@ -275,18 +275,14 @@ const Dashboard = () => {
             </div>
           </header>
 
-          <section className="py-16 px-4">
+          <section className="py-12 px-4">
             <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-hero/10 backdrop-blur-sm border border-primary/20 rounded-full mb-6">
-                  <Receipt className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium text-primary">AI-Powered Processing</span>
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-secondary/50 backdrop-blur-sm border border-border/50 rounded-full mb-4">
+                  <span className="text-sm font-medium text-muted-foreground">AI-Powered Receipt Parsing</span>
                 </div>
-                <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                  Upload Your Receipt
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                  Support for images, PDFs, and CSV files up to 10MB with instant AI processing
+                <p className="text-lg text-foreground max-w-md mx-auto mb-8">
+                  Upload receipts and instantly get itemized, categorized results.
                 </p>
               </div>
               <ReceiptUpload onFileSelect={handleFileSelect} />
