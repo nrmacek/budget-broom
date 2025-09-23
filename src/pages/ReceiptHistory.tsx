@@ -113,21 +113,8 @@ const ReceiptHistory = () => {
   };
 
   const handleDownloadReceipt = (receipt: ReceiptRecord) => {
-    // CSV Headers
-    const headers = [
-      'Store Name',
-      'Receipt Date',
-      'Receipt Total',
-      'Item Name',
-      'Item Price',
-      'Item Quantity',
-      'Item Category',
-      'Tax Amount',
-      'Discount Amount',
-      'Additional Charges',
-      'Processed At',
-      'Original Filename'
-    ];
+    // CSV Headers - simplified to user's requirements
+    const headers = ['Item Name', 'Price', 'Category', 'Store', 'Date'];
 
     // Convert receipt data to CSV rows
     const csvRows = [headers.join(',')];
@@ -135,18 +122,11 @@ const ReceiptHistory = () => {
     // Add a row for each line item
     receipt.line_items.forEach((item: any) => {
       const row = [
-        `"${receipt.store_name}"`,
-        `"${receipt.date}"`,
-        `"$${receipt.total.toFixed(2)}"`,
         `"${item.name || 'Unknown Item'}"`,
         `"$${(item.price || 0).toFixed(2)}"`,
-        `"${item.quantity || 1}"`,
         `"${item.category || 'Uncategorized'}"`,
-        `"$${receipt.taxes?.reduce((sum: number, tax: any) => sum + (tax.amount || 0), 0).toFixed(2) || '0.00'}"`,
-        `"$${receipt.discounts?.reduce((sum: number, discount: any) => sum + (discount.amount || 0), 0).toFixed(2) || '0.00'}"`,
-        `"$${receipt.additional_charges?.reduce((sum: number, charge: any) => sum + (charge.amount || 0), 0).toFixed(2) || '0.00'}"`,
-        `"${receipt.processed_at}"`,
-        `"${receipt.original_filename || 'N/A'}"`
+        `"${receipt.store_name}"`,
+        `"${receipt.date}"`
       ];
       csvRows.push(row.join(','));
     });
@@ -154,18 +134,11 @@ const ReceiptHistory = () => {
     // If no line items, add a single row with receipt info
     if (receipt.line_items.length === 0) {
       const row = [
-        `"${receipt.store_name}"`,
-        `"${receipt.date}"`,
-        `"$${receipt.total.toFixed(2)}"`,
         `"No items"`,
         `"$0.00"`,
-        `"0"`,
         `"N/A"`,
-        `"$${receipt.taxes?.reduce((sum: number, tax: any) => sum + (tax.amount || 0), 0).toFixed(2) || '0.00'}"`,
-        `"$${receipt.discounts?.reduce((sum: number, discount: any) => sum + (discount.amount || 0), 0).toFixed(2) || '0.00'}"`,
-        `"$${receipt.additional_charges?.reduce((sum: number, charge: any) => sum + (charge.amount || 0), 0).toFixed(2) || '0.00'}"`,
-        `"${receipt.processed_at}"`,
-        `"${receipt.original_filename || 'N/A'}"`
+        `"${receipt.store_name}"`,
+        `"${receipt.date}"`
       ];
       csvRows.push(row.join(','));
     }
