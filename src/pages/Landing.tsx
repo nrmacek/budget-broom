@@ -69,7 +69,7 @@ const Landing = () => {
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col items-center text-center space-y-8">
             {/* Avatar Cluster Social Proof */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm border border-border/50 rounded-full px-6 py-3 shadow-medium">
               <div className="flex -space-x-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-hero border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
                   JS
