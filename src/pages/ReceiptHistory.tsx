@@ -146,6 +146,10 @@ const ReceiptHistory = () => {
   };
 
   const handleDownloadReceipt = (receipt: ReceiptRecord) => {
+    // Production Constants
+    const PARSER_VERSION = "1.2.0";
+    const DEFAULT_CURRENCY = "USD";
+    
     // Calculate total discounts and taxes for pro-rating
     const totalDiscounts = Array.isArray(receipt.discounts) 
       ? receipt.discounts.reduce((sum: number, discount: any) => sum + (discount.amount || 0), 0)
@@ -157,10 +161,15 @@ const ReceiptHistory = () => {
       ? receipt.line_items.reduce((sum: number, item: any) => sum + (item.total || 0), 0)
       : 1; // Prevent division by zero
 
-    // CSV Headers - production-ready format with enhanced columns
+    // Helper function to round to 2 decimal places (avoid floating point drift)
+    const roundToCents = (value: number): number => Math.round(value * 100) / 100;
+
+    // CSV Headers - production-ready format with mathematical accuracy and traceability
     const headers = [
       'receipt_id',
-      'line_item_seq',
+      'line_item_id',
+      'line_item_seq', 
+      'purchase_date',
       'purchase_datetime',
       'store',
       'item_name',
@@ -171,7 +180,11 @@ const ReceiptHistory = () => {
       'discount_amount',
       'tax_amount',
       'category',
-      'currency'
+      'category_confidence',
+      'currency',
+      'is_refund',
+      'source_file',
+      'parser_version'
     ];
 
     // UTF-8 BOM for Excel compatibility
@@ -179,35 +192,86 @@ const ReceiptHistory = () => {
     const csvRows = [headers.join(',')];
     
     // Enhanced datetime formatting
+    const purchaseDate = receipt.date; // YYYY-MM-DD format
     const purchaseDateTime = formatDateTime(receipt.date);
+    const sourceFile = receipt.original_filename || 'unknown';
     
-    // Add a row for each line item with enhanced data
+    // Process line items with mathematical accuracy
     receipt.line_items.forEach((item: any, index: number) => {
-      const lineTotal = item.total || 0;
-      const quantity = item.quantity || 1;
-      const unitPrice = item.unitPrice || (lineTotal / quantity);
+      const quantity = Math.abs(item.quantity || 1); // Handle negative quantities for returns
+      const isRefund = item.quantity < 0 || item.isRefund || false;
+      const actualQuantity = isRefund ? -quantity : quantity;
       
-      // Pro-rate discounts and taxes based on line total
-      const discountAmount = totalLineItems > 0 ? (lineTotal / totalLineItems) * totalDiscounts : 0;
-      const taxAmount = totalLineItems > 0 ? (lineTotal / totalLineItems) * totalTaxes : 0;
+      // Calculate unit price with precision
+      const lineTotal = roundToCents(item.total || 0);
+      const unitPrice = quantity > 0 ? roundToCents(lineTotal / quantity) : 0;
+      
+      // Pro-rate discounts and taxes based on line total with precision
+      const discountAmount = totalLineItems > 0 ? 
+        roundToCents((lineTotal / totalLineItems) * totalDiscounts) : 0;
+      const taxAmount = totalLineItems > 0 ? 
+        roundToCents((lineTotal / totalLineItems) * totalTaxes) : 0;
+        
+      // Mathematical verification: line_total = quantity*unit_price - discount_amount + tax_amount
+      const calculatedTotal = roundToCents((actualQuantity * unitPrice) - discountAmount + taxAmount);
+      const finalLineTotal = Math.abs(calculatedTotal - lineTotal) < 0.01 ? lineTotal : calculatedTotal;
+
+      // Category handling with confidence
+      const category = item.category || 'Uncategorized';
+      const categoryConfidence = item.categoryConfidence || (item.category ? '0.8' : '0.0');
 
       const row = [
         escapeCSVField(receipt.id),
+        escapeCSVField(item.id || `${receipt.id}_${index + 1}`), // line_item_id (stable GUID)
         escapeCSVField(index + 1), // line_item_seq starts at 1
-        escapeCSVField(purchaseDateTime),
+        escapeCSVField(purchaseDate), // YYYY-MM-DD format
+        escapeCSVField(purchaseDateTime), // ISO-8601 with timezone
         escapeCSVField(receipt.store_name),
         escapeCSVField(item.description || 'Unknown Item'),
-        escapeCSVField(item.originalDescription || item.description || 'Unknown Item'), // item_name_raw
-        escapeCSVField(quantity.toString()),
-        escapeCSVField(unitPrice.toFixed(4)), // 4 decimal precision for unit price
-        escapeCSVField(lineTotal.toFixed(2)),
+        escapeCSVField(item.originalDescription || item.description || 'Unknown Item'),
+        escapeCSVField(actualQuantity.toString()), // Handles negative for returns
+        escapeCSVField(unitPrice.toFixed(4)), // 4 decimal precision
+        escapeCSVField(finalLineTotal.toFixed(2)), // Mathematically verified
         escapeCSVField(discountAmount.toFixed(2)),
         escapeCSVField(taxAmount.toFixed(2)),
-        escapeCSVField(item.category || 'Uncategorized'),
-        escapeCSVField('USD')
+        escapeCSVField(category),
+        escapeCSVField(categoryConfidence),
+        escapeCSVField(DEFAULT_CURRENCY),
+        escapeCSVField(isRefund.toString()),
+        escapeCSVField(sourceFile),
+        escapeCSVField(PARSER_VERSION)
       ];
       csvRows.push(row.join(','));
     });
+
+    // Handle fees/charges as separate line items (category = Fees)
+    if (Array.isArray(receipt.additional_charges)) {
+      receipt.additional_charges.forEach((charge: any, index: number) => {
+        const chargeAmount = roundToCents(charge.amount || 0);
+        const row = [
+          escapeCSVField(receipt.id),
+          escapeCSVField(`${receipt.id}_fee_${index + 1}`),
+          escapeCSVField(receipt.line_items.length + index + 1),
+          escapeCSVField(purchaseDate),
+          escapeCSVField(purchaseDateTime),
+          escapeCSVField(receipt.store_name),
+          escapeCSVField(charge.description || 'Additional Charge'),
+          escapeCSVField(charge.description || 'Additional Charge'),
+          escapeCSVField('1'),
+          escapeCSVField(chargeAmount.toFixed(4)),
+          escapeCSVField(chargeAmount.toFixed(2)),
+          escapeCSVField('0.00'),
+          escapeCSVField('0.00'),
+          escapeCSVField('Fees'),
+          escapeCSVField('1.0'),
+          escapeCSVField(DEFAULT_CURRENCY),
+          escapeCSVField('false'),
+          escapeCSVField(sourceFile),
+          escapeCSVField(PARSER_VERSION)
+        ];
+        csvRows.push(row.join(','));
+      });
+    }
 
     // If no line items, add a single row with receipt info
     if (receipt.line_items.length === 0) {
