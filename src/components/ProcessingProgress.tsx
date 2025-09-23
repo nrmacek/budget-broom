@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, Circle, Loader2 } from 'lucide-react';
+import { CheckCircle, Circle, Loader2, Receipt } from 'lucide-react';
 
 interface ProcessingStep {
   id: string;
@@ -92,42 +92,46 @@ export function ProcessingProgress({ fileName, isProcessing, onComplete }: Proce
   }, [isProcessing, onComplete, progress]);
 
   return (
-    <Card className="p-8">
+    <Card className="p-8 bg-gradient-card shadow-large">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Processing Receipt</h2>
-        <p className="text-muted-foreground">
-          Processing <span className="font-medium">{fileName}</span>
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-hero/10 backdrop-blur-sm border border-primary/20 rounded-full mb-6">
+          <Receipt className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium text-primary">AI Processing</span>
+        </div>
+        <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Processing Receipt</h2>
+        <p className="text-muted-foreground text-lg">
+          Processing <span className="font-semibold text-primary">{fileName}</span>
         </p>
       </div>
 
       <div className="mb-8">
-        <Progress value={progress} className="h-2" />
-        <p className="text-sm text-muted-foreground mt-2 text-center">
+        <Progress value={progress} className="h-3 bg-gradient-subtle" />
+        <p className="text-sm text-muted-foreground mt-3 text-center font-medium">
           {progress}% complete
         </p>
       </div>
 
-      <div className="space-y-4">
-        {steps.map((step) => (
-          <div key={step.id} className="flex items-start gap-4">
+      <div className="space-y-6">
+        {steps.map((step, index) => (
+          <div key={step.id} className="flex items-start gap-4 p-4 rounded-lg bg-gradient-subtle/30 transition-all duration-300">
             <div className="flex-shrink-0 mt-1">
               {step.completed ? (
-                <CheckCircle className="h-5 w-5 text-success" />
+                <CheckCircle className="h-6 w-6 text-success drop-shadow-sm" />
               ) : step.active ? (
-                <Loader2 className="h-5 w-5 text-primary animate-spin" />
+                <Loader2 className="h-6 w-6 text-primary animate-spin drop-shadow-sm" />
               ) : (
-                <Circle className="h-5 w-5 text-muted-foreground" />
+                <Circle className="h-6 w-6 text-muted-foreground" />
               )}
             </div>
             <div className="flex-1">
-              <h3 className={`font-medium ${
+              <h3 className={`font-semibold text-lg ${
                 step.completed ? 'text-success' :
                 step.active ? 'text-primary' :
                 'text-muted-foreground'
               }`}>
                 {step.label}
               </h3>
-              <p className="text-sm text-muted-foreground">{step.description}</p>
+              <p className="text-sm text-muted-foreground mt-1">{step.description}</p>
             </div>
           </div>
         ))}

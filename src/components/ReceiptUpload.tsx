@@ -71,38 +71,38 @@ export function ReceiptUpload({ onFileSelect }: ReceiptUploadProps) {
   };
 
   return (
-    <Card className="border-2 border-dashed transition-all duration-200 ease-in-out hover:shadow-glow">
+    <Card className="border-2 border-dashed transition-all duration-200 ease-in-out hover:shadow-glow bg-gradient-card/50 backdrop-blur-sm">
       <div
-        className={`p-12 text-center transition-colors duration-200 ${
+        className={`p-12 text-center transition-all duration-300 rounded-lg ${
           isDragOver 
-            ? 'border-primary bg-primary/5' 
-            : 'border-border hover:border-primary/50'
+            ? 'border-primary bg-gradient-hero/5 scale-[1.02]' 
+            : 'border-border hover:border-primary/50 hover:bg-gradient-subtle/30'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-hero">
-          <Upload className="h-8 w-8 text-white" />
+        <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-hero shadow-glow">
+          <Upload className="h-10 w-10 text-white" />
         </div>
         
-        <h3 className="mb-2 text-xl font-semibold">Upload Your Receipt</h3>
-        <p className="mb-6 text-muted-foreground">
+        <h3 className="mb-4 text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Upload Your Receipt</h3>
+        <p className="mb-8 text-muted-foreground text-lg">
           Drag and drop your receipt here, or click to browse
         </p>
         
-        <div className="mb-6 flex justify-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="mb-8 flex justify-center gap-6">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gradient-subtle/50 px-3 py-2 rounded-full">
             <Image className="h-4 w-4" />
-            Images
+            <span className="font-medium">Images</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gradient-subtle/50 px-3 py-2 rounded-full">
             <FileText className="h-4 w-4" />
-            PDFs
+            <span className="font-medium">PDFs</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gradient-subtle/50 px-3 py-2 rounded-full">
             <FileSpreadsheet className="h-4 w-4" />
-            CSVs
+            <span className="font-medium">CSVs</span>
           </div>
         </div>
 
@@ -118,7 +118,9 @@ export function ReceiptUpload({ onFileSelect }: ReceiptUploadProps) {
             input.click();
           }}
           disabled={isProcessing}
-          className="transition-transform duration-200 hover:scale-105"
+          variant="hero"
+          size="lg"
+          className="transition-all duration-200 hover:scale-105 shadow-glow"
         >
           {isProcessing ? 'Processing...' : 'Choose File'}
         </Button>

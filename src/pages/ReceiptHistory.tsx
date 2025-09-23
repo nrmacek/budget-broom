@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Receipt, LogOut, User, Eye, Download, Trash2, Calendar, DollarSign, Building2 } from 'lucide-react';
+import { Receipt, LogOut, User, Eye, Download, Trash2, Calendar, DollarSign, Building2, History as HistoryIcon } from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ReceiptResults } from '@/components/ReceiptResults';
@@ -214,14 +214,17 @@ const ReceiptHistory = () => {
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
           <AppSidebar onNewReceipt={handleNewReceipt} />
-          <div className="flex-1 bg-gradient-to-br from-background to-muted/20">
-            <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+          <div className="flex-1 bg-gradient-background">
+            <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
               <div className="px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-gradient-hero">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-gradient-hero shadow-glow">
                     <Receipt className="h-6 w-6 text-white" />
                   </div>
-                  <h1 className="text-xl font-bold">ReceiptParser</h1>
+                  <div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</h1>
+                    <p className="text-sm text-muted-foreground">AI-Powered Receipt Processing</p>
+                  </div>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -252,15 +255,18 @@ const ReceiptHistory = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar onNewReceipt={handleNewReceipt} />
-        <div className="flex-1 bg-gradient-to-br from-background to-muted/20">
+        <div className="flex-1 bg-gradient-background">
           {/* Header */}
-          <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+          <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
             <div className="px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-gradient-hero">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-gradient-hero shadow-glow">
                   <Receipt className="h-6 w-6 text-white" />
                 </div>
-                <h1 className="text-xl font-bold">ReceiptParser</h1>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</h1>
+                  <p className="text-sm text-muted-foreground">AI-Powered Receipt Processing</p>
+                </div>
               </div>
               
               <div className="flex items-center gap-2">
@@ -278,22 +284,28 @@ const ReceiptHistory = () => {
 
           <section className="py-8 px-4">
             <div className="max-w-7xl mx-auto">
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-2">Receipt History</h2>
-                <p className="text-muted-foreground">
-                  View and manage your processed receipts
+              <div className="mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-hero/10 backdrop-blur-sm border border-primary/20 rounded-full mb-6">
+                  <HistoryIcon className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">Receipt Management</span>
+                </div>
+                <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Receipt History</h2>
+                <p className="text-lg text-muted-foreground">
+                  View, manage, and export your processed receipts
                 </p>
               </div>
 
               {receipts.length === 0 ? (
-                <Card className="text-center py-12">
+                <Card className="text-center py-16 bg-gradient-card shadow-medium">
                   <CardContent>
-                    <Receipt className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No receipts yet</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Start by uploading your first receipt to see it here.
+                    <div className="p-6 rounded-full bg-gradient-hero/10 w-fit mx-auto mb-6">
+                      <Receipt className="h-16 w-16 text-primary mx-auto" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">No receipts yet</h3>
+                    <p className="text-muted-foreground mb-8 text-lg max-w-md mx-auto">
+                      Start by uploading your first receipt to see it here and begin tracking your expenses.
                     </p>
-                    <Button onClick={handleNewReceipt}>
+                    <Button onClick={handleNewReceipt} variant="hero" size="lg" className="shadow-glow">
                       <Receipt className="h-4 w-4 mr-2" />
                       Upload Receipt
                     </Button>
@@ -303,7 +315,7 @@ const ReceiptHistory = () => {
                 <>
                   {/* Summary Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card>
+                    <Card className="bg-gradient-card shadow-medium hover:shadow-large transition-all duration-200">
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Receipts</CardTitle>
                         <Receipt className="h-4 w-4 text-muted-foreground" />
@@ -313,7 +325,7 @@ const ReceiptHistory = () => {
                       </CardContent>
                     </Card>
                     
-                    <Card>
+                    <Card className="bg-gradient-card shadow-medium hover:shadow-large transition-all duration-200">
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Amount</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -325,7 +337,7 @@ const ReceiptHistory = () => {
                       </CardContent>
                     </Card>
                     
-                    <Card>
+                    <Card className="bg-gradient-card shadow-medium hover:shadow-large transition-all duration-200">
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">This Month</CardTitle>
                         <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -344,9 +356,9 @@ const ReceiptHistory = () => {
                   </div>
 
                   {/* Receipts Table */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Recent Receipts</CardTitle>
+                  <Card className="bg-gradient-card shadow-medium">
+                    <CardHeader className="border-b border-border/50">
+                      <CardTitle className="text-xl font-semibold">Recent Receipts</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <Table>

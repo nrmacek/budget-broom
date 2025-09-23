@@ -148,19 +148,25 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
   const availableCategories = Object.keys(categoryIcons);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+    <div className="min-h-screen bg-gradient-background">
       {/* Main Content */}
       <div className="max-w-6xl mx-auto p-4">
         <div className="space-y-6">
           {/* Receipt Header */}
-          <Card className="p-6 bg-gradient-card">
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl font-bold">Receipt Parsed Successfully</h1>
+          <Card className="p-8 bg-gradient-card shadow-large">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-hero/10 backdrop-blur-sm border border-primary/20 rounded-full mb-4">
+                  <Receipt className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">Parsing Complete</span>
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Receipt Parsed Successfully</h1>
+              </div>
               <div className="flex gap-3">
-                <Button variant="outline" onClick={onStartOver}>
+                <Button variant="outline" onClick={onStartOver} className="hover:scale-105 transition-transform">
                   Parse Another Receipt
                 </Button>
-                <Button onClick={exportToCSV} className="bg-gradient-accent hover:scale-105 transition-transform">
+                <Button onClick={exportToCSV} variant="hero" className="shadow-glow hover:scale-105 transition-all duration-200">
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
                 </Button>
@@ -168,35 +174,35 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-primary/10">
-                  <Store className="h-5 w-5 text-primary" />
+              <div className="flex items-center gap-4 p-4 bg-gradient-subtle/50 rounded-xl">
+                <div className="p-3 rounded-xl bg-gradient-hero shadow-glow">
+                  <Store className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Store</p>
-                  <p className="font-semibold text-lg">{receiptData.storeName}</p>
+                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Store</p>
+                  <p className="font-bold text-xl">{receiptData.storeName}</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-accent/10">
-                  <Calendar className="h-5 w-5 text-accent" />
+              <div className="flex items-center gap-4 p-4 bg-gradient-subtle/50 rounded-xl">
+                <div className="p-3 rounded-xl bg-gradient-accent shadow-glow">
+                  <Calendar className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p className="font-semibold text-lg">{receiptData.date}</p>
+                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Date</p>
+                  <p className="font-bold text-xl">{receiptData.date}</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-success/10">
-                  <DollarSign className="h-5 w-5 text-success" />
+              <div className="flex items-center gap-4 p-4 bg-gradient-subtle/50 rounded-xl">
+                <div className="p-3 rounded-xl bg-success shadow-glow">
+                  <DollarSign className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total</p>
-                  <p className="font-bold text-2xl">${receiptData.total.toFixed(2)}</p>
+                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total</p>
+                  <p className="font-bold text-2xl text-success">${receiptData.total.toFixed(2)}</p>
                   {hasDiscrepancy && (
-                    <p className="text-xs text-warning">
+                    <p className="text-xs text-warning font-medium">
                       ⚠ ${totalDiscrepancy.toFixed(2)} discrepancy
                     </p>
                   )}
@@ -206,18 +212,18 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
           </Card>
 
           {/* Category Buckets */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold mb-4">Spending by Category</h2>
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Spending by Category</h2>
             
             <div className="grid gap-6">
               {getCategorizedItems().map(({ category, items: categoryItems, total }) => {
                 const isExpanded = expandedCategories.has(category);
                 return (
-                  <Card key={category} className="overflow-hidden">
+                  <Card key={category} className="overflow-hidden bg-gradient-card shadow-medium hover:shadow-large transition-all duration-200">
                     {/* Category Header - Clickable */}
                     <button 
                       onClick={() => toggleCategory(category)}
-                      className="w-full p-6 bg-gradient-subtle hover:bg-gradient-subtle/80 transition-colors text-left"
+                      className="w-full p-6 bg-gradient-subtle/50 hover:bg-gradient-subtle/70 transition-all duration-200 text-left"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">

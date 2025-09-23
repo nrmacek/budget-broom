@@ -52,17 +52,20 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
 
   return (
     <Sidebar
-      className={`${isCollapsed ? 'w-14' : 'w-64'} transition-all duration-300 border-r bg-card/50 backdrop-blur-sm`}
+      className={`${isCollapsed ? 'w-14' : 'w-64'} transition-all duration-300 border-r bg-gradient-card/70 backdrop-blur-md shadow-medium`}
       collapsible="icon"
     >
       {/* Header with Logo */}
-      <div className="p-4 border-b">
+      <div className="p-4 border-b border-border/50">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-gradient-hero shrink-0">
+          <div className="p-2 rounded-xl bg-gradient-hero shadow-glow shrink-0">
             <Receipt className="h-5 w-5 text-white" />
           </div>
           {!isCollapsed && (
-            <span className="font-bold text-lg truncate">ReceiptParser</span>
+            <div>
+              <span className="font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</span>
+              <p className="text-xs text-muted-foreground">AI-Powered</p>
+            </div>
           )}
         </div>
       </div>
@@ -86,11 +89,11 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
                     }`}
                   >
                     <button 
-                      className="flex items-center gap-3 w-full"
+                      className="flex items-center gap-3 w-full p-2 rounded-lg transition-all duration-200"
                       onClick={() => handleMenuClick(item.title, item.url)}
                     >
                       <item.icon className="h-4 w-4 shrink-0" />
-                      {!isCollapsed && <span className="truncate">{item.title}</span>}
+                      {!isCollapsed && <span className="truncate font-medium">{item.title}</span>}
                     </button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -110,9 +113,9 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
                       asChild
                       className="hover:bg-accent/50 transition-colors"
                     >
-                      <button className="flex items-center gap-3 w-full">
+                      <button className="flex items-center gap-3 w-full p-2 rounded-lg transition-all duration-200 hover:bg-accent/30">
                         <item.icon className="h-4 w-4 shrink-0" />
-                        {!isCollapsed && <span className="truncate">{item.title}</span>}
+                        {!isCollapsed && <span className="truncate font-medium">{item.title}</span>}
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -124,8 +127,8 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
       </SidebarContent>
 
       {/* Collapse Toggle */}
-      <div className="p-2 border-t">
-        <SidebarTrigger className="w-full justify-center hover:bg-accent/50 transition-colors" />
+      <div className="p-2 border-t border-border/50 bg-gradient-subtle/30">
+        <SidebarTrigger className="w-full justify-center hover:bg-accent/30 transition-all duration-200 rounded-lg" />
       </div>
     </Sidebar>
   );

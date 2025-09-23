@@ -192,15 +192,18 @@ const Dashboard = () => {
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
           <AppSidebar onNewReceipt={handleNewReceipt} />
-          <div className="flex-1 bg-gradient-to-br from-background to-muted/20">
+          <div className="flex-1 bg-gradient-background">
             {/* Header */}
-            <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+            <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
               <div className="px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-gradient-hero">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-gradient-hero shadow-glow">
                     <Receipt className="h-6 w-6 text-white" />
                   </div>
-                  <h1 className="text-xl font-bold">ReceiptParser</h1>
+                  <div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</h1>
+                    <p className="text-sm text-muted-foreground">AI-Powered Receipt Processing</p>
+                  </div>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -237,13 +240,16 @@ const Dashboard = () => {
           <AppSidebar onNewReceipt={handleNewReceipt} />
           <div className="flex-1">
             {/* Header */}
-            <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+            <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
               <div className="px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-gradient-hero">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-gradient-hero shadow-glow">
                     <Receipt className="h-6 w-6 text-white" />
                   </div>
-                  <h1 className="text-xl font-bold">ReceiptParser</h1>
+                  <div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</h1>
+                    <p className="text-sm text-muted-foreground">AI-Powered Receipt Processing</p>
+                  </div>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -272,15 +278,18 @@ const Dashboard = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar onNewReceipt={handleNewReceipt} />
-        <div className="flex-1 bg-gradient-to-br from-background to-muted/20">
+        <div className="flex-1 bg-gradient-background">
           {/* Header */}
-          <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+          <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
             <div className="px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-gradient-hero">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-gradient-hero shadow-glow">
                   <Receipt className="h-6 w-6 text-white" />
                 </div>
-                <h1 className="text-xl font-bold">ReceiptParser</h1>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</h1>
+                  <p className="text-sm text-muted-foreground">AI-Powered Receipt Processing</p>
+                </div>
               </div>
               
               <div className="flex items-center gap-2">
@@ -296,12 +305,18 @@ const Dashboard = () => {
             </div>
           </header>
 
-          <section className="py-12 px-4">
-            <div className="max-w-2xl mx-auto">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold mb-4">Upload Your Receipt</h2>
-                <p className="text-muted-foreground">
-                  Support for images (JPG, PNG, WebP), PDFs, and CSV files up to 10MB
+          <section className="py-16 px-4">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-hero/10 backdrop-blur-sm border border-primary/20 rounded-full mb-6">
+                  <Receipt className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">AI-Powered Processing</span>
+                </div>
+                <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                  Upload Your Receipt
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                  Support for images, PDFs, and CSV files up to 10MB with instant AI processing
                 </p>
               </div>
               <ReceiptUpload onFileSelect={handleFileSelect} />
