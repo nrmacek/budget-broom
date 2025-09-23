@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import { CSVExporter } from '@/lib/csvExport';
 
 interface ReceiptRecord {
   id: string;
@@ -147,8 +148,6 @@ const ReceiptHistory = () => {
 
   const handleDownloadReceipt = (receipt: ReceiptRecord, format: string = 'v2-production') => {
     try {
-      // Import the CSV export system
-      const { CSVExporter } = require('../lib/csvExport');
       const exporter = new CSVExporter(format);
       
       // Convert receipt to the expected format
