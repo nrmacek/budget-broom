@@ -70,22 +70,22 @@ export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProp
         sideOffset={8}
         aria-label="User account menu"
       >
-        <DropdownMenuItem className="cursor-pointer focus:bg-muted">
+        <DropdownMenuItem className="cursor-pointer hover:bg-muted focus:bg-muted transition-colors">
           <Settings className="h-4 w-4 mr-3" />
           <span>Profile</span>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer focus:bg-muted">
+        <DropdownMenuItem className="cursor-pointer hover:bg-muted focus:bg-muted transition-colors">
           <CreditCard className="h-4 w-4 mr-3" />
           <span>Billing & Subscription</span>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer focus:bg-muted">
+        <DropdownMenuItem className="cursor-pointer hover:bg-muted focus:bg-muted transition-colors">
           <Bell className="h-4 w-4 mr-3" />
           <span>Notification Settings</span>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer focus:bg-muted">
+        <DropdownMenuItem className="cursor-pointer hover:bg-muted focus:bg-muted transition-colors">
           <HelpCircle className="h-4 w-4 mr-3" />
           <span>Support</span>
         </DropdownMenuItem>
@@ -94,7 +94,7 @@ export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProp
         
         <DropdownMenuItem 
           onClick={onSignOut}
-          className="cursor-pointer focus:bg-muted text-muted-foreground"
+          className="cursor-pointer hover:bg-muted focus:bg-muted transition-colors text-muted-foreground"
         >
           <LogOut className="h-4 w-4 mr-3" />
           <span>Sign Out</span>
