@@ -56,7 +56,7 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
       collapsible="icon"
     >
       {/* Header with Logo */}
-      <div className={`${isCollapsed ? 'p-2' : 'p-4'} border-b border-border/50`}>
+      <div className={`${isCollapsed ? 'p-2' : 'p-4'}`}>
         <div className="flex items-center gap-3">
           <div className={`${isCollapsed ? 'p-1.5' : 'p-2'} rounded-xl bg-gradient-hero shadow-glow shrink-0`}>
             <Receipt className={`${isCollapsed ? 'h-4 w-4' : 'h-5 w-5'} text-white`} />
@@ -64,7 +64,6 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
           {!isCollapsed && (
             <div>
               <span className="font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</span>
-              <p className="text-xs text-muted-foreground">AI-Powered</p>
             </div>
           )}
         </div>
@@ -73,11 +72,6 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
       <SidebarContent className="py-4">
         {/* Main Navigation */}
         <SidebarGroup>
-          {!isCollapsed && (
-            <SidebarGroupLabel className="text-xs text-muted-foreground px-3 mb-2">
-              Main
-            </SidebarGroupLabel>
-          )}
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
