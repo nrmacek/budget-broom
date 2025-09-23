@@ -193,25 +193,15 @@ const Dashboard = () => {
         <div className="min-h-screen flex w-full">
           <AppSidebar onNewReceipt={handleNewReceipt} />
           <div className="flex-1 bg-gradient-background">
-            {/* Header */}
+            {/* Simple Profile Header */}
             <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
-              <div className="px-4 py-4 flex items-center justify-between">
+              <div className="px-4 py-3 flex items-center justify-end">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-gradient-hero shadow-glow">
-                    <Receipt className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</h1>
-                    <p className="text-sm text-muted-foreground">AI-Powered Receipt Processing</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <User className="h-4 w-4" />
                     {user?.email}
                   </div>
-                  <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  <Button variant="hero" size="sm" onClick={handleSignOut} className="rounded-full px-4">
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </Button>
@@ -239,25 +229,15 @@ const Dashboard = () => {
         <div className="min-h-screen flex w-full">
           <AppSidebar onNewReceipt={handleNewReceipt} />
           <div className="flex-1">
-            {/* Header */}
+            {/* Simple Profile Header */}
             <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
-              <div className="px-4 py-4 flex items-center justify-between">
+              <div className="px-4 py-3 flex items-center justify-end">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-gradient-hero shadow-glow">
-                    <Receipt className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</h1>
-                    <p className="text-sm text-muted-foreground">AI-Powered Receipt Processing</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <User className="h-4 w-4" />
                     {user?.email}
                   </div>
-                  <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  <Button variant="hero" size="sm" onClick={handleSignOut} className="rounded-full px-4">
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </Button>
@@ -279,25 +259,15 @@ const Dashboard = () => {
       <div className="min-h-screen flex w-full">
         <AppSidebar onNewReceipt={handleNewReceipt} />
         <div className="flex-1 bg-gradient-background">
-          {/* Header */}
+          {/* Simple Profile Header */}
           <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
-            <div className="px-4 py-4 flex items-center justify-between">
+            <div className="px-4 py-3 flex items-center justify-end">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-gradient-hero shadow-glow">
-                  <Receipt className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</h1>
-                  <p className="text-sm text-muted-foreground">AI-Powered Receipt Processing</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
                   {user?.email}
                 </div>
-                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <Button variant="hero" size="sm" onClick={handleSignOut} className="rounded-full px-4">
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>

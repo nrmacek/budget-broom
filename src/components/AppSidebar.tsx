@@ -52,14 +52,14 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
 
   return (
     <Sidebar
-      className={`${isCollapsed ? 'w-14' : 'w-64'} transition-all duration-300 border-r bg-gradient-card/70 backdrop-blur-md shadow-medium`}
+      className={`${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300 border-r bg-gradient-card/70 backdrop-blur-md shadow-medium`}
       collapsible="icon"
     >
       {/* Header with Logo */}
-      <div className="p-4 border-b border-border/50">
+      <div className={`${isCollapsed ? 'p-2' : 'p-4'} border-b border-border/50`}>
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gradient-hero shadow-glow shrink-0">
-            <Receipt className="h-5 w-5 text-white" />
+          <div className={`${isCollapsed ? 'p-1.5' : 'p-2'} rounded-xl bg-gradient-hero shadow-glow shrink-0`}>
+            <Receipt className={`${isCollapsed ? 'h-4 w-4' : 'h-5 w-5'} text-white`} />
           </div>
           {!isCollapsed && (
             <div>
