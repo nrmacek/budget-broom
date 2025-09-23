@@ -66,60 +66,58 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              {/* Avatar Cluster Social Proof */}
-              <div className="flex items-center gap-3">
-                <div className="flex -space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-hero border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
-                    JS
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-gradient-accent border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
-                    MK
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-primary border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
-                    AL
-                  </div>
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col items-center text-center space-y-8">
+            {/* Avatar Cluster Social Proof */}
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-hero border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
+                  JS
                 </div>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-warning text-warning" />
-                  ))}
+                <div className="w-10 h-10 rounded-full bg-gradient-accent border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
+                  MK
                 </div>
-                <span className="text-sm text-muted-foreground">Trusted by 500+ users</span>
+                <div className="w-10 h-10 rounded-full bg-primary border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
+                  AL
+                </div>
               </div>
-              
-              <div className="space-y-6">
-                <h1 className="text-6xl lg:text-7xl font-bold leading-[0.9] tracking-tight">
-                  Know Exactly Where
-                  <span className="bg-gradient-hero bg-clip-text text-transparent block mt-2">
-                    Your Money Goes
-                  </span>
-                </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
-                  Turn vague charges and messy receipts into clear, categorized expenses you can understand, track, and export.
-                </p>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star key={star} className="h-4 w-4 fill-warning text-warning" />
+                ))}
               </div>
-              
-              <div className="flex flex-wrap gap-4 items-center">
-                <Link to="/auth">
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-8 py-6 rounded-full h-auto font-semibold"
-                  >
-                    Get Started Free
-                    <ArrowRight className="h-5 w-5 ml-2" />
-                  </Button>
-                </Link>
-                <p className="text-sm text-muted-foreground">
-                  No credit card required
-                </p>
-              </div>
+              <span className="text-sm text-muted-foreground">Trusted by 500+ users</span>
             </div>
             
-            {/* Dashboard Visual */}
-            <div className="relative">
+            <div className="space-y-6">
+              <h1 className="text-6xl lg:text-7xl font-bold leading-[0.9] tracking-tight">
+                Know Exactly Where
+                <span className="bg-gradient-hero bg-clip-text text-transparent block mt-2">
+                  Your Money Goes
+                </span>
+              </h1>
+              <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+                Turn vague charges and messy receipts into clear, categorized expenses you can understand, track, and export.
+              </p>
+            </div>
+            
+            <div className="flex flex-col items-center gap-4">
+              <Link to="/auth">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-8 py-6 rounded-full h-auto font-semibold"
+                >
+                  Get Started Free
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Button>
+              </Link>
+              <p className="text-sm text-muted-foreground">
+                No credit card required
+              </p>
+            </div>
+            
+            {/* Dashboard Visual - Centered Below Content */}
+            <div className="relative mt-12 max-w-md mx-auto">
               <div className="bg-gradient-card rounded-3xl p-8 shadow-large border border-border/50">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between border-b pb-4">
