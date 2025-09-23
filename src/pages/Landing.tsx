@@ -27,7 +27,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-gradient-background">
       {/* Header - Logo Outside Pill Navigation */}
-      <header className="py-4 px-4 sticky top-0 z-50">
+      <header className="py-4 px-4">
         <div className="max-w-7xl mx-auto relative flex items-center justify-between">
           {/* Logo - Outside Pill */}
           <div className="flex items-center gap-2">
