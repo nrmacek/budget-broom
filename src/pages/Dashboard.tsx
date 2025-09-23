@@ -257,14 +257,6 @@ const Dashboard = () => {
 
           <section className="py-12 px-4">
             <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-secondary/50 backdrop-blur-sm border border-border/50 rounded-full mb-4">
-                  <span className="text-sm font-medium text-muted-foreground">AI-Powered Receipt Parsing</span>
-                </div>
-                <p className="text-lg text-foreground max-w-md mx-auto mb-8">
-                  Upload receipts and instantly get itemized, categorized results.
-                </p>
-              </div>
               <ReceiptUpload onFileSelect={handleFileSelect} />
             </div>
           </section>
