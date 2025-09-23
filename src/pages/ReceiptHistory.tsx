@@ -113,20 +113,39 @@ const ReceiptHistory = () => {
   };
 
   const handleDownloadReceipt = (receipt: ReceiptRecord) => {
-    // CSV Headers - simplified to user's requirements
-    const headers = ['Item Name', 'Price', 'Category', 'Store', 'Date'];
+    // CSV Headers - comprehensive format for budgeting/tax purposes
+    const headers = [
+      'receipt_id',
+      'line_item_seq', 
+      'purchase_datetime',
+      'store',
+      'item_name',
+      'item_name_raw',
+      'quantity',
+      'line_total',
+      'category',
+      'currency'
+    ];
 
     // Convert receipt data to CSV rows
     const csvRows = [headers.join(',')];
     
+    // Convert date to ISO format
+    const purchaseDateTime = new Date(receipt.date).toISOString().split('T')[0]; // YYYY-MM-DD format
+    
     // Add a row for each line item
-    receipt.line_items.forEach((item: any) => {
+    receipt.line_items.forEach((item: any, index: number) => {
       const row = [
-        `"${item.description || 'Unknown Item'}"`,
-        `"$${(item.total || 0).toFixed(2)}"`,
-        `"${item.category || 'Uncategorized'}"`,
+        `"${receipt.id}"`,
+        `${index + 1}`, // line_item_seq starts at 1
+        `"${purchaseDateTime}"`,
         `"${receipt.store_name}"`,
-        `"${receipt.date}"`
+        `"${item.description || 'Unknown Item'}"`,
+        `"${item.description || 'Unknown Item'}"`, // item_name_raw (same as item_name for now)
+        `${item.quantity || 1}`, // default quantity to 1
+        `${(item.total || 0).toFixed(2)}`, // numeric format, no $ sign
+        `"${item.category || 'Uncategorized'}"`,
+        `"USD"`
       ];
       csvRows.push(row.join(','));
     });
@@ -134,11 +153,16 @@ const ReceiptHistory = () => {
     // If no line items, add a single row with receipt info
     if (receipt.line_items.length === 0) {
       const row = [
-        `"No items"`,
-        `"$0.00"`,
-        `"N/A"`,
+        `"${receipt.id}"`,
+        `1`,
+        `"${purchaseDateTime}"`,
         `"${receipt.store_name}"`,
-        `"${receipt.date}"`
+        `"No items"`,
+        `"No items"`,
+        `0`,
+        `0.00`,
+        `"N/A"`,
+        `"USD"`
       ];
       csvRows.push(row.join(','));
     }
@@ -148,7 +172,9 @@ const ReceiptHistory = () => {
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `receipt-${receipt.store_name}-${receipt.date}.csv`;
+    // More descriptive filename
+    const sanitizedStoreName = receipt.store_name.replace(/[^a-zA-Z0-9]/g, '_');
+    link.download = `receipt_export_${sanitizedStoreName}_${receipt.date}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -156,7 +182,7 @@ const ReceiptHistory = () => {
     
     toast({
       title: "Receipt downloaded",
-      description: "Receipt data has been downloaded as a CSV file.",
+      description: "Receipt data exported in professional CSV format for budgeting and tax purposes.",
     });
   };
 
