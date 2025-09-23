@@ -28,7 +28,7 @@ const Landing = () => {
     <div className="min-h-screen bg-gradient-background">
       {/* Header - Logo Outside Pill Navigation */}
       <header className="py-4 px-4 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto relative flex items-center justify-between">
           {/* Logo - Outside Pill */}
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-hero">
@@ -37,8 +37,8 @@ const Landing = () => {
             <h1 className="text-lg font-bold">ReceiptParser</h1>
           </div>
           
-          {/* Center Pill Navigation */}
-          <nav className="bg-foreground/95 backdrop-blur-sm rounded-full px-8 py-4 shadow-glow">
+          {/* Center Pill Navigation - Absolutely Centered */}
+          <nav className="absolute left-1/2 transform -translate-x-1/2 bg-foreground/95 backdrop-blur-sm rounded-full px-8 py-4 shadow-glow">
             <div className="flex items-center gap-8">
               <button onClick={() => scrollToSection('pricing')} className="text-white/80 hover:text-white transition-colors text-sm font-medium">
                 Pricing
