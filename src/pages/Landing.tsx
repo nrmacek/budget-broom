@@ -90,7 +90,7 @@ const Landing = () => {
             </div>
             
             <div className="space-y-6">
-              <h1 className="text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
+              <h1 className="text-6xl lg:text-7xl font-bold leading-[1.2] tracking-tight pb-3">
                 Know Exactly Where
                 <span className="bg-gradient-hero bg-clip-text text-transparent block mt-2">
                   Your Money Goes
