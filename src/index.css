@@ -127,4 +127,98 @@ All colors MUST be HSL.
     font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
     font-variant-numeric: tabular-nums;
   }
+
+  /* Sidebar Structure */
+  .sidebar {
+    width: 240px;
+    transition: width 200ms ease;
+    border-right: 1px solid hsl(var(--border));
+    background: hsl(var(--card) / 0.7);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-medium);
+  }
+
+  .sidebar--collapsed {
+    width: 64px;
+  }
+
+  .sidebar__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    padding: 16px 12px;
+    overflow-y: auto;
+  }
+
+  .sidebar__header {
+    padding-bottom: 12px;
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .sidebar__nav {
+    display: grid;
+    gap: 10px;
+    padding-top: 8px;
+  }
+
+  .sidebar__footer {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Nav Items */
+  .nav-item {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 8px;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    color: hsl(var(--foreground));
+    font-medium: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 200ms ease;
+    width: 100%;
+  }
+
+  .nav-item:hover {
+    background: hsl(var(--accent) / 0.5);
+    color: hsl(var(--accent-foreground));
+  }
+
+  .nav-item--active {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  .nav-item__label {
+    transition: all 200ms ease;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .collapse-toggle {
+    transition: all 200ms ease;
+  }
+
+  /* Collapsed State */
+  .sidebar--collapsed .nav-item__label {
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sidebar--collapsed .nav-item {
+    justify-content: center;
+  }
+
+  .sidebar--collapsed .collapse-toggle {
+    padding: 8px;
+  }
 }

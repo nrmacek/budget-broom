@@ -1,19 +1,7 @@
-import React, { useState } from 'react';
-import { Receipt, Search, FileText, Settings, Plus, History } from 'lucide-react';
+import React from 'react';
+import { Receipt, Search, FileText, Settings, Plus, History, Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
-  useSidebar,
-} from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar';
 
 const menuItems = [
   { title: 'New Receipt', url: '/dashboard', icon: Plus },
@@ -31,7 +19,7 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
   const isCollapsed = state === 'collapsed';
@@ -53,79 +41,55 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
   };
 
   return (
-    <Sidebar
-      className={`${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300 border-r bg-gradient-card/70 backdrop-blur-md shadow-medium`}
-      collapsible="icon"
-    >
-      {/* Header with Logo */}
-      <div className={`${isCollapsed ? 'p-2' : 'p-4'}`}>
-        <div className="flex items-center gap-3">
-          <div className={`${isCollapsed ? 'p-1.5' : 'p-2'} rounded-xl bg-gradient-hero shadow-glow shrink-0`}>
-            <Receipt className={`${isCollapsed ? 'h-4 w-4' : 'h-5 w-5'} text-white`} />
-          </div>
-          {!isCollapsed && (
-            <div>
-              <span className="font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ReceiptParser</span>
+    <aside className={`sidebar ${isCollapsed ? 'sidebar--collapsed' : ''}`}>
+      <div className="sidebar__inner">
+        {/* Header */}
+        <div className="sidebar__header">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-gradient-hero shadow-glow shrink-0">
+              <Receipt className="h-5 w-5 text-white" />
             </div>
-          )}
+            <span className="nav-item__label font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent overflow-hidden transition-all duration-200">
+              ReceiptParser
+            </span>
+          </div>
+          <button 
+            onClick={toggleSidebar}
+            className="collapse-toggle mt-3 p-2 hover:bg-accent/30 rounded-lg transition-colors w-full flex items-center justify-center"
+            aria-label="Toggle sidebar"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
         </div>
-      </div>
 
-      <SidebarContent className="py-4">
         {/* Main Navigation */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild
-                    className={`hover:bg-accent/50 transition-colors ${
-                      isActiveRoute(item.url) ? 'bg-accent text-accent-foreground' : ''
-                    }`}
-                  >
-                    <button 
-                      className="flex items-center gap-3 w-full p-2 rounded-lg transition-all duration-200"
-                      onClick={() => handleMenuClick(item.title, item.url)}
-                    >
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      {!isCollapsed && <span className="truncate font-medium">{item.title}</span>}
-                    </button>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <nav className="sidebar__nav">
+          {menuItems.map((item) => (
+            <button
+              key={item.title}
+              onClick={() => handleMenuClick(item.title, item.url)}
+              className={`nav-item ${isActiveRoute(item.url) ? 'nav-item--active' : ''}`}
+            >
+              <item.icon className="h-4 w-4 shrink-0" />
+              <span className="nav-item__label">{item.title}</span>
+            </button>
+          ))}
+        </nav>
 
-        {/* Bottom Navigation */}
-        <div className="mt-auto">
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {bottomItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild
-                      className="hover:bg-accent/50 transition-colors"
-                    >
-                      <button className="flex items-center gap-3 w-full p-2 rounded-lg transition-all duration-200 hover:bg-accent/30">
-                        <item.icon className="h-4 w-4 shrink-0" />
-                        {!isCollapsed && <span className="truncate font-medium">{item.title}</span>}
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+        {/* Footer Navigation */}
+        <div className="sidebar__footer">
+          {bottomItems.map((item) => (
+            <button
+              key={item.title}
+              onClick={() => navigate(item.url)}
+              className="nav-item"
+            >
+              <item.icon className="h-4 w-4 shrink-0" />
+              <span className="nav-item__label">{item.title}</span>
+            </button>
+          ))}
         </div>
-      </SidebarContent>
-
-      {/* Collapse Toggle */}
-      <div className="p-2 border-t border-border/50 bg-gradient-subtle/30">
-        <SidebarTrigger className="w-full justify-center hover:bg-accent/30 transition-all duration-200 rounded-lg" />
       </div>
-    </Sidebar>
+    </aside>
   );
 }
