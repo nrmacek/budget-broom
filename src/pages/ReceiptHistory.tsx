@@ -122,8 +122,8 @@ const ReceiptHistory = () => {
     // Add a row for each line item
     receipt.line_items.forEach((item: any) => {
       const row = [
-        `"${item.description || item.name || item.item_name || 'Unknown Item'}"`,
-        `"$${(item.total_price || item.price || item.unit_price || 0).toFixed(2)}"`,
+        `"${item.description || 'Unknown Item'}"`,
+        `"$${(item.total || 0).toFixed(2)}"`,
         `"${item.category || 'Uncategorized'}"`,
         `"${receipt.store_name}"`,
         `"${receipt.date}"`
