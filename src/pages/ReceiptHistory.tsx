@@ -113,25 +113,69 @@ const ReceiptHistory = () => {
   };
 
   const handleDownloadReceipt = (receipt: ReceiptRecord) => {
-    const receiptData = {
-      store: receipt.store_name,
-      date: receipt.date,
-      total: `$${receipt.total.toFixed(2)}`,
-      subtotal: `$${receipt.subtotal.toFixed(2)}`,
-      lineItems: receipt.line_items,
-      discounts: receipt.discounts,
-      taxes: receipt.taxes,
-      additionalCharges: receipt.additional_charges,
-      processedAt: receipt.processed_at,
-      originalFilename: receipt.original_filename
-    };
+    // CSV Headers
+    const headers = [
+      'Store Name',
+      'Receipt Date',
+      'Receipt Total',
+      'Item Name',
+      'Item Price',
+      'Item Quantity',
+      'Item Category',
+      'Tax Amount',
+      'Discount Amount',
+      'Additional Charges',
+      'Processed At',
+      'Original Filename'
+    ];
 
-    const dataStr = JSON.stringify(receiptData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    // Convert receipt data to CSV rows
+    const csvRows = [headers.join(',')];
+    
+    // Add a row for each line item
+    receipt.line_items.forEach((item: any) => {
+      const row = [
+        `"${receipt.store_name}"`,
+        `"${receipt.date}"`,
+        `"$${receipt.total.toFixed(2)}"`,
+        `"${item.name || 'Unknown Item'}"`,
+        `"$${(item.price || 0).toFixed(2)}"`,
+        `"${item.quantity || 1}"`,
+        `"${item.category || 'Uncategorized'}"`,
+        `"$${receipt.taxes?.reduce((sum: number, tax: any) => sum + (tax.amount || 0), 0).toFixed(2) || '0.00'}"`,
+        `"$${receipt.discounts?.reduce((sum: number, discount: any) => sum + (discount.amount || 0), 0).toFixed(2) || '0.00'}"`,
+        `"$${receipt.additional_charges?.reduce((sum: number, charge: any) => sum + (charge.amount || 0), 0).toFixed(2) || '0.00'}"`,
+        `"${receipt.processed_at}"`,
+        `"${receipt.original_filename || 'N/A'}"`
+      ];
+      csvRows.push(row.join(','));
+    });
+
+    // If no line items, add a single row with receipt info
+    if (receipt.line_items.length === 0) {
+      const row = [
+        `"${receipt.store_name}"`,
+        `"${receipt.date}"`,
+        `"$${receipt.total.toFixed(2)}"`,
+        `"No items"`,
+        `"$0.00"`,
+        `"0"`,
+        `"N/A"`,
+        `"$${receipt.taxes?.reduce((sum: number, tax: any) => sum + (tax.amount || 0), 0).toFixed(2) || '0.00'}"`,
+        `"$${receipt.discounts?.reduce((sum: number, discount: any) => sum + (discount.amount || 0), 0).toFixed(2) || '0.00'}"`,
+        `"$${receipt.additional_charges?.reduce((sum: number, charge: any) => sum + (charge.amount || 0), 0).toFixed(2) || '0.00'}"`,
+        `"${receipt.processed_at}"`,
+        `"${receipt.original_filename || 'N/A'}"`
+      ];
+      csvRows.push(row.join(','));
+    }
+
+    const csvContent = csvRows.join('\n');
+    const dataBlob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `receipt-${receipt.store_name}-${receipt.date}.json`;
+    link.download = `receipt-${receipt.store_name}-${receipt.date}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -139,7 +183,7 @@ const ReceiptHistory = () => {
     
     toast({
       title: "Receipt downloaded",
-      description: "Receipt data has been downloaded as a JSON file.",
+      description: "Receipt data has been downloaded as a CSV file.",
     });
   };
 
