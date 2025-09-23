@@ -1,5 +1,5 @@
 import React from 'react';
-import { Receipt, Search, FileText, Settings, Plus, History, Menu } from 'lucide-react';
+import { Receipt, Search, FileText, Settings, Plus, History, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSidebar } from '@/components/ui/sidebar';
 
@@ -58,7 +58,7 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
             className="collapse-toggle mt-3 p-2 hover:bg-accent/30 rounded-lg transition-colors w-full flex items-center justify-center"
             aria-label="Toggle sidebar"
           >
-            <Menu className="h-4 w-4" />
+            {isCollapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
           </button>
         </div>
 
