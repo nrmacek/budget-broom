@@ -70,22 +70,22 @@ export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProp
         sideOffset={8}
         aria-label="User account menu"
       >
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors">
+        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors hover:text-foreground focus:text-foreground">
           <Settings className="h-4 w-4 mr-3" />
           <span>Profile</span>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors">
+        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors hover:text-foreground focus:text-foreground">
           <CreditCard className="h-4 w-4 mr-3" />
           <span>Billing & Subscription</span>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors">
+        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors hover:text-foreground focus:text-foreground">
           <Bell className="h-4 w-4 mr-3" />
           <span>Notification Settings</span>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors">
+        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors hover:text-foreground focus:text-foreground">
           <HelpCircle className="h-4 w-4 mr-3" />
           <span>Support</span>
         </DropdownMenuItem>
@@ -94,7 +94,7 @@ export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProp
         
         <DropdownMenuItem 
           onClick={onSignOut}
-          className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors text-muted-foreground"
+          className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors text-muted-foreground hover:text-foreground focus:text-foreground"
         >
           <LogOut className="h-4 w-4 mr-3" />
           <span>Sign Out</span>
