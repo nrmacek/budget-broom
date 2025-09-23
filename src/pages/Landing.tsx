@@ -81,7 +81,7 @@ const Landing = () => {
       />
 
       {/* Quick Benefits Row */}
-      <section id="benefits" className="py-16 px-4 bg-muted/10">
+      <section id="benefits" className="py-12 px-4 bg-muted/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="flex items-center gap-4">
@@ -118,14 +118,14 @@ const Landing = () => {
       </section>
 
       {/* Why ReceiptParser Section */}
-      <section id="why-receiptparser" className="py-20 px-4">
+      <section id="why-receiptparser" className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Why ReceiptParser?</h2>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-primary/10 w-fit mb-6">
                 <Eye className="h-8 w-8 text-primary" />
               </div>
@@ -135,7 +135,7 @@ const Landing = () => {
               </p>
             </Card>
             
-            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-accent/10 w-fit mb-6">
                 <Zap className="h-8 w-8 text-accent" />
               </div>
@@ -145,7 +145,7 @@ const Landing = () => {
               </p>
             </Card>
             
-            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-success/10 w-fit mb-6">
                 <Shield className="h-8 w-8 text-success" />
               </div>
@@ -159,10 +159,10 @@ const Landing = () => {
       </section>
 
       {/* Visual Example Section */}
-      <section className="py-20 px-4 bg-muted/10">
+      <section className="py-16 px-4 bg-muted/10">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8">See It In Action</h2>
-          <div className="bg-gradient-card rounded-2xl p-8 shadow-large">
+          <div className="bg-gradient-card rounded-2xl p-6 shadow-large">
             <div className="bg-muted/20 rounded-lg p-12 mb-6">
               <p className="text-6xl mb-4">📸</p>
               <p className="text-muted-foreground text-lg">App Screenshot Placeholder</p>
@@ -176,14 +176,14 @@ const Landing = () => {
       </section>
 
       {/* Use Cases Section */}
-      <section id="use-cases" className="py-20 px-4">
+      <section id="use-cases" className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Perfect For</h2>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-6 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-primary/10 w-fit mx-auto mb-6">
                 <Users className="h-8 w-8 text-primary" />
               </div>
@@ -193,7 +193,7 @@ const Landing = () => {
               </p>
             </Card>
             
-            <Card className="p-8 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-6 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-accent/10 w-fit mx-auto mb-6">
                 <Receipt className="h-8 w-8 text-accent" />
               </div>
@@ -203,7 +203,7 @@ const Landing = () => {
               </p>
             </Card>
             
-            <Card className="p-8 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-6 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-success/10 w-fit mx-auto mb-6">
                 <Building className="h-8 w-8 text-success" />
               </div>
@@ -217,10 +217,10 @@ const Landing = () => {
       </section>
 
       {/* Proof & Trust Section */}
-      <section className="py-20 px-4 bg-muted/10">
+      <section className="py-16 px-4 bg-muted/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8">Powered by Proven Technology</h2>
-          <div className="bg-gradient-card rounded-2xl p-8 shadow-medium mb-8">
+          <div className="bg-gradient-card rounded-2xl p-6 shadow-medium mb-8">
             <p className="text-lg text-muted-foreground mb-6">
               ReceiptParser uses industry-standard OCR + AI models trusted by enterprise systems, built into a simple tool designed for everyday users.
             </p>
@@ -236,9 +236,9 @@ const Landing = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4">
+      <section id="pricing" className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Choose Your Plan</h2>
             <p className="text-xl text-muted-foreground">
               Find the perfect plan for your receipt processing needs
@@ -247,7 +247,7 @@ const Landing = () => {
           
           <div className="grid md:grid-cols-3 gap-8">
             {/* Free Tier */}
-            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold mb-2">Free</h3>
                 <div className="mb-4">
@@ -284,7 +284,7 @@ const Landing = () => {
             </Card>
 
             {/* Plus Tier */}
-            <Card className="p-8 bg-gradient-hero border-0 shadow-glow relative overflow-hidden">
+            <Card className="p-6 bg-gradient-hero border-0 shadow-glow relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-warning text-warning-foreground px-3 py-1 text-sm font-semibold">
                 Popular
               </div>
@@ -328,7 +328,7 @@ const Landing = () => {
             </Card>
 
             {/* Pro Tier */}
-            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold mb-2">Pro</h3>
                 <div className="mb-4">
@@ -380,7 +380,7 @@ const Landing = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 px-4 bg-muted/10">
+      <section className="py-16 px-4 bg-muted/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to See Where Your Money Really Goes?</h2>
           <p className="text-xl text-muted-foreground mb-8">
@@ -402,7 +402,7 @@ const Landing = () => {
       </section>
 
       {/* Enhanced Footer */}
-      <footer className="border-t bg-card/50 py-16 px-4">
+      <footer className="border-t bg-card/50 py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {/* Brand */}
