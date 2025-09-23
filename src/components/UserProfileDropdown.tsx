@@ -48,7 +48,7 @@ export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProp
         <Button 
           variant="ghost" 
           size="sm" 
-          className="h-8 gap-2 px-3 text-sm font-normal hover:bg-muted/50 focus:bg-muted/50 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm"
+          className="h-8 gap-2 px-3 text-sm font-normal hover:bg-muted/50 focus:bg-muted/50 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm [&:hover>span]:text-foreground"
           aria-label={`User menu for ${displayName}`}
         >
           <Avatar className="h-6 w-6">

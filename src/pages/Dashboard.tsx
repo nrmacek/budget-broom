@@ -255,7 +255,7 @@ const Dashboard = () => {
             </div>
           </header>
 
-          <section className="py-12 px-4">
+          <section className="py-8 px-4">
             <div className="max-w-3xl mx-auto">
               <ReceiptUpload onFileSelect={handleFileSelect} />
             </div>

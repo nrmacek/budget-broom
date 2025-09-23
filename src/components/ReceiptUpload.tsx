@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Upload, FileText, Image, FileSpreadsheet } from 'lucide-react';
+import { Upload, FileText, Image, FileSpreadsheet, Lock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -87,7 +87,7 @@ export function ReceiptUpload({ onFileSelect }: ReceiptUploadProps) {
         </div>
         
         <h3 className="mb-4 text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Upload Your Receipt</h3>
-        <p className="mb-8 text-muted-foreground text-lg">
+        <p className="mb-6 text-muted-foreground text-lg">
           Drag and drop your receipt here, or click to browse
         </p>
         
@@ -125,8 +125,8 @@ export function ReceiptUpload({ onFileSelect }: ReceiptUploadProps) {
           {isProcessing ? 'Processing...' : 'Choose File'}
         </Button>
         
-        <p className="mt-4 text-xs text-muted-foreground">
-          Images, PDFs, CSVs up to 10MB · Secure & private.
+        <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-1">
+          Images, PDFs, CSVs up to 10MB · Secure & private <Lock className="h-3 w-3" />
         </p>
       </div>
     </Card>
