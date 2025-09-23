@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { HeroSection } from '@/components/ui/hero-section';
-import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail, Github } from 'lucide-react';
+import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Landing = () => {
@@ -52,36 +51,76 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <HeroSection
-        badge={{
-          text: "🚀 Transform Your Receipt Management",
-          action: {
-            text: "Learn more",
-            href: "#benefits",
-          },
-        }}
-        title="Turn Receipts Into Actionable Insights"
-        description="Upload any receipt and get instant data extraction, categorization, and financial insights. Perfect for expense tracking, tax prep, and business accounting."
-        actions={[
-          {
-            text: "Get Started Free",
-            href: "/auth",
-            variant: "default",
-          },
-          {
-            text: "See How It Works",
-            href: "#benefits",
-            variant: "outline",
-          },
-        ]}
-        image={{
-          src: "/src/assets/hero-receipt-parser.jpg",
-          alt: "ReceiptParser Dashboard Preview",
-        }}
-      />
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h1 className="text-5xl font-bold leading-tight">
+                  Know Exactly Where
+                  <span className="bg-gradient-hero bg-clip-text text-transparent"> Your Money Goes</span>
+                </h1>
+                <p className="text-xl text-muted-foreground leading-relaxed">
+                  Turn vague charges and messy receipts into clear, categorized expenses you can understand, track, and export. Perfect for families, freelancers, and small businesses.
+                </p>
+              </div>
+              
+              <div className="flex flex-wrap gap-4">
+                <Link to="/auth">
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-hero hover:scale-105 transition-transform shadow-glow"
+                  >
+                    Get Started Free
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+                <p className="text-sm text-muted-foreground self-center">
+                  No credit card required
+                </p>
+              </div>
+            </div>
+            
+            <div className="relative bg-gradient-card rounded-2xl p-8 shadow-large">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold mb-4">From This...</h3>
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <p className="text-muted-foreground">Target $154.44</p>
+                    <p className="text-xs text-muted-foreground">(confusing)</p>
+                  </div>
+                </div>
+                
+                <div className="flex justify-center">
+                  <ArrowRight className="h-6 w-6 text-primary" />
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold mb-4">...To This!</h3>
+                  <div className="space-y-2">
+                    <div className="bg-success/10 p-3 rounded-lg flex justify-between">
+                      <span>Groceries</span>
+                      <span className="font-semibold">$92</span>
+                    </div>
+                    <div className="bg-warning/10 p-3 rounded-lg flex justify-between">
+                      <span>Toys</span>
+                      <span className="font-semibold">$42</span>
+                    </div>
+                    <div className="bg-accent/10 p-3 rounded-lg flex justify-between">
+                      <span>Toiletries</span>
+                      <span className="font-semibold">$20</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">(clear breakdown)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Quick Benefits Row */}
-      <section id="benefits" className="py-12 px-4 bg-muted/10">
+      <section id="benefits" className="py-16 px-4 bg-muted/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="flex items-center gap-4">
@@ -118,14 +157,14 @@ const Landing = () => {
       </section>
 
       {/* Why ReceiptParser Section */}
-      <section id="why-receiptparser" className="py-16 px-4">
+      <section id="why-receiptparser" className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Why ReceiptParser?</h2>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-primary/10 w-fit mb-6">
                 <Eye className="h-8 w-8 text-primary" />
               </div>
@@ -135,7 +174,7 @@ const Landing = () => {
               </p>
             </Card>
             
-            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-accent/10 w-fit mb-6">
                 <Zap className="h-8 w-8 text-accent" />
               </div>
@@ -145,7 +184,7 @@ const Landing = () => {
               </p>
             </Card>
             
-            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-success/10 w-fit mb-6">
                 <Shield className="h-8 w-8 text-success" />
               </div>
@@ -159,10 +198,10 @@ const Landing = () => {
       </section>
 
       {/* Visual Example Section */}
-      <section className="py-16 px-4 bg-muted/10">
+      <section className="py-20 px-4 bg-muted/10">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8">See It In Action</h2>
-          <div className="bg-gradient-card rounded-2xl p-6 shadow-large">
+          <div className="bg-gradient-card rounded-2xl p-8 shadow-large">
             <div className="bg-muted/20 rounded-lg p-12 mb-6">
               <p className="text-6xl mb-4">📸</p>
               <p className="text-muted-foreground text-lg">App Screenshot Placeholder</p>
@@ -176,14 +215,14 @@ const Landing = () => {
       </section>
 
       {/* Use Cases Section */}
-      <section id="use-cases" className="py-16 px-4">
+      <section id="use-cases" className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Perfect For</h2>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-6 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-8 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-primary/10 w-fit mx-auto mb-6">
                 <Users className="h-8 w-8 text-primary" />
               </div>
@@ -193,7 +232,7 @@ const Landing = () => {
               </p>
             </Card>
             
-            <Card className="p-6 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-8 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-accent/10 w-fit mx-auto mb-6">
                 <Receipt className="h-8 w-8 text-accent" />
               </div>
@@ -203,7 +242,7 @@ const Landing = () => {
               </p>
             </Card>
             
-            <Card className="p-6 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-8 text-center bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="p-4 rounded-full bg-success/10 w-fit mx-auto mb-6">
                 <Building className="h-8 w-8 text-success" />
               </div>
@@ -217,10 +256,10 @@ const Landing = () => {
       </section>
 
       {/* Proof & Trust Section */}
-      <section className="py-16 px-4 bg-muted/10">
+      <section className="py-20 px-4 bg-muted/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8">Powered by Proven Technology</h2>
-          <div className="bg-gradient-card rounded-2xl p-6 shadow-medium mb-8">
+          <div className="bg-gradient-card rounded-2xl p-8 shadow-medium mb-8">
             <p className="text-lg text-muted-foreground mb-6">
               ReceiptParser uses industry-standard OCR + AI models trusted by enterprise systems, built into a simple tool designed for everyday users.
             </p>
@@ -236,9 +275,9 @@ const Landing = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-16 px-4">
+      <section id="pricing" className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Choose Your Plan</h2>
             <p className="text-xl text-muted-foreground">
               Find the perfect plan for your receipt processing needs
@@ -247,7 +286,7 @@ const Landing = () => {
           
           <div className="grid md:grid-cols-3 gap-8">
             {/* Free Tier */}
-            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold mb-2">Free</h3>
                 <div className="mb-4">
@@ -284,7 +323,7 @@ const Landing = () => {
             </Card>
 
             {/* Plus Tier */}
-            <Card className="p-6 bg-gradient-hero border-0 shadow-glow relative overflow-hidden">
+            <Card className="p-8 bg-gradient-hero border-0 shadow-glow relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-warning text-warning-foreground px-3 py-1 text-sm font-semibold">
                 Popular
               </div>
@@ -328,7 +367,7 @@ const Landing = () => {
             </Card>
 
             {/* Pro Tier */}
-            <Card className="p-6 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
+            <Card className="p-8 bg-gradient-card border-0 shadow-medium hover:shadow-large transition-shadow">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold mb-2">Pro</h3>
                 <div className="mb-4">
@@ -380,7 +419,7 @@ const Landing = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-16 px-4 bg-muted/10">
+      <section className="py-20 px-4 bg-muted/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to See Where Your Money Really Goes?</h2>
           <p className="text-xl text-muted-foreground mb-8">
@@ -402,7 +441,7 @@ const Landing = () => {
       </section>
 
       {/* Enhanced Footer */}
-      <footer className="border-t bg-card/50 py-12 px-4">
+      <footer className="border-t bg-card/50 py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {/* Brand */}
