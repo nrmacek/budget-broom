@@ -112,40 +112,99 @@ const ReceiptHistory = () => {
     setIsViewDialogOpen(true);
   };
 
+  // Helper function to protect against CSV injection
+  const sanitizeForCSV = (value: string): string => {
+    if (!value) return value;
+    // Check if field starts with potentially dangerous characters
+    if (value.match(/^[=+\-@]/)) {
+      return `'${value}`;
+    }
+    return value;
+  };
+
+  // Helper function to escape CSV fields properly
+  const escapeCSVField = (value: string | number | null | undefined): string => {
+    if (value === null || value === undefined) return '""';
+    const stringValue = String(value);
+    const sanitized = sanitizeForCSV(stringValue);
+    // Escape double quotes and wrap in quotes if contains comma, quote, or newline
+    if (sanitized.includes('"') || sanitized.includes(',') || sanitized.includes('\n') || sanitized.includes('\r')) {
+      return `"${sanitized.replace(/"/g, '""')}"`;
+    }
+    return `"${sanitized}"`;
+  };
+
+  // Helper function to format datetime with timezone (default to noon local)
+  const formatDateTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    // If only date provided (no time), set to noon local time
+    if (dateString.length === 10) { // YYYY-MM-DD format
+      date.setHours(12, 0, 0, 0);
+    }
+    // Return ISO-8601 format with timezone
+    return date.toISOString();
+  };
+
   const handleDownloadReceipt = (receipt: ReceiptRecord) => {
-    // CSV Headers - comprehensive format for budgeting/tax purposes
+    // Calculate total discounts and taxes for pro-rating
+    const totalDiscounts = Array.isArray(receipt.discounts) 
+      ? receipt.discounts.reduce((sum: number, discount: any) => sum + (discount.amount || 0), 0)
+      : 0;
+    const totalTaxes = Array.isArray(receipt.taxes)
+      ? receipt.taxes.reduce((sum: number, tax: any) => sum + (tax.amount || 0), 0)
+      : 0;
+    const totalLineItems = Array.isArray(receipt.line_items) 
+      ? receipt.line_items.reduce((sum: number, item: any) => sum + (item.total || 0), 0)
+      : 1; // Prevent division by zero
+
+    // CSV Headers - production-ready format with enhanced columns
     const headers = [
       'receipt_id',
-      'line_item_seq', 
+      'line_item_seq',
       'purchase_datetime',
       'store',
       'item_name',
       'item_name_raw',
       'quantity',
+      'unit_price',
       'line_total',
+      'discount_amount',
+      'tax_amount',
       'category',
       'currency'
     ];
 
-    // Convert receipt data to CSV rows
+    // UTF-8 BOM for Excel compatibility
+    const BOM = '\uFEFF';
     const csvRows = [headers.join(',')];
     
-    // Convert date to ISO format
-    const purchaseDateTime = new Date(receipt.date).toISOString().split('T')[0]; // YYYY-MM-DD format
+    // Enhanced datetime formatting
+    const purchaseDateTime = formatDateTime(receipt.date);
     
-    // Add a row for each line item
+    // Add a row for each line item with enhanced data
     receipt.line_items.forEach((item: any, index: number) => {
+      const lineTotal = item.total || 0;
+      const quantity = item.quantity || 1;
+      const unitPrice = item.unitPrice || (lineTotal / quantity);
+      
+      // Pro-rate discounts and taxes based on line total
+      const discountAmount = totalLineItems > 0 ? (lineTotal / totalLineItems) * totalDiscounts : 0;
+      const taxAmount = totalLineItems > 0 ? (lineTotal / totalLineItems) * totalTaxes : 0;
+
       const row = [
-        `"${receipt.id}"`,
-        `${index + 1}`, // line_item_seq starts at 1
-        `"${purchaseDateTime}"`,
-        `"${receipt.store_name}"`,
-        `"${item.description || 'Unknown Item'}"`,
-        `"${item.description || 'Unknown Item'}"`, // item_name_raw (same as item_name for now)
-        `${item.quantity || 1}`, // default quantity to 1
-        `${(item.total || 0).toFixed(2)}`, // numeric format, no $ sign
-        `"${item.category || 'Uncategorized'}"`,
-        `"USD"`
+        escapeCSVField(receipt.id),
+        escapeCSVField(index + 1), // line_item_seq starts at 1
+        escapeCSVField(purchaseDateTime),
+        escapeCSVField(receipt.store_name),
+        escapeCSVField(item.description || 'Unknown Item'),
+        escapeCSVField(item.originalDescription || item.description || 'Unknown Item'), // item_name_raw
+        escapeCSVField(quantity.toString()),
+        escapeCSVField(unitPrice.toFixed(4)), // 4 decimal precision for unit price
+        escapeCSVField(lineTotal.toFixed(2)),
+        escapeCSVField(discountAmount.toFixed(2)),
+        escapeCSVField(taxAmount.toFixed(2)),
+        escapeCSVField(item.category || 'Uncategorized'),
+        escapeCSVField('USD')
       ];
       csvRows.push(row.join(','));
     });
@@ -153,28 +212,34 @@ const ReceiptHistory = () => {
     // If no line items, add a single row with receipt info
     if (receipt.line_items.length === 0) {
       const row = [
-        `"${receipt.id}"`,
-        `1`,
-        `"${purchaseDateTime}"`,
-        `"${receipt.store_name}"`,
-        `"No items"`,
-        `"No items"`,
-        `0`,
-        `0.00`,
-        `"N/A"`,
-        `"USD"`
+        escapeCSVField(receipt.id),
+        escapeCSVField('1'),
+        escapeCSVField(purchaseDateTime),
+        escapeCSVField(receipt.store_name),
+        escapeCSVField('No items'),
+        escapeCSVField('No items'),
+        escapeCSVField('0'),
+        escapeCSVField('0.0000'),
+        escapeCSVField('0.00'),
+        escapeCSVField('0.00'),
+        escapeCSVField('0.00'),
+        escapeCSVField('N/A'),
+        escapeCSVField('USD')
       ];
       csvRows.push(row.join(','));
     }
 
-    const csvContent = csvRows.join('\n');
-    const dataBlob = new Blob([csvContent], { type: 'text/csv' });
+    // Use CRLF line endings for Windows/Excel compatibility
+    const csvContent = BOM + csvRows.join('\r\n');
+    const dataBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    // More descriptive filename
+    
+    // Enhanced filename with timestamp for uniqueness
     const sanitizedStoreName = receipt.store_name.replace(/[^a-zA-Z0-9]/g, '_');
-    link.download = `receipt_export_${sanitizedStoreName}_${receipt.date}.csv`;
+    const timestamp = new Date().toISOString().slice(0, 16).replace(/[:-]/g, ''); // YYYYMMDDTHHMMSS
+    link.download = `receipt_export_${sanitizedStoreName}_${receipt.date}_${timestamp}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -182,7 +247,7 @@ const ReceiptHistory = () => {
     
     toast({
       title: "Receipt downloaded",
-      description: "Receipt data exported in professional CSV format for budgeting and tax purposes.",
+      description: "Production-ready CSV export with security enhancements, timezone support, and pro-rated taxes/discounts.",
     });
   };
 
