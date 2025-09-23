@@ -161,12 +161,6 @@ export const CSV_EXPORT_CONFIGS: Record<string, CSVExportConfig> = {
         extract: (_, lineItem) => lineItem?.category || 'Uncategorized'
       },
       {
-        key: 'category_confidence',
-        header: 'category_confidence',
-        extract: (_, lineItem) => lineItem?.category_confidence || 0.5,
-        format: (value) => value.toFixed(2)
-      },
-      {
         key: 'currency',
         header: 'currency',
         extract: (receipt) => receipt.currency || 'USD'
