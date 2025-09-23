@@ -112,6 +112,37 @@ const ReceiptHistory = () => {
     setIsViewDialogOpen(true);
   };
 
+  const handleDownloadReceipt = (receipt: ReceiptRecord) => {
+    const receiptData = {
+      store: receipt.store_name,
+      date: receipt.date,
+      total: `$${receipt.total.toFixed(2)}`,
+      subtotal: `$${receipt.subtotal.toFixed(2)}`,
+      lineItems: receipt.line_items,
+      discounts: receipt.discounts,
+      taxes: receipt.taxes,
+      additionalCharges: receipt.additional_charges,
+      processedAt: receipt.processed_at,
+      originalFilename: receipt.original_filename
+    };
+
+    const dataStr = JSON.stringify(receiptData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `receipt-${receipt.store_name}-${receipt.date}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Receipt downloaded",
+      description: "Receipt data has been downloaded as a JSON file.",
+    });
+  };
+
   const transformReceiptData = (receipt: ReceiptRecord) => {
     return {
       storeName: receipt.store_name,
@@ -322,7 +353,11 @@ const ReceiptHistory = () => {
                                   >
                                     <Eye className="h-4 w-4" />
                                   </Button>
-                                  <Button variant="ghost" size="sm">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm"
+                                    onClick={() => handleDownloadReceipt(receipt)}
+                                  >
                                     <Download className="h-4 w-4" />
                                   </Button>
                                   <Button 
