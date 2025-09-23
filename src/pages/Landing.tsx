@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail } from 'lucide-react';
+import { HeroSection } from '@/components/ui/hero-section';
+import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Landing = () => {
@@ -51,73 +52,33 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-5xl font-bold leading-tight">
-                  Know Exactly Where
-                  <span className="bg-gradient-hero bg-clip-text text-transparent"> Your Money Goes</span>
-                </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed">
-                  Turn vague charges and messy receipts into clear, categorized expenses you can understand, track, and export. Perfect for families, freelancers, and small businesses.
-                </p>
-              </div>
-              
-              <div className="flex flex-wrap gap-4">
-                <Link to="/auth">
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-hero hover:scale-105 transition-transform shadow-glow"
-                  >
-                    Get Started Free
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </Link>
-                <p className="text-sm text-muted-foreground self-center">
-                  No credit card required
-                </p>
-              </div>
-            </div>
-            
-            <div className="relative bg-gradient-card rounded-2xl p-8 shadow-large">
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold mb-4">From This...</h3>
-                  <div className="bg-muted/50 p-4 rounded-lg">
-                    <p className="text-muted-foreground">Target $154.44</p>
-                    <p className="text-xs text-muted-foreground">(confusing)</p>
-                  </div>
-                </div>
-                
-                <div className="flex justify-center">
-                  <ArrowRight className="h-6 w-6 text-primary" />
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold mb-4">...To This!</h3>
-                  <div className="space-y-2">
-                    <div className="bg-success/10 p-3 rounded-lg flex justify-between">
-                      <span>Groceries</span>
-                      <span className="font-semibold">$92</span>
-                    </div>
-                    <div className="bg-warning/10 p-3 rounded-lg flex justify-between">
-                      <span>Toys</span>
-                      <span className="font-semibold">$42</span>
-                    </div>
-                    <div className="bg-accent/10 p-3 rounded-lg flex justify-between">
-                      <span>Toiletries</span>
-                      <span className="font-semibold">$20</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">(clear breakdown)</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        badge={{
+          text: "🚀 Transform Your Receipt Management",
+          action: {
+            text: "Learn more",
+            href: "#benefits",
+          },
+        }}
+        title="Turn Receipts Into Actionable Insights"
+        description="Upload any receipt and get instant data extraction, categorization, and financial insights. Perfect for expense tracking, tax prep, and business accounting."
+        actions={[
+          {
+            text: "Get Started Free",
+            href: "/auth",
+            variant: "default",
+          },
+          {
+            text: "See How It Works",
+            href: "#benefits",
+            variant: "outline",
+          },
+        ]}
+        image={{
+          src: "/src/assets/hero-receipt-parser.jpg",
+          alt: "ReceiptParser Dashboard Preview",
+        }}
+      />
 
       {/* Quick Benefits Row */}
       <section id="benefits" className="py-16 px-4 bg-muted/10">
