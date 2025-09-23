@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Receipt, LogOut, User, Eye, Download, Trash2, Calendar, DollarSign, Building2 } from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
+import { ReceiptResults } from '@/components/ReceiptResults';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -32,6 +34,8 @@ const ReceiptHistory = () => {
   const navigate = useNavigate();
   const [receipts, setReceipts] = useState<ReceiptRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewedReceipt, setViewedReceipt] = useState<ReceiptRecord | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchReceipts();
@@ -101,6 +105,24 @@ const ReceiptHistory = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleViewReceipt = (receipt: ReceiptRecord) => {
+    setViewedReceipt(receipt);
+    setIsViewDialogOpen(true);
+  };
+
+  const transformReceiptData = (receipt: ReceiptRecord) => {
+    return {
+      storeName: receipt.store_name,
+      date: receipt.date,
+      total: receipt.total,
+      subtotal: receipt.subtotal,
+      lineItems: Array.isArray(receipt.line_items) ? receipt.line_items : [],
+      discounts: Array.isArray(receipt.discounts) ? receipt.discounts : [],
+      taxes: Array.isArray(receipt.taxes) ? receipt.taxes : [],
+      additionalCharges: Array.isArray(receipt.additional_charges) ? receipt.additional_charges : [],
+    };
   };
 
   const formatCurrency = (amount: number) => {
@@ -293,7 +315,11 @@ const ReceiptHistory = () => {
                               </TableCell>
                               <TableCell className="text-right">
                                 <div className="flex items-center justify-end gap-1">
-                                  <Button variant="ghost" size="sm">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm"
+                                    onClick={() => handleViewReceipt(receipt)}
+                                  >
                                     <Eye className="h-4 w-4" />
                                   </Button>
                                   <Button variant="ghost" size="sm">
@@ -320,6 +346,21 @@ const ReceiptHistory = () => {
             </div>
           </section>
         </div>
+        
+        {/* View Receipt Dialog */}
+        <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Receipt Details</DialogTitle>
+            </DialogHeader>
+            {viewedReceipt && (
+              <ReceiptResults 
+                receiptData={transformReceiptData(viewedReceipt)}
+                onStartOver={() => setIsViewDialogOpen(false)}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </SidebarProvider>
   );
