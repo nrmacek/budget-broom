@@ -5,10 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Receipt, LogOut, User, Eye, Download, Trash2, Calendar, DollarSign, Building2, History as HistoryIcon } from 'lucide-react';
+import { Receipt, Eye, Download, Trash2, Calendar, DollarSign, Building2, History as HistoryIcon } from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ReceiptResults } from '@/components/ReceiptResults';
+import { UserProfileDropdown } from '@/components/UserProfileDropdown';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -215,17 +216,10 @@ const ReceiptHistory = () => {
           <AppSidebar onNewReceipt={handleNewReceipt} />
           <div className="flex-1 bg-gradient-background">
             <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
-              <div className="px-4 py-3 flex items-center justify-end">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <User className="h-4 w-4" />
-                    {user?.email}
-                  </div>
-                  <Button variant="hero" size="sm" onClick={handleSignOut} className="rounded-full px-4">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </Button>
-                </div>
+              <div className="px-4 py-2 flex items-center justify-end">
+                {user && (
+                  <UserProfileDropdown user={user} onSignOut={handleSignOut} />
+                )}
               </div>
             </header>
             <div className="flex items-center justify-center p-4 min-h-[calc(100vh-64px)]">
@@ -247,17 +241,10 @@ const ReceiptHistory = () => {
         <div className="flex-1 bg-gradient-background">
           {/* Header */}
           <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
-            <div className="px-4 py-3 flex items-center justify-end">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <User className="h-4 w-4" />
-                  {user?.email}
-                </div>
-                <Button variant="hero" size="sm" onClick={handleSignOut} className="rounded-full px-4">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
+            <div className="px-4 py-2 flex items-center justify-end">
+              {user && (
+                <UserProfileDropdown user={user} onSignOut={handleSignOut} />
+              )}
             </div>
           </header>
 
