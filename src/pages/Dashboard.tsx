@@ -58,6 +58,7 @@ const Dashboard = () => {
   const [appState, setAppState] = useState<AppState>('uploading');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
+  const [receiptId, setReceiptId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleFileSelect = async (file: File) => {
@@ -88,7 +89,7 @@ const Dashboard = () => {
       
       // Save receipt to database
       try {
-        const { error: saveError } = await supabase
+        const { data: savedReceipt, error: saveError } = await supabase
           .from('receipts')
           .insert({
             user_id: user?.id,
@@ -101,10 +102,14 @@ const Dashboard = () => {
             additional_charges: data.additionalCharges || [],
             line_items: data.lineItems,
             original_filename: file.name,
-          });
+          })
+          .select()
+          .single();
 
         if (saveError) {
           console.error('Error saving receipt:', saveError);
+        } else if (savedReceipt) {
+          setReceiptId(savedReceipt.id);
         }
       } catch (saveError) {
         console.error('Error saving receipt to database:', saveError);
@@ -159,6 +164,7 @@ const Dashboard = () => {
   const handleStartOver = () => {
     setUploadedFile(null);
     setReceiptData(null);
+    setReceiptId(null);
     setAppState('uploading');
   };
 
@@ -166,6 +172,7 @@ const Dashboard = () => {
     console.log('handleNewReceipt called, changing state to uploading');
     setUploadedFile(null);
     setReceiptData(null);
+    setReceiptId(null);
     setAppState('uploading');
   };
 
@@ -233,6 +240,7 @@ const Dashboard = () => {
             </header>
             <ReceiptResults 
               receiptData={receiptData}
+              receiptId={receiptId}
               onStartOver={handleStartOver}
             />
           </div>

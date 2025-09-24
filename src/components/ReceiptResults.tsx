@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, Store, Calendar, DollarSign, Receipt, ChevronDown, ChevronRight } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useCategories } from '@/hooks/useCategories';
+import { useCategoryAssignments } from '@/hooks/useCategoryAssignments';
 
 interface LineItem {
   id: string;
@@ -45,12 +48,37 @@ interface ReceiptData {
 
 interface ReceiptResultsProps {
   receiptData: ReceiptData;
+  receiptId?: string;
   onStartOver: () => void;
 }
 
-export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps) {
+export function ReceiptResults({ receiptData, receiptId, onStartOver }: ReceiptResultsProps) {
   const [items, setItems] = useState<LineItem[]>(receiptData.lineItems);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [categoryAssignments, setCategoryAssignments] = useState<Record<number, string>>({});
+  
+  const { categories, loading: categoriesLoading } = useCategories();
+  const { updateLineItemCategory, getCategoryAssignments, loading: assignmentLoading } = useCategoryAssignments();
+
+  useEffect(() => {
+    // Load existing category assignments if receiptId is provided
+    if (receiptId) {
+      loadCategoryAssignments();
+    }
+  }, [receiptId]);
+
+  const loadCategoryAssignments = async () => {
+    if (!receiptId) return;
+    
+    const assignments = await getCategoryAssignments(receiptId);
+    const assignmentMap: Record<number, string> = {};
+    
+    assignments.forEach((assignment: any) => {
+      assignmentMap[assignment.line_item_index] = assignment.category_id;
+    });
+    
+    setCategoryAssignments(assignmentMap);
+  };
 
   const toggleCategory = (category: string) => {
     setExpandedCategories(prev => {
@@ -64,19 +92,34 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
     });
   };
 
-  const handleCategoryChange = (itemId: string, newCategory: string) => {
-    setItems(prevItems => 
-      prevItems.map(item => 
-        item.id === itemId 
-          ? { ...item, category: newCategory }
-          : item
-      )
-    );
-    
-    toast({
-      title: "Category updated",
-      description: `Item moved to ${newCategory}`,
-    });
+  const handleCategoryChange = async (itemIndex: number, categoryId: string) => {
+    // Update local state immediately for better UX
+    const category = categories.find(cat => cat.id === categoryId);
+    if (category) {
+      setItems(prevItems => 
+        prevItems.map((item, index) => 
+          index === itemIndex 
+            ? { ...item, category: category.display_name }
+            : item
+        )
+      );
+      
+      setCategoryAssignments(prev => ({
+        ...prev,
+        [itemIndex]: categoryId
+      }));
+
+      // Update in database if receiptId is available
+      if (receiptId) {
+        const success = await updateLineItemCategory(receiptId, itemIndex, categoryId, 'user');
+        if (success) {
+          toast({
+            title: "Category updated",
+            description: `Item moved to ${category.display_name}`,
+          });
+        }
+      }
+    }
   };
 
   const exportToCSV = () => {
@@ -133,19 +176,18 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
   const totalDiscrepancy = Math.abs(calculatedTotal - receiptData.total);
   const hasDiscrepancy = totalDiscrepancy > 0.01; // Allow for small rounding differences
 
-  const categoryIcons: Record<string, any> = {
-    'Groceries': '🛒',
-    'Electronics': '📱',
-    'Clothing': '👕',
-    'Personal Care': '🧴',
-    'Household': '🏠',
-    'Dining': '🍽️',
-    'Transportation': '🚗',
-    'Entertainment': '🎬',
-    'Other': '📦'
+  // Get category display info
+  const getCategoryDisplayInfo = (categoryName: string) => {
+    const category = categories.find(cat => 
+      cat.display_name === categoryName || cat.slug === categoryName
+    );
+    return category || { display_name: categoryName, icon: 'MoreHorizontal', slug: 'other' };
   };
 
-  const availableCategories = Object.keys(categoryIcons);
+  const getCategoryIcon = (iconName: string) => {
+    const IconComponent = (Icons as any)[iconName] || Icons.MoreHorizontal;
+    return IconComponent;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-background">
@@ -221,13 +263,17 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                 return (
                   <Card key={category} className="overflow-hidden bg-gradient-card shadow-medium hover:shadow-large transition-all duration-200">
                     {/* Category Header - Clickable */}
-                    <button 
+                     <button 
                       onClick={() => toggleCategory(category)}
                       className="w-full p-6 bg-gradient-subtle/50 hover:bg-gradient-subtle/70 transition-all duration-200 text-left"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{categoryIcons[category] || categoryIcons['Other']}</span>
+                          {(() => {
+                            const categoryInfo = getCategoryDisplayInfo(category);
+                            const IconComponent = getCategoryIcon(categoryInfo.icon);
+                            return <IconComponent className="h-6 w-6 text-primary" />;
+                          })()}
                           <div>
                             <h3 className="text-xl font-semibold">{category}</h3>
                             <p className="text-sm text-muted-foreground">
@@ -286,21 +332,25 @@ export function ReceiptResults({ receiptData, onStartOver }: ReceiptResultsProps
                                       Qty: {item.quantity} × ${item.unitPrice.toFixed(2)} each
                                     </p>
                                     <Select
-                                      value={item.category}
-                                      onValueChange={(newCategory) => handleCategoryChange(item.id, newCategory)}
+                                      value={categoryAssignments[index] || categories.find(cat => cat.display_name === item.category)?.id || ''}
+                                      onValueChange={(categoryId) => handleCategoryChange(index, categoryId)}
+                                      disabled={categoriesLoading || assignmentLoading}
                                     >
                                       <SelectTrigger className="w-40 h-8 text-xs">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="z-50 bg-popover border shadow-lg">
-                                        {availableCategories.map((cat) => (
-                                          <SelectItem key={cat} value={cat} className="text-xs">
-                                            <span className="flex items-center gap-2">
-                                              <span>{categoryIcons[cat]}</span>
-                                              <span>{cat}</span>
-                                            </span>
-                                          </SelectItem>
-                                        ))}
+                                        {categories.map((cat) => {
+                                          const IconComponent = getCategoryIcon(cat.icon);
+                                          return (
+                                            <SelectItem key={cat.id} value={cat.id} className="text-xs">
+                                              <span className="flex items-center gap-2">
+                                                <IconComponent className="h-3 w-3" />
+                                                <span>{cat.display_name}</span>
+                                              </span>
+                                            </SelectItem>
+                                          );
+                                        })}
                                       </SelectContent>
                                     </Select>
                                   </div>
