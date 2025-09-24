@@ -142,6 +142,14 @@ const Dashboard = () => {
     });
   };
 
+  const handleNewReceipt = () => {
+    setExtractedData(null);
+    setReceiptId(null);
+    setProgress(0);
+    setCurrentStep('');
+    setCurrentFileName('');
+  };
+
   const handleSignOut = async () => {
     const { error } = await signOut();
     if (error) {
@@ -158,7 +166,7 @@ const Dashboard = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <AppSidebar />
+        <AppSidebar onNewReceipt={handleNewReceipt} />
         <div className="flex-1 bg-gradient-background">
           <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
             <div className="px-4 py-2 flex items-center justify-end">
@@ -206,8 +214,9 @@ const Dashboard = () => {
                 {extractedData && receiptId && (
                   <div className="space-y-6">
                     <ReceiptResults 
-                      data={extractedData} 
+                      receiptData={extractedData} 
                       receiptId={receiptId}
+                      onStartOver={handleNewReceipt}
                     />
                   </div>
                 )}
