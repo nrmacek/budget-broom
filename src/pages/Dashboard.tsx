@@ -6,174 +6,140 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ReceiptUpload } from '@/components/ReceiptUpload';
 import { ProcessingProgress } from '@/components/ProcessingProgress';
+import { BulkUpload } from '@/components/BulkUpload';
+import { useSmartSuggestions } from '@/hooks/useSmartSuggestions';
 import { ReceiptResults } from '@/components/ReceiptResults';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
-type AppState = 'uploading' | 'processing' | 'results';
-
-interface LineItem {
-  id: string;
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
-  category: string;
-  confidence: number;
-}
-
-interface Discount {
-  description: string;
-  amount: number;
-}
-
-interface Tax {
-  description: string;
-  rate?: number;
-  amount: number;
-}
-
-interface AdditionalCharge {
-  description: string;
-  amount: number;
-}
-
-interface ReceiptData {
-  storeName: string;
-  date: string;
-  subtotal: number;
-  discounts?: Discount[];
-  taxes?: Tax[];
-  additionalCharges?: AdditionalCharge[];
-  total: number;
-  lineItems: LineItem[];
-}
-
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [appState, setAppState] = useState<AppState>('uploading');
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
-  const [receiptId, setReceiptId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState('');
+  const [extractedData, setExtractedData] = useState<any>(null);
+  const [receiptId, setReceiptId] = useState<string | null>(null);
+  const [processingMode, setProcessingMode] = useState<'single' | 'bulk'>('single');
+  const [currentFileName, setCurrentFileName] = useState<string>('');
+  const { getSuggestionsForItem } = useSmartSuggestions();
 
-  const handleFileSelect = async (file: File) => {
-    setUploadedFile(file);
-    setAppState('processing');
+  const handleFileUpload = async (file: File) => {
+    if (!user) return;
+
     setIsProcessing(true);
-    
+    setProgress(0);
+    setCurrentStep('Uploading file...');
+    setExtractedData(null);
+    setCurrentFileName(file.name);
+
     try {
-      // Create form data to send to edge function
       const formData = new FormData();
       formData.append('file', file);
 
-      // Call the Supabase edge function
+      // Enhanced progress simulation
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          if (prev < 25) {
+            setCurrentStep('Analyzing image structure...');
+            return prev + Math.random() * 8;
+          } else if (prev < 50) {
+            setCurrentStep('Extracting text with AI vision...');
+            return prev + Math.random() * 6;
+          } else if (prev < 75) {
+            setCurrentStep('Categorizing items intelligently...');
+            return prev + Math.random() * 5;
+          } else if (prev < 90) {
+            setCurrentStep('Finalizing data extraction...');
+            return prev + Math.random() * 3;
+          }
+          return prev;
+        });
+      }, 400);
+
       const { data, error } = await supabase.functions.invoke('parse-receipt', {
         body: formData,
       });
+
+      clearInterval(progressInterval);
 
       if (error) {
         throw error;
       }
 
-      if (data.error) {
-        throw new Error(data.error);
+      setProgress(95);
+      setCurrentStep('Saving to database...');
+
+      // Enhance line items with smart suggestions
+      if (data.lineItems && Array.isArray(data.lineItems)) {
+        for (const item of data.lineItems) {
+          if (!item.category || item.confidence < 0.6) {
+            const suggestions = await getSuggestionsForItem(item.description);
+            if (suggestions.length > 0) {
+              item.category = suggestions[0].suggested_category_id;
+              item.confidence = Math.max(item.confidence || 0, suggestions[0].confidence);
+            }
+          }
+        }
       }
 
-      setReceiptData(data);
-      setAppState('results');
-      
       // Save receipt to database
-      try {
-        const { data: savedReceipt, error: saveError } = await supabase
-          .from('receipts')
-          .insert({
-            user_id: user?.id,
-            store_name: data.storeName,
-            date: data.date,
-            subtotal: data.subtotal,
-            total: data.total,
-            discounts: data.discounts || [],
-            taxes: data.taxes || [],
-            additional_charges: data.additionalCharges || [],
-            line_items: data.lineItems,
-            original_filename: file.name,
-          })
-          .select()
-          .single();
+      const { data: savedReceipt, error: saveError } = await supabase
+        .from('receipts')
+        .insert({
+          user_id: user.id,
+          store_name: data.storeName,
+          date: data.date,
+          subtotal: data.subtotal,
+          total: data.total,
+          line_items: data.lineItems,
+          discounts: data.discounts || [],
+          taxes: data.taxes || [],
+          additional_charges: data.additionalCharges || [],
+          original_filename: file.name,
+        })
+        .select()
+        .single();
 
-        if (saveError) {
-          console.error('Error saving receipt:', saveError);
-        } else if (savedReceipt) {
-          setReceiptId(savedReceipt.id);
-        }
-      } catch (saveError) {
-        console.error('Error saving receipt to database:', saveError);
+      if (saveError) {
+        throw saveError;
       }
-      
+
+      setProgress(100);
+      setCurrentStep('Complete!');
+      setExtractedData(data);
+      setReceiptId(savedReceipt.id);
+
       toast({
-        title: "Receipt processed successfully!",
-        description: `Found ${data.lineItems.length} items from ${data.storeName}`,
+        title: "Receipt processed successfully",
+        description: `Extracted ${data.lineItems?.length || 0} items from ${data.storeName}`,
       });
-
     } catch (error) {
-      console.error('Error processing receipt:', error);
-      
-      // Extract more specific error messages
-      let errorMessage = "Failed to process receipt. Please try again.";
-      
-      if (error && typeof error === 'object' && 'message' in error) {
-        const message = (error as any).message;
-        if (message.includes('OpenAI API key')) {
-          errorMessage = "Service configuration error. Please contact support.";
-        } else if (message.includes('Failed to parse receipt data')) {
-          errorMessage = "Could not extract data from the receipt. Please try a clearer image or different file.";
-        } else if (message.includes('Unsupported file type')) {
-          errorMessage = "Unsupported file type. Please use JPG, PNG, WebP, or CSV files.";
-        } else if (message.includes('File too large')) {
-          errorMessage = "File is too large. Please use a file smaller than 10MB.";
-        } else if (message.includes('No file provided')) {
-          errorMessage = "No file was uploaded. Please select a file to process.";
-        } else if (message.includes('non-2xx status code')) {
-          errorMessage = "Service error occurred. Please try again in a moment.";
-        } else {
-          errorMessage = message; // Use the actual error message if it's informative
-        }
-      }
-      
+      console.error('Receipt processing error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to process receipt';
       toast({
         title: "Processing failed",
         description: errorMessage,
-        variant: "destructive",
+        variant: "destructive"
       });
-      setAppState('uploading');
     } finally {
-      setIsProcessing(false);
+      setTimeout(() => {
+        setIsProcessing(false);
+        setProgress(0);
+        setCurrentStep('');
+        setCurrentFileName('');
+      }, 1000);
     }
   };
 
-  const handleProcessingComplete = () => {
-    // This is now handled in handleFileSelect
-    setAppState('results');
-  };
-
-  const handleStartOver = () => {
-    setUploadedFile(null);
-    setReceiptData(null);
-    setReceiptId(null);
-    setAppState('uploading');
-  };
-
-  const handleNewReceipt = () => {
-    console.log('handleNewReceipt called, changing state to uploading');
-    setUploadedFile(null);
-    setReceiptData(null);
-    setReceiptId(null);
-    setAppState('uploading');
+  const handleBulkUpload = async (results: any[]) => {
+    toast({
+      title: "Bulk processing completed",
+      description: `Successfully processed ${results.length} receipts with enhanced categorization.`,
+    });
   };
 
   const handleSignOut = async () => {
@@ -186,75 +152,14 @@ const Dashboard = () => {
       });
     } else {
       navigate('/');
-      toast({
-        title: "Signed out successfully",
-        description: "You have been signed out of your account.",
-      });
     }
   };
-
-  console.log('Current appState:', appState, 'receiptData exists:', !!receiptData);
-
-  if (appState === 'processing' && uploadedFile) {
-    return (
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
-          <AppSidebar onNewReceipt={handleNewReceipt} />
-          <div className="flex-1 bg-gradient-background">
-            {/* Profile Header */}
-            <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
-              <div className="px-4 py-2 flex items-center justify-end">
-                {user && (
-                  <UserProfileDropdown user={user} onSignOut={handleSignOut} />
-                )}
-              </div>
-            </header>
-            <div className="flex items-center justify-center p-4 min-h-[calc(100vh-64px)]">
-              <div className="w-full max-w-md">
-                <ProcessingProgress 
-                  fileName={uploadedFile.name}
-                  isProcessing={isProcessing}
-                  onComplete={handleProcessingComplete}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </SidebarProvider>
-    );
-  }
-
-  if (appState === 'results' && receiptData) {
-    return (
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
-          <AppSidebar onNewReceipt={handleNewReceipt} />
-          <div className="flex-1">
-            {/* Profile Header */}
-            <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
-              <div className="px-4 py-2 flex items-center justify-end">
-                {user && (
-                  <UserProfileDropdown user={user} onSignOut={handleSignOut} />
-                )}
-              </div>
-            </header>
-            <ReceiptResults 
-              receiptData={receiptData}
-              receiptId={receiptId}
-              onStartOver={handleStartOver}
-            />
-          </div>
-        </div>
-      </SidebarProvider>
-    );
-  }
 
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <AppSidebar onNewReceipt={handleNewReceipt} />
+        <AppSidebar />
         <div className="flex-1 bg-gradient-background">
-          {/* Profile Header */}
           <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
             <div className="px-4 py-2 flex items-center justify-end">
               {user && (
@@ -264,8 +169,49 @@ const Dashboard = () => {
           </header>
 
           <section className="py-8 px-4">
-            <div className="max-w-3xl mx-auto">
-              <ReceiptUpload onFileSelect={handleFileSelect} />
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  {/* Toggle between single and bulk upload */}
+                  <div className="flex gap-2 mb-6">
+                    <Button
+                      variant={processingMode === 'single' ? 'default' : 'outline'}
+                      onClick={() => setProcessingMode('single')}
+                    >
+                      Single Upload
+                    </Button>
+                    <Button
+                      variant={processingMode === 'bulk' ? 'default' : 'outline'}
+                      onClick={() => setProcessingMode('bulk')}
+                    >
+                      Bulk Upload
+                    </Button>
+                  </div>
+
+                  {processingMode === 'single' ? (
+                    <ReceiptUpload onFileSelect={handleFileUpload} />
+                  ) : (
+                    <BulkUpload onComplete={handleBulkUpload} />
+                  )}
+                  
+                  <ProcessingProgress 
+                    isProcessing={isProcessing} 
+                    progress={progress} 
+                    currentStep={currentStep}
+                    fileName={currentFileName}
+                    estimatedTime={Math.max(10 - Math.floor(progress / 10), 1)}
+                  />
+                </div>
+                
+                {extractedData && receiptId && (
+                  <div className="space-y-6">
+                    <ReceiptResults 
+                      data={extractedData} 
+                      receiptId={receiptId}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </section>
         </div>

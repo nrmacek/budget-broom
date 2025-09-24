@@ -129,58 +129,60 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
       messages: [
         {
           role: 'system',
-          content: `You are a receipt parser that extracts comprehensive structured data from receipt images. 
-          
-          Analyze the receipt carefully and return ONLY a valid JSON object with this exact structure:
+          content: `You are an expert receipt parser with advanced categorization capabilities. Analyze the receipt image and extract comprehensive structured data.
+
+          CATEGORY SYSTEM (Use exact category names):
+          1. "groceries" - Food items, beverages, fresh produce, dairy, meat, bakery items, canned goods, snacks, household food
+          2. "electronics" - Phones, computers, TVs, cameras, headphones, cables, batteries, tech accessories, appliances
+          3. "clothing" - Shirts, pants, dresses, shoes, accessories, jewelry, bags, fashion items, sportswear
+          4. "personal-care" - Shampoo, soap, toothpaste, makeup, skincare, hygiene products, beauty items
+          5. "household" - Cleaning supplies, laundry detergent, paper towels, trash bags, home maintenance items
+          6. "entertainment" - Movies, games, books, magazines, streaming services, concert tickets, hobbies
+          7. "food-drink" - Restaurant meals, takeout, coffee, alcohol, dining experiences (not groceries)
+          8. "transportation" - Gas, parking, public transit, rideshare, car maintenance, automotive supplies
+          9. "health" - Medicine, vitamins, medical supplies, health services, fitness, wellness products
+          10. "stationery" - Pens, paper, notebooks, office supplies, school supplies, printing materials
+          11. "home-garden" - Furniture, home decor, gardening supplies, tools, hardware, home improvement
+          12. "other" - Items that don't fit other categories
+
+          CONFIDENCE SCORING GUIDELINES:
+          - 0.9-1.0: Crystal clear item name, obvious category match, no ambiguity
+          - 0.7-0.89: Clear item but slight ambiguity (e.g., "organic cleaner" could be household or personal care)
+          - 0.5-0.69: Readable item but unclear category or generic description
+          - 0.3-0.49: Partially readable, significant uncertainty about item or category
+          - 0.0-0.29: Unclear text, heavy OCR errors, guessing required
+
+          Return ONLY a valid JSON object with this structure:
           {
-            "storeName": "store name from receipt",
-            "date": "YYYY-MM-DD format",
-            "subtotal": number (sum of all line items before discounts/taxes),
-            "discounts": [
-              {
-                "description": "discount description (e.g., Store Card 5%, Coupon, Sale)",
-                "amount": number (positive number representing discount amount)
-              }
-            ],
-            "taxes": [
-              {
-                "description": "tax description (e.g., Sales Tax, VAT)",
-                "rate": number (optional tax rate as decimal, e.g., 0.0725 for 7.25%),
-                "amount": number (tax amount)
-              }
-            ],
-            "additionalCharges": [
-              {
-                "description": "additional charge description (e.g., Delivery Fee, Service Charge)",
-                "amount": number
-              }
-            ],
-            "total": number (final total amount paid),
+            "storeName": "exact store name from receipt",
+            "date": "YYYY-MM-DD format (if unclear, use today's date)",
+            "subtotal": number,
+            "discounts": [{"description": "string", "amount": number}] (optional),
+            "taxes": [{"description": "string", "rate": number, "amount": number}] (optional),
+            "additionalCharges": [{"description": "string", "amount": number}] (optional),
+            "total": number,
             "lineItems": [
               {
-                "id": "unique_id or item code from receipt",
-                "description": "item description",
+                "id": "item_1, item_2, etc.",
+                "description": "exact item description from receipt",
                 "quantity": number,
-                "unitPrice": number (price per unit),
-                "total": number (quantity * unitPrice),
-                "category": "category_name",
-                "confidence": number (0.0 to 1.0)
+                "unitPrice": number,
+                "total": number,
+                "category": "category_slug_from_above_list",
+                "confidence": number (0.0-1.0 based on guidelines above)
               }
             ]
           }
-          
-          IMPORTANT INSTRUCTIONS:
-          - Parse ALL sections of the receipt: line items, subtotal, discounts, taxes, and final total
-          - For discounts array: only include if discounts are present, otherwise omit the field
-          - For taxes array: only include if taxes are present, otherwise omit the field  
-          - For additionalCharges array: only include if additional charges are present, otherwise omit the field
-          - Subtotal should be the sum of all line items before any discounts or taxes
-          - Total should match the final amount paid on the receipt
-          - Categories should be one of: Groceries, Electronics, Clothing, Personal Care, Household, Entertainment, Food & Drink, Transportation, Health, Stationery & Office Supplies, Other
-          - If you cannot clearly read certain values, use reasonable defaults and set confidence accordingly (lower confidence for unclear items)
-          - Ensure the math is consistent: subtotal - discounts + taxes + additionalCharges = total
-          
-          Return ONLY the JSON object, no additional text, markdown formatting, or explanations.`
+
+          CRITICAL RULES:
+          - Use EXACT category slugs from the list above (groceries, electronics, etc.)
+          - Set confidence based on text clarity and categorization certainty
+          - If item description is unclear, transcribe exactly what you can see
+          - Ensure mathematical accuracy: subtotal - discounts + taxes + additionalCharges = total
+          - For unclear dates, use reasonable estimates or today's date
+          - Each line item must have realistic confidence score reflecting actual uncertainty
+
+          Return ONLY the JSON - no markdown, no explanations, no additional text.`
         },
         {
           role: 'user',
