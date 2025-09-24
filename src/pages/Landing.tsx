@@ -54,9 +54,9 @@ const Landing = () => {
               <button onClick={() => scrollToSection('faq')} className="text-white/80 hover:text-white transition-colors text-sm font-medium">
                 FAQs
               </button>
-              <button onClick={() => scrollToSection('final-cta')} className="text-white/80 hover:text-white transition-colors text-sm font-medium">
+              <Link to="/auth?tab=signup" className="text-white/80 hover:text-white transition-colors text-sm font-medium">
                 Get Started Free
-              </button>
+              </Link>
             </div>
           </nav>
           

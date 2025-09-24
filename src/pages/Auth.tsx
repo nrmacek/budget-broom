@@ -14,6 +14,7 @@ const Auth = () => {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') === 'signin' ? 'signin' : 'signup');
   
   // Default to signup tab if specified in URL params, otherwise default to signup
   const defaultTab = searchParams.get('tab') === 'signin' ? 'signin' : 'signup';
@@ -109,11 +110,11 @@ const Auth = () => {
             <h1 className="text-xl font-bold">ReceiptParser</h1>
           </div>
           <p className="text-muted-foreground">
-            {defaultTab === 'signup' ? 'Sign up to start analyzing receipts' : 'Sign in to access your receipt processing history'}
+            {activeTab === 'signup' ? 'Sign up to start analyzing receipts' : 'Sign in to access your receipt processing history'}
           </p>
         </div>
 
-        <Tabs defaultValue={defaultTab} className="w-full">
+        <Tabs defaultValue={defaultTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
