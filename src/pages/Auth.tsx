@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,11 @@ import { useToast } from '@/hooks/use-toast';
 const Auth = () => {
   const { user, loading, signIn, signUp } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Default to signup tab if specified in URL params, otherwise default to signup
+  const defaultTab = searchParams.get('tab') === 'signin' ? 'signin' : 'signup';
 
   // Redirect if already authenticated
   if (!loading && user) {
@@ -105,11 +109,11 @@ const Auth = () => {
             <h1 className="text-xl font-bold">ReceiptParser</h1>
           </div>
           <p className="text-muted-foreground">
-            Sign in to access your receipt processing history
+            {defaultTab === 'signup' ? 'Sign up to start analyzing receipts' : 'Sign in to access your receipt processing history'}
           </p>
         </div>
 
-        <Tabs defaultValue="signin" className="w-full">
+        <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>

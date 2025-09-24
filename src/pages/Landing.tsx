@@ -107,7 +107,7 @@ const Landing = () => {
             </div>
             
             <div className="flex flex-col items-center gap-4">
-              <Link to="/auth">
+              <Link to="/auth?tab=signup">
                 <Button 
                   size="lg" 
                   className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-8 py-6 rounded-full h-auto font-semibold"
@@ -230,7 +230,7 @@ const Landing = () => {
                   </div>
                 </div>
                 
-                <Link to="/auth" className="block">
+                <Link to="/auth?tab=signup" className="block">
                   <Button className="w-full rounded-full font-semibold" variant="outline">
                     Get Started Free
                   </Button>
@@ -280,7 +280,7 @@ const Landing = () => {
                   </div>
                 </div>
                 
-                <Link to="/auth" className="block">
+                <Link to="/auth?tab=signup" className="block">
                   <Button className="w-full bg-white text-primary hover:bg-white/90 rounded-full font-semibold">
                     Start Standard Plan
                   </Button>
