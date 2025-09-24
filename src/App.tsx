@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import ReceiptHistory from "./pages/ReceiptHistory";
+import Categories from "./pages/Categories";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,11 @@ const App = () => (
             <Route path="/history" element={
               <ProtectedRoute>
                 <ReceiptHistory />
+              </ProtectedRoute>
+            } />
+            <Route path="/categories" element={
+              <ProtectedRoute>
+                <Categories />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
