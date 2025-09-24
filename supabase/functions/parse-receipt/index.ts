@@ -88,9 +88,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in parse-receipt function:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to process receipt';
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'Failed to process receipt' 
+        error: errorMessage
       }), 
       {
         status: 500,
