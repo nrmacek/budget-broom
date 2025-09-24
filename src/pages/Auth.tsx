@@ -110,7 +110,7 @@ const Auth = () => {
             <h1 className="text-xl font-bold">ReceiptParser</h1>
           </div>
           <p className="text-muted-foreground">
-            {activeTab === 'signup' ? 'Sign up to start analyzing receipts' : 'Sign in to access your receipt processing history'}
+            {activeTab === 'signup' ? 'Sign up to start analyzing receipts' : 'Sign in to access your receipt processing dashboard'}
           </p>
         </div>
 
