@@ -1,12 +1,11 @@
 import React from 'react';
-import { Receipt, Search, Tag, Settings, Plus, History, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Receipt, Tag, Settings, Plus, History, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSidebar } from '@/components/ui/sidebar';
 
 const menuItems = [
   { title: 'New Receipt', url: '/dashboard', icon: Plus },
   { title: 'Receipt History', url: '/history', icon: History },
-  { title: 'Search Receipts', url: '/search', icon: Search },
   { title: 'Categories', url: '/categories', icon: Tag },
 ];
 
