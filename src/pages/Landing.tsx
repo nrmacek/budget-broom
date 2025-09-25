@@ -62,7 +62,7 @@ const Landing = () => {
           
           {/* Sign In - Outside Pill */}
           <Link to="/auth">
-            <Button variant="outline" className="rounded-full font-medium">
+            <Button variant="outline" className="rounded-full font-medium border-primary text-primary hover:bg-primary hover:text-primary-foreground">
               Sign In
             </Button>
           </Link>
