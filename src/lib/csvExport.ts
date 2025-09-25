@@ -1,22 +1,12 @@
 import { format } from 'date-fns';
-
-export interface ReceiptData {
-  id: string;
-  store_name?: string;
-  date?: string;
-  total?: number;
-  line_items?: any[];
-  original_filename?: string;
-  created_at?: string;
-  currency?: string;
-}
+import { Receipt, LineItem, CSVValue, CSVExtractFunction, CSVFormatFunction, CSVValidateFunction } from '@/types';
 
 export interface CSVColumn {
   key: string;
   header: string;
-  extract: (receipt: ReceiptData, lineItem?: any, index?: number) => any;
-  format?: (value: any) => string;
-  validate?: (value: any) => boolean;
+  extract: CSVExtractFunction;
+  format?: CSVFormatFunction;
+  validate?: CSVValidateFunction;
 }
 
 export interface CSVExportConfig {
@@ -26,7 +16,7 @@ export interface CSVExportConfig {
 }
 
 // Utility functions
-const sanitizeCSVValue = (value: any): string => {
+const sanitizeCSVValue = (value: CSVValue): string => {
   if (value === null || value === undefined) return '';
   
   let str = String(value);
@@ -288,7 +278,7 @@ export class CSVExporter {
     }
   }
 
-  generateCSV(receipts: ReceiptData[]): string {
+  generateCSV(receipts: Receipt[]): string {
     const headers = this.config.columns.map(col => col.header);
     const rows: string[] = [headers.join(',')];
 

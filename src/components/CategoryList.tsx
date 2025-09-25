@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { DateRange } from '@/pages/Categories';
 import { PieChart, TrendingUp, Package } from 'lucide-react';
 import * as Icons from 'lucide-react';
+import { CategoryAssignment, LineItem } from '@/types';
 
 interface CategoryStats {
   category_id: string;
@@ -92,11 +93,11 @@ export const CategoryList: React.FC<CategoryListProps> = ({ dateRange }) => {
 
       let grandTotal = 0;
 
-      assignmentData?.forEach((assignment: any) => {
+      assignmentData?.forEach((assignment: CategoryAssignment) => {
         const categoryId = assignment.category_id;
         const categoryName = assignment.categories.display_name;
         const categoryIcon = assignment.categories.icon;
-        const lineItems = assignment.receipts.line_items;
+        const lineItems = assignment.receipts?.line_items as LineItem[] || [];
         const receiptId = assignment.receipts.id;
         
         if (!categoryTotals[categoryId]) {

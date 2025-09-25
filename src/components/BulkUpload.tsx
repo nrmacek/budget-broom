@@ -9,16 +9,18 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
+import { FileUploadResult } from '@/types';
+
 interface FileUploadState {
   file: File;
   status: 'pending' | 'processing' | 'completed' | 'error';
-  result?: any;
+  result?: FileUploadResult;
   error?: string;
   progress: number;
 }
 
 interface BulkUploadProps {
-  onComplete: (results: any[]) => void;
+  onComplete: (results: FileUploadResult[]) => void;
 }
 
 export function BulkUpload({ onComplete }: BulkUploadProps) {
@@ -81,7 +83,7 @@ export function BulkUpload({ onComplete }: BulkUploadProps) {
 
     setIsProcessing(true);
     let completedCount = 0;
-    const results: any[] = [];
+    const results: FileUploadResult[] = [];
 
     try {
       // Process files in parallel but with concurrency limit
@@ -122,7 +124,13 @@ export function BulkUpload({ onComplete }: BulkUploadProps) {
 
         const { error: insertError } = await supabase
           .from('receipts')
-          .insert(receipts);
+          .insert(receipts.map(r => ({
+            ...r,
+            line_items: r.line_items as any,
+            discounts: r.discounts as any,
+            taxes: r.taxes as any,
+            additional_charges: r.additional_charges as any,
+          })));
 
         if (insertError) {
           throw insertError;

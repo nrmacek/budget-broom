@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { DateRange } from '@/pages/Categories';
 import { TrendingUp, DollarSign, Receipt, PieChart } from 'lucide-react';
 import * as Icons from 'lucide-react';
+import { CategoryAssignment, LineItem } from '@/types';
 
 interface CategorySpending {
   category_id: string;
@@ -102,11 +103,11 @@ export const CategoryOverview: React.FC<CategoryOverviewProps> = ({ dateRange })
       let totalItems = 0;
       const receiptIds = new Set();
 
-      spendingData?.forEach((assignment: any) => {
+      spendingData?.forEach((assignment: CategoryAssignment) => {
         const categoryId = assignment.category_id;
         const categoryName = assignment.categories.display_name;
         const categoryIcon = assignment.categories.icon;
-        const lineItems = assignment.receipts.line_items;
+        const lineItems = assignment.receipts?.line_items as LineItem[] || [];
         
         receiptIds.add(assignment.receipts.id);
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Receipt, LogOut, User } from 'lucide-react';
 import { UserProfileDropdown } from '@/components/UserProfileDropdown';
@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { FileUploadResult } from '@/types';
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
@@ -135,7 +136,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleBulkUpload = async (results: any[]) => {
+  const handleBulkUpload = async (results: FileUploadResult[]) => {
     toast({
       title: "Bulk processing completed",
       description: `Successfully processed ${results.length} receipts with enhanced categorization.`,

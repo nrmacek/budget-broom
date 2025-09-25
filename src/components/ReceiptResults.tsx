@@ -8,6 +8,7 @@ import * as Icons from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
 import { useCategoryAssignments } from '@/hooks/useCategoryAssignments';
+import { CategoryAssignment } from '@/types';
 
 interface LineItem {
   id: string;
@@ -73,7 +74,7 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver }: ReceiptR
     const assignments = await getCategoryAssignments(receiptId);
     const assignmentMap: Record<number, string> = {};
     
-    assignments.forEach((assignment: any) => {
+    assignments.forEach((assignment: CategoryAssignment) => {
       assignmentMap[assignment.line_item_index] = assignment.category_id;
     });
     

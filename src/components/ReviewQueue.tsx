@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { DateRange } from '@/pages/Categories';
 import { AlertTriangle, CheckSquare, Search, Filter } from 'lucide-react';
 import * as Icons from 'lucide-react';
+import { LineItem, CategoryAssignment } from '@/types';
 
 interface ReviewItem {
   receipt_id: string;
@@ -102,8 +103,8 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ dateRange }) => {
         const lineItems = Array.isArray(receipt.line_items) ? receipt.line_items : [];
         const assignments = Array.isArray(receipt.category_assignments) ? receipt.category_assignments : [];
 
-        lineItems.forEach((lineItem: any, index: number) => {
-          const assignment = assignments.find((a: any) => a.line_item_index === index);
+        lineItems.forEach((lineItem: LineItem, index: number) => {
+          const assignment = assignments.find((a: CategoryAssignment) => a.line_item_index === index);
           const confidence = assignment?.confidence || 0;
           
           // Determine if item needs review

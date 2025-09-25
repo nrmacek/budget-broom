@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { HistoricalAssignment, LineItem } from '@/types';
 
 export interface SmartSuggestion {
   item_pattern: string;
@@ -131,7 +132,7 @@ export const useSmartSuggestions = () => {
           ? assignment.receipts.line_items 
           : [];
 
-        lineItems.forEach((item: any, index: number) => {
+        (lineItems as LineItem[]).forEach((item: LineItem, index: number) => {
           if (assignment.line_item_index === index) {
             const itemDesc = (item.description || '').toLowerCase();
             
