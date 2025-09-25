@@ -24,9 +24,7 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
   const isCollapsed = state === 'collapsed';
 
   const handleMenuClick = (title: string, url: string) => {
-    console.log('Menu item clicked:', title);
     if (title === 'New Receipt') {
-      console.log('Calling onNewReceipt function');
       onNewReceipt();
     } else {
       navigate(url);
