@@ -8,6 +8,7 @@ export interface LineItem {
   quantity?: number;
   price?: number;
   unit_price?: number;
+  total?: number;
   discount?: number;
   tax?: number;
   is_refund?: boolean;
@@ -45,6 +46,28 @@ export interface CategoryAssignment {
     icon: string;
   };
   receipts?: Receipt;
+}
+
+// Database-specific types that match Supabase return structure
+export interface CategoryAssignmentFromDB {
+  category_id: string;
+  line_item_index: number;
+  confidence?: number;
+  source: string;
+  receipt_id?: string;
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+  categories?: {
+    display_name: string;
+    icon: string;
+  };
+  receipts?: {
+    id: string;
+    line_items: any;
+    created_at: string;
+    user_id: string;
+  };
 }
 
 export interface ReceiptWithAssignments extends Receipt {

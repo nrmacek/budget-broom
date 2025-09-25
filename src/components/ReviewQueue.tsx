@@ -100,11 +100,8 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ dateRange }) => {
       const items: ReviewItem[] = [];
 
       receipts?.forEach((receipt) => {
-        const lineItems = Array.isArray(receipt.line_items) ? receipt.line_items : [];
-        const assignments = Array.isArray(receipt.category_assignments) ? receipt.category_assignments : [];
-
-        lineItems.forEach((lineItem: LineItem, index: number) => {
-          const assignment = assignments.find((a: CategoryAssignment) => a.line_item_index === index);
+        (receipt.line_items as LineItem[]).forEach((lineItem: LineItem, index: number) => {
+          const assignment = (receipt.category_assignments as any[])?.find((a: any) => a.line_item_index === index);
           const confidence = assignment?.confidence || 0;
           
           // Determine if item needs review
@@ -126,7 +123,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ dateRange }) => {
               store_name: receipt.store_name,
               receipt_date: receipt.date,
               item_description: lineItem.description || 'Unknown Item',
-              item_total: parseFloat(lineItem.total) || 0,
+              item_total: lineItem.total || 0,
               current_category_id: assignment?.category_id,
               current_category_name: assignment?.categories?.display_name,
               confidence: confidence,

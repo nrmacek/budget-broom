@@ -74,7 +74,7 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver }: ReceiptR
     const assignments = await getCategoryAssignments(receiptId);
     const assignmentMap: Record<number, string> = {};
     
-    assignments.forEach((assignment: CategoryAssignment) => {
+    assignments.forEach((assignment: any) => {
       assignmentMap[assignment.line_item_index] = assignment.category_id;
     });
     

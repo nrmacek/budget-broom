@@ -103,7 +103,7 @@ export const CategoryOverview: React.FC<CategoryOverviewProps> = ({ dateRange })
       let totalItems = 0;
       const receiptIds = new Set();
 
-      spendingData?.forEach((assignment: CategoryAssignment) => {
+      spendingData?.forEach((assignment: any) => {
         const categoryId = assignment.category_id;
         const categoryName = assignment.categories.display_name;
         const categoryIcon = assignment.categories.icon;
@@ -123,7 +123,7 @@ export const CategoryOverview: React.FC<CategoryOverviewProps> = ({ dateRange })
         // Find the corresponding line item by index
         const lineItem = lineItems[assignment.line_item_index];
         if (lineItem) {
-          const itemTotal = parseFloat(lineItem.total) || 0;
+          const itemTotal = lineItem.total || 0;
           categoryTotals[categoryId].amount += itemTotal;
           categoryTotals[categoryId].count += 1;
           totalSpending += itemTotal;
