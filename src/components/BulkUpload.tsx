@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Upload, FileText, Image, X, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { Upload, FileText, Image, FileSpreadsheet, X, CheckCircle, AlertTriangle, Loader2, Lock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -225,9 +225,9 @@ export function BulkUpload({ onComplete }: BulkUploadProps) {
   return (
     <div className="space-y-6">
       {/* Drop Zone */}
-      <Card className="border-2 border-dashed transition-all duration-200">
+      <Card className="border-2 border-dashed transition-all duration-200 ease-in-out hover:shadow-glow bg-gradient-card/50 backdrop-blur-sm">
         <div
-          className="p-8 text-center"
+          className="p-12 text-center transition-all duration-300 rounded-lg border-border hover:border-primary/50 hover:bg-gradient-subtle/30"
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
@@ -237,11 +237,29 @@ export function BulkUpload({ onComplete }: BulkUploadProps) {
             }
           }}
         >
-          <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-          <h3 className="text-lg font-semibold mb-2">Bulk Receipt Upload</h3>
-          <p className="text-muted-foreground mb-4">
+          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-hero shadow-glow">
+            <Upload className="h-10 w-10 text-white" />
+          </div>
+          
+          <h3 className="mb-4 text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Bulk Receipt Upload</h3>
+          <p className="mb-6 text-muted-foreground text-lg">
             Drop multiple files here or click to select up to 10 receipts
           </p>
+          
+          <div className="mb-8 flex justify-center gap-6">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gradient-subtle/50 px-3 py-2 rounded-full">
+              <Image className="h-4 w-4" />
+              <span className="font-medium">Images</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gradient-subtle/50 px-3 py-2 rounded-full">
+              <FileText className="h-4 w-4" />
+              <span className="font-medium">PDFs</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gradient-subtle/50 px-3 py-2 rounded-full">
+              <FileSpreadsheet className="h-4 w-4" />
+              <span className="font-medium">CSVs</span>
+            </div>
+          </div>
           
           <Button
             onClick={() => {
@@ -256,9 +274,16 @@ export function BulkUpload({ onComplete }: BulkUploadProps) {
               input.click();
             }}
             disabled={isProcessing}
+            variant="hero"
+            size="lg"
+            className="transition-all duration-200 hover:scale-105 shadow-glow"
           >
-            Select Files
+            {isProcessing ? 'Processing...' : 'Select Files'}
           </Button>
+          
+          <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-1">
+            Images, PDFs, CSVs up to 10MB · Secure & private <Lock className="h-3 w-3" />
+          </p>
         </div>
       </Card>
 
