@@ -9,6 +9,7 @@ import { toast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
 import { useCategoryAssignments } from '@/hooks/useCategoryAssignments';
 import { CategoryAssignment } from '@/types';
+import { CSVExporter } from '@/lib/csvExport';
 
 interface LineItem {
   id: string;
@@ -124,29 +125,61 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver }: ReceiptR
   };
 
   const exportToCSV = () => {
-    const headers = ['Description', 'Quantity', 'Unit Price', 'Total', 'Category'];
-    const csvData = [
-      headers.join(','),
-      ...items.map(item => [
-        `"${item.description}"`,
-        item.quantity,
-        item.unitPrice.toFixed(2),
-        item.total.toFixed(2),
-        item.category
-      ].join(','))
-    ].join('\n');
+    try {
+      // Calculate totals from arrays
+      const totalDiscounts = (receiptData.discounts || []).reduce((sum, discount) => sum + discount.amount, 0);
+      const totalTaxes = (receiptData.taxes || []).reduce((sum, tax) => sum + tax.amount, 0);
+      const totalAdditionalCharges = (receiptData.additionalCharges || []).reduce((sum, charge) => sum + charge.amount, 0);
 
-    const blob = new Blob([csvData], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `receipt-${receiptData.storeName}-${receiptData.date}.csv`;
-    a.click();
-    
-    toast({
-      title: "CSV exported successfully",
-      description: "Your receipt data has been downloaded.",
-    });
+      // Transform the local receipt data to match the Receipt interface expected by CSVExporter
+      const transformedReceipt = {
+        id: receiptId || `temp-${Date.now()}`,
+        store_name: receiptData.storeName,
+        date: receiptData.date,
+        total: receiptData.total,
+        subtotal: receiptData.subtotal,
+        line_items: items.map((item, index) => ({
+          name: item.description,
+          description: item.description,
+          quantity: item.quantity,
+          price: item.unitPrice,
+          unit_price: item.unitPrice,
+          total: item.total,
+          category: item.category,
+          discount: 0, // Default values for fields not available in current interface
+          tax: 0,
+          is_refund: false
+        })),
+        discounts: totalDiscounts,
+        taxes: totalTaxes,
+        additional_charges: totalAdditionalCharges,
+        original_filename: `receipt-${receiptData.storeName}-${receiptData.date}`,
+        currency: 'USD'
+      };
+
+      const exporter = new CSVExporter('v2-production');
+      const csvContent = exporter.generateCSV([transformedReceipt]);
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `receipt-${receiptData.storeName}-${receiptData.date}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "CSV exported successfully", 
+        description: "Your comprehensive receipt data has been downloaded.",
+      });
+    } catch (error) {
+      console.error('CSV export error:', error);
+      toast({
+        title: "Export failed",
+        description: "There was an error exporting your receipt data.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getCategorizedItems = () => {
