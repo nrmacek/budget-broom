@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [currentStep, setCurrentStep] = useState('');
   const [extractedData, setExtractedData] = useState<any>(null);
   const [receiptId, setReceiptId] = useState<string | null>(null);
+  const [imagePath, setImagePath] = useState<string | null>(null);
   const [processingMode, setProcessingMode] = useState<'single' | 'bulk'>('single');
   const [currentFileName, setCurrentFileName] = useState<string>('');
   const { getSuggestionsForItem } = useSmartSuggestions();
@@ -38,22 +39,39 @@ const Dashboard = () => {
     setCurrentFileName(file.name);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      // First, upload the file to Supabase Storage
+      const timestamp = Date.now();
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${timestamp}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+
+      setCurrentStep('Storing receipt image...');
+      setProgress(10);
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('receipt-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        throw new Error(`Failed to store image: ${uploadError.message}`);
+      }
+
+      setProgress(20);
+      setCurrentStep('Analyzing image structure...');
 
       // Enhanced progress simulation
       const progressInterval = setInterval(() => {
         setProgress(prev => {
-          if (prev < 25) {
-            setCurrentStep('Analyzing image structure...');
-            return prev + Math.random() * 8;
-          } else if (prev < 50) {
+          if (prev < 40) {
             setCurrentStep('Extracting text with AI vision...');
             return prev + Math.random() * 6;
-          } else if (prev < 75) {
+          } else if (prev < 65) {
             setCurrentStep('Categorizing items intelligently...');
             return prev + Math.random() * 5;
-          } else if (prev < 90) {
+          } else if (prev < 85) {
             setCurrentStep('Finalizing data extraction...');
             return prev + Math.random() * 3;
           }
@@ -61,8 +79,14 @@ const Dashboard = () => {
         });
       }, 400);
 
+      // Call the parse-receipt function with the image path
       const { data, error } = await supabase.functions.invoke('parse-receipt', {
-        body: formData,
+        body: {
+          imagePath: filePath,
+          fileName: file.name,
+          mimeType: file.type,
+          fileSize: file.size
+        },
       });
 
       clearInterval(progressInterval);
@@ -87,7 +111,7 @@ const Dashboard = () => {
         }
       }
 
-      // Save receipt to database
+      // Save receipt to database with image metadata
       const { data: savedReceipt, error: saveError } = await supabase
         .from('receipts')
         .insert({
@@ -101,6 +125,10 @@ const Dashboard = () => {
           taxes: data.taxes || [],
           additional_charges: data.additionalCharges || [],
           original_filename: file.name,
+          image_bucket: 'receipt-images',
+          image_path: filePath,
+          mime_type: file.type,
+          file_size: file.size,
         })
         .select()
         .single();
@@ -113,6 +141,7 @@ const Dashboard = () => {
       setCurrentStep('Complete!');
       setExtractedData(data);
       setReceiptId(savedReceipt.id);
+      setImagePath(filePath);
 
       toast({
         title: "Receipt processed successfully",
@@ -146,6 +175,7 @@ const Dashboard = () => {
   const handleNewReceipt = () => {
     setExtractedData(null);
     setReceiptId(null);
+    setImagePath(null);
     setProgress(0);
     setCurrentStep('');
     setCurrentFileName('');
@@ -217,6 +247,7 @@ const Dashboard = () => {
                     <ReceiptResults 
                       receiptData={extractedData} 
                       receiptId={receiptId}
+                      imagePath={imagePath}
                       onStartOver={handleNewReceipt}
                     />
                   </div>

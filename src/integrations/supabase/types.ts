@@ -174,8 +174,12 @@ export type Database = {
           created_at: string
           date: string
           discounts: Json | null
+          file_size: number | null
           id: string
+          image_bucket: string | null
+          image_path: string | null
           line_items: Json
+          mime_type: string | null
           original_filename: string | null
           processed_at: string
           store_name: string
@@ -190,8 +194,12 @@ export type Database = {
           created_at?: string
           date: string
           discounts?: Json | null
+          file_size?: number | null
           id?: string
+          image_bucket?: string | null
+          image_path?: string | null
           line_items?: Json
+          mime_type?: string | null
           original_filename?: string | null
           processed_at?: string
           store_name: string
@@ -206,8 +214,12 @@ export type Database = {
           created_at?: string
           date?: string
           discounts?: Json | null
+          file_size?: number | null
           id?: string
+          image_bucket?: string | null
+          image_path?: string | null
           line_items?: Json
+          mime_type?: string | null
           original_filename?: string | null
           processed_at?: string
           store_name?: string

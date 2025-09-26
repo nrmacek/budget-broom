@@ -10,6 +10,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { useCategoryAssignments } from '@/hooks/useCategoryAssignments';
 import { CategoryAssignment } from '@/types';
 import { CSVExporter } from '@/lib/csvExport';
+import { PDFGenerator } from '@/lib/pdfGenerator';
 
 interface LineItem {
   id: string;
@@ -52,9 +53,10 @@ interface ReceiptResultsProps {
   receiptData: ReceiptData;
   receiptId?: string;
   onStartOver: () => void;
+  imagePath?: string | null;
 }
 
-export function ReceiptResults({ receiptData, receiptId, onStartOver }: ReceiptResultsProps) {
+export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath }: ReceiptResultsProps) {
   const [items, setItems] = useState<LineItem[]>(receiptData.lineItems);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [categoryAssignments, setCategoryAssignments] = useState<Record<number, string>>({});
@@ -182,6 +184,34 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver }: ReceiptR
     }
   };
 
+  const downloadReceiptPDF = async () => {
+    if (!imagePath) {
+      toast({
+        title: "No image available",
+        description: "This receipt doesn't have an associated image for PDF download.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const filename = `receipt-${receiptData.storeName}-${receiptData.date}`;
+      await PDFGenerator.downloadReceiptPDF(imagePath, filename);
+      
+      toast({
+        title: "PDF downloaded successfully", 
+        description: "Your receipt PDF has been downloaded.",
+      });
+    } catch (error) {
+      console.error('PDF download error:', error);
+      toast({
+        title: "Download failed",
+        description: "There was an error downloading the PDF. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getCategorizedItems = () => {
     const categorized = items.reduce((acc, item) => {
       if (!acc[item.category]) {
@@ -242,6 +272,12 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver }: ReceiptR
                 <Button variant="outline" onClick={onStartOver} className="hover:scale-105 transition-transform">
                   Parse Another Receipt
                 </Button>
+                {imagePath && (
+                  <Button onClick={downloadReceiptPDF} variant="default" className="hover:scale-105 transition-transform">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Receipt PDF
+                  </Button>
+                )}
                 <Button onClick={exportToCSV} variant="hero" className="shadow-glow hover:scale-105 transition-all duration-200">
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV

@@ -55,36 +55,75 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const formData = await req.formData();
-    const file = formData.get('file') as File;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
-    if (!file) {
-      throw new Error('No file provided');
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Supabase configuration not available');
     }
 
-    console.log(`Processing file: ${file.name}, type: ${file.type}, size: ${file.size}`);
-
-    let extractedData: ReceiptData;
-
-    if (file.type.startsWith('image/')) {
-      // Handle image files using OpenAI Vision API
-      extractedData = await processImageReceipt(file, openAIApiKey);
-    } else if (file.type === 'application/pdf') {
-      // For PDF files, we'd need additional processing
-      // For now, return an error asking user to use images
-      throw new Error('PDF processing not yet implemented. Please use image files (JPG, PNG, WebP).');
-    } else if (file.type === 'text/csv') {
-      // Handle CSV files
-      extractedData = await processCsvReceipt(file);
+    const body = await req.json();
+    
+    // Check if we're processing via image path (new method) or direct file upload (legacy)
+    if (body.imagePath) {
+      // New method: fetch image from Supabase Storage
+      console.log(`Processing stored image: ${body.imagePath}, type: ${body.mimeType}`);
+      
+      const imageResponse = await fetch(`${supabaseUrl}/storage/v1/object/receipt-images/${body.imagePath}`, {
+        headers: {
+          'Authorization': `Bearer ${supabaseServiceKey}`
+        }
+      });
+      
+      if (!imageResponse.ok) {
+        throw new Error(`Failed to fetch stored image: ${imageResponse.statusText}`);
+      }
+      
+      const imageBlob = await imageResponse.blob();
+      const file = new File([imageBlob], body.fileName, { type: body.mimeType });
+      
+      let extractedData: ReceiptData;
+      
+      if (body.mimeType.startsWith('image/')) {
+        extractedData = await processImageReceipt(file, openAIApiKey);
+      } else if (body.mimeType === 'text/csv') {
+        extractedData = await processCsvReceipt(file);
+      } else {
+        throw new Error('Unsupported file type. Please use image or CSV files.');
+      }
+      
+      console.log('Successfully parsed receipt:', extractedData);
+      return new Response(JSON.stringify(extractedData), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     } else {
-      throw new Error('Unsupported file type. Please use image, PDF, or CSV files.');
+      // Legacy method: handle FormData (for backward compatibility)
+      const formData = await req.formData();
+      const file = formData.get('file') as File;
+      
+      if (!file) {
+        throw new Error('No file provided');
+      }
+
+      console.log(`Processing file: ${file.name}, type: ${file.type}, size: ${file.size}`);
+
+      let extractedData: ReceiptData;
+
+      if (file.type.startsWith('image/')) {
+        extractedData = await processImageReceipt(file, openAIApiKey);
+      } else if (file.type === 'application/pdf') {
+        throw new Error('PDF processing not yet implemented. Please use image files (JPG, PNG, WebP).');
+      } else if (file.type === 'text/csv') {
+        extractedData = await processCsvReceipt(file);
+      } else {
+        throw new Error('Unsupported file type. Please use image, PDF, or CSV files.');
+      }
+      
+      console.log('Successfully parsed receipt:', extractedData);
+      return new Response(JSON.stringify(extractedData), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
-
-    console.log('Successfully parsed receipt:', extractedData);
-
-    return new Response(JSON.stringify(extractedData), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
 
   } catch (error) {
     console.error('Error in parse-receipt function:', error);
