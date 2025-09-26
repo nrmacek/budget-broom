@@ -5,7 +5,7 @@ import { useSidebar } from '@/components/ui/sidebar';
 
 const menuItems = [
   { title: 'New Receipt', url: '/dashboard', icon: Plus },
-  { title: 'Receipt History', url: '/history', icon: History },
+  { title: 'History', url: '/history', icon: History },
   { title: 'Categories', url: '/categories', icon: Tag },
 ];
 
