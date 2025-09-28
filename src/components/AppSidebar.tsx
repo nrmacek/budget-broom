@@ -47,7 +47,7 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
             <img 
               src={logo} 
               alt="Best Receipt Parser Logo" 
-              className="h-8 w-auto object-contain shrink-0"
+              className="h-10 w-auto object-contain shrink-0"
             />
             <span className="nav-item__label font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent overflow-hidden transition-all duration-200">
               ReceiptParser

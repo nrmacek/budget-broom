@@ -108,7 +108,7 @@ const Auth = () => {
             <img 
               src={logo} 
               alt="Best Receipt Parser Logo" 
-              className="h-8 w-auto object-contain"
+              className="h-12 w-auto object-contain flex-shrink-0"
             />
             <h1 className="text-xl font-bold font-raleway">ReceiptParser</h1>
           </div>
