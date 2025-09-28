@@ -40,7 +40,7 @@ const Landing = () => {
             <div className="p-2 bg-gradient-hero">
               <Receipt className="h-5 w-5 text-white" />
             </div>
-            <h1 className="text-lg font-bold font-raleway">ReceiptParser</h1>
+            <h1 className="text-lg font-bold font-raleway"><span style={{ color: '#3498DB' }}>Best</span> Receipt Parser</h1>
           </div>
           
           {/* Center Pill Navigation - Absolutely Centered */}
