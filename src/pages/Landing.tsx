@@ -41,7 +41,7 @@ const Landing = () => {
             <img 
               src={logo} 
               alt="Best Receipt Parser Logo" 
-              className="h-8 w-8"
+              className="h-8 w-auto object-contain"
             />
             <h1 className="text-xl font-bold font-raleway"><span style={{ color: '#3498DB' }}>Best</span> Receipt Parser</h1>
           </div>
@@ -503,7 +503,7 @@ const Landing = () => {
                 <img 
                   src={logo} 
                   alt="Best Receipt Parser Logo" 
-                  className="h-6 w-6"
+                  className="h-6 w-auto object-contain"
                 />
                 <h3 className="font-bold font-raleway"><span style={{ color: '#3498DB' }}>Best</span> Receipt Parser</h3>
               </div>
