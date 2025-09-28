@@ -43,7 +43,7 @@ const Landing = () => {
               alt="Best Receipt Parser Logo" 
               className="h-12 w-auto object-contain flex-shrink-0 rounded-none"
             />
-            <h1 className="text-xl font-bold font-raleway"><span style={{ color: '#3498DB' }}>Best</span> Receipt Parser</h1>
+            <h1 className="text-xl font-bold font-raleway"><span style={{ color: '#3498DB' }}>Best</span>ReceiptParser<span className="font-normal">.com</span></h1>
           </div>
           
           {/* Center Pill Navigation - Absolutely Centered */}
