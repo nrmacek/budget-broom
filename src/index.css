@@ -117,6 +117,7 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+    border-radius: calc(var(--radius) * 1.5);
   }
 
   body {

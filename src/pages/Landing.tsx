@@ -78,10 +78,10 @@ const Landing = () => {
             <div className="space-y-8">
               <div className="space-y-6">
                 <h1 className="font-raleway leading-[1.15]">
-                  <div className="text-5xl md:text-6xl lg:text-7xl text-foreground font-bold tracking-tight">
+                  <div className="text-5xl md:text-6xl lg:text-7xl text-foreground font-normal tracking-tight">
                     Receipts → Ready-to-Use
                   </div>
-                  <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-bold tracking-tight mt-2">
+                  <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-normal tracking-tight mt-2">
                     Data in Seconds.
                   </div>
                 </h1>
@@ -97,6 +97,7 @@ const Landing = () => {
                     className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-12 py-7 h-auto font-semibold"
                   >
                     Parse My First Receipt
+                    <ArrowRight className="h-5 w-5 ml-2" />
                   </Button>
                 </Link>
                 <p className="text-sm text-muted-foreground/60 font-sans font-normal">
