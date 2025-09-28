@@ -86,7 +86,7 @@ export function ReceiptUpload({ onFileSelect }: ReceiptUploadProps) {
           <Upload className="h-10 w-10 text-white" />
         </div>
         
-        <h3 className="mb-4 text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Upload Your Receipt</h3>
+        <h3 className="mb-4 text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-raleway">Upload Your Receipt</h3>
         <p className="mb-6 text-muted-foreground text-lg">
           Drag and drop your receipt here, or click to browse
         </p>

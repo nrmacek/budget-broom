@@ -266,7 +266,7 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
                   <Receipt className="h-4 w-4 text-primary" />
                   <span className="text-sm font-medium text-primary">Parsing Complete</span>
                 </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Receipt Parsed Successfully</h1>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-raleway">Receipt Parsed Successfully</h1>
               </div>
               <div className="flex gap-3">
                 <Button variant="outline" onClick={onStartOver} className="hover:scale-105 transition-transform">
@@ -325,7 +325,7 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
 
           {/* Category Buckets */}
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Spending by Category</h2>
+            <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-raleway">Spending by Category</h2>
             
             <div className="grid gap-6">
               {getCategorizedItems().map(({ category, items: categoryItems, total }) => {

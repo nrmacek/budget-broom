@@ -53,7 +53,7 @@ const Categories = () => {
           <header className="border-b bg-card/50 backdrop-blur-md sticky top-0 z-50 shadow-soft">
             <div className="px-6 py-4 flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-raleway">
                   Categories
                 </h1>
                 <p className="text-muted-foreground">

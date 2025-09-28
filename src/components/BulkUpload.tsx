@@ -241,7 +241,7 @@ export function BulkUpload({ onComplete }: BulkUploadProps) {
             <Upload className="h-10 w-10 text-white" />
           </div>
           
-          <h3 className="mb-4 text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Bulk Receipt Upload</h3>
+          <h3 className="mb-4 text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-raleway">Bulk Receipt Upload</h3>
           <p className="mb-6 text-muted-foreground text-lg">
             Drop multiple files here or click to select up to 10 receipts
           </p>
