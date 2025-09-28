@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import BRPLogo from '@/assets/BRP_Logo.svg';
+import BRPLogo from '@/assets/BRP_Logo.svg?url';
 import { 
   Zap, 
   Shield, 

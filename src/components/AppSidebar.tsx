@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tag, Settings, Plus, History, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import BRPLogo from '@/assets/BRP_Logo.svg';
+import BRPLogo from '@/assets/BRP_Logo.svg?url';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSidebar } from '@/components/ui/sidebar';
 
