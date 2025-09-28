@@ -131,20 +131,22 @@ const Landing = () => {
             </p>
             
             {/* Monthly/Yearly Toggle */}
-            <div className="flex items-center justify-center gap-4 mt-8 mb-8">
-              <span className={`text-sm font-medium transition-colors ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
-                Monthly
-              </span>
-              <Switch
-                checked={isYearly}
-                onCheckedChange={setIsYearly}
-                className="data-[state=checked]:bg-primary"
-              />
-              <span className={`text-sm font-medium transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
-                Yearly
-              </span>
+            <div className="flex flex-col items-center gap-3 mt-8 mb-8">
+              <div className="flex items-center justify-center gap-4">
+                <span className={`text-sm font-medium transition-colors ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  Monthly
+                </span>
+                <Switch
+                  checked={isYearly}
+                  onCheckedChange={setIsYearly}
+                  className="data-[state=checked]:bg-primary"
+                />
+                <span className={`text-sm font-medium transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  Yearly
+                </span>
+              </div>
               {isYearly && (
-                <Badge variant="secondary" className="ml-2 bg-success/10 text-success border-success/20">
+                <Badge variant="secondary" className="bg-success/10 text-success border-success/20 animate-fade-in">
                   Save up to 20%
                 </Badge>
               )}
