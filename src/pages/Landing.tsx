@@ -77,28 +77,29 @@ const Landing = () => {
             {/* Left Side - Content */}
             <div className="space-y-8">
               <div className="space-y-6">
-                <h1 className="text-6xl lg:text-7xl leading-tight tracking-tight font-raleway">
-                  Receipts → Ready-to-Use
-                  <span className="bg-gradient-hero bg-clip-text text-transparent block mt-2">
+                <h1 className="font-raleway leading-[1.15]">
+                  <div className="text-5xl md:text-6xl lg:text-7xl text-foreground font-bold tracking-tight">
+                    Receipts → Ready-to-Use
+                  </div>
+                  <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-bold tracking-tight mt-2">
                     Data in Seconds.
-                  </span>
+                  </div>
                 </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed font-sans">
+                <p className="text-lg md:text-xl text-muted-foreground/80 leading-relaxed font-sans font-medium max-w-2xl">
                   Upload receipts, get clean, categorized expense data you can understand, track, and export.
                 </p>
               </div>
               
-              <div className="flex flex-col items-start gap-4">
+              <div className="flex flex-col items-start gap-3">
                 <Link to="/auth?tab=signup">
                   <Button 
                     size="lg" 
-                    className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-8 py-6 h-auto font-semibold"
+                    className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-12 py-7 h-auto font-semibold"
                   >
-                    👉 Parse My First Receipt
-                    <ArrowRight className="h-5 w-5 ml-2" />
+                    Parse My First Receipt
                   </Button>
                 </Link>
-                <p className="text-sm text-muted-foreground font-sans">
+                <p className="text-sm text-muted-foreground/60 font-sans font-normal">
                   No credit card required
                 </p>
               </div>
