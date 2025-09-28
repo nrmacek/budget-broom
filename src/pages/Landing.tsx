@@ -503,7 +503,7 @@ const Landing = () => {
                 <img 
                   src={logo} 
                   alt="Best Receipt Parser Logo" 
-                  className="h-8 w-auto object-contain flex-shrink-0"
+                  className="h-8 w-auto object-contain flex-shrink-0 rounded-none"
                 />
                 <h3 className="font-bold font-raleway"><span style={{ color: '#3498DB' }}>Best</span> Receipt Parser</h3>
               </div>
