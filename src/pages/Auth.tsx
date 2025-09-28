@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Receipt } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import BRPLogo from '@/assets/BRP_Logo.svg?url';
 
 const Auth = () => {
   const { user, loading, signIn, signUp } = useAuth();
@@ -104,10 +105,9 @@ const Auth = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="p-2 rounded-lg bg-gradient-hero">
-              <Receipt className="h-6 w-6 text-white" />
+            <div className="p-3 rounded-lg bg-gradient-hero">
+              <img src={BRPLogo} alt="BRP Logo" className="h-8 w-auto" />
             </div>
-            <h1 className="text-xl font-bold font-raleway">ReceiptParser</h1>
           </div>
           <p className="text-muted-foreground">
             {activeTab === 'signup' ? 'Sign up to start analyzing receipts' : 'Sign in to access your receipt processing dashboard'}
