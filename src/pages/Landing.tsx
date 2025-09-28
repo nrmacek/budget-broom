@@ -126,6 +126,26 @@ const Landing = () => {
             <p className="text-xl text-muted-foreground font-sans">
               Choose the plan that fits your needs
             </p>
+            
+            {/* Monthly/Yearly Toggle */}
+            <div className="flex items-center justify-center gap-4 mt-8 mb-8">
+              <span className={`text-sm font-medium transition-colors ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+                Monthly
+              </span>
+              <Switch
+                checked={isYearly}
+                onCheckedChange={setIsYearly}
+                className="data-[state=checked]:bg-primary"
+              />
+              <span className={`text-sm font-medium transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+                Yearly
+              </span>
+              {isYearly && (
+                <Badge variant="secondary" className="ml-2 bg-success/10 text-success border-success/20">
+                  Save up to 20%
+                </Badge>
+              )}
+            </div>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -136,7 +156,7 @@ const Landing = () => {
                   <h3 className="text-2xl font-bold mb-2 font-raleway">Basic</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold font-raleway">$0</span>
-                    <span className="text-muted-foreground font-sans">/month</span>
+                    <span className="text-muted-foreground font-sans">/{isYearly ? 'year' : 'month'}</span>
                   </div>
                   <p className="text-muted-foreground font-sans">Perfect for getting started</p>
                 </div>
@@ -169,13 +189,18 @@ const Landing = () => {
               <div className="absolute top-0 right-0 bg-warning text-warning-foreground px-3 py-1 text-sm font-semibold">
                 Most Popular
               </div>
+              {isYearly && (
+                <div className="absolute top-0 left-0 bg-success text-success-foreground px-3 py-1 text-sm font-semibold">
+                  Save $22
+                </div>
+              )}
               
               <div className="space-y-6">
                 <div>
                   <h3 className="text-2xl font-bold mb-2 font-raleway">Standard</h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold font-raleway">$9</span>
-                    <span className="text-white/80 font-sans">/month</span>
+                    <span className="text-4xl font-bold font-raleway">${isYearly ? '86' : '9'}</span>
+                    <span className="text-white/80 font-sans">/{isYearly ? 'year' : 'month'}</span>
                   </div>
                   <p className="text-white/80 font-sans">For regular users</p>
                 </div>
@@ -208,13 +233,18 @@ const Landing = () => {
             </Card>
 
             {/* Enterprise Plan */}
-            <Card className="p-8 bg-white border border-border shadow-medium">
+            <Card className="p-8 bg-white border border-border shadow-medium relative">
+              {isYearly && (
+                <div className="absolute top-0 right-0 bg-success text-success-foreground px-3 py-1 text-sm font-semibold">
+                  Save $70
+                </div>
+              )}
               <div className="space-y-6">
                 <div>
                   <h3 className="text-2xl font-bold mb-2 font-raleway">Enterprise</h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold font-raleway">$29</span>
-                    <span className="text-muted-foreground font-sans">/month</span>
+                    <span className="text-4xl font-bold font-raleway">${isYearly ? '278' : '29'}</span>
+                    <span className="text-muted-foreground font-sans">/{isYearly ? 'year' : 'month'}</span>
                   </div>
                   <p className="text-muted-foreground font-sans">For power users</p>
                 </div>
