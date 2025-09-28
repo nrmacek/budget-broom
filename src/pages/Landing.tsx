@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import BRPLogo from '@/assets/BRP_Logo.svg';
 import { 
-  Receipt, 
   Zap, 
   Shield, 
   Download, 
@@ -36,11 +36,8 @@ const Landing = () => {
       <header className="py-4 px-4">
         <div className="max-w-7xl mx-auto relative flex items-center justify-between">
           {/* Logo - Outside Pill */}
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-gradient-hero">
-              <Receipt className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-lg font-bold font-raleway">ReceiptParser</h1>
+          <div className="flex items-center">
+            <img src={BRPLogo} alt="BRP Logo" className="h-8" />
           </div>
           
           {/* Center Pill Navigation - Absolutely Centered */}
@@ -497,10 +494,7 @@ const Landing = () => {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="p-2 bg-gradient-hero">
-                  <Receipt className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="font-bold font-raleway">ReceiptParser</h3>
+                <img src={BRPLogo} alt="BRP Logo" className="h-6" />
               </div>
               <p className="text-sm text-muted-foreground font-sans">
                 Receipts Made Useful
