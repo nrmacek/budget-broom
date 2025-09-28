@@ -85,7 +85,7 @@ const Landing = () => {
                     Receipts → Ready-to-Use
                   </div>
                   <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-bold tracking-tight mt-2">
-                    Data in Seconds.
+                    Data <span className="italic">in Seconds.</span>
                   </div>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground/80 leading-relaxed font-sans font-medium max-w-2xl">
