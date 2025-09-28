@@ -78,13 +78,13 @@ const Landing = () => {
             <div className="space-y-8">
               <div className="space-y-6">
                 <h1 className="text-6xl lg:text-7xl leading-tight tracking-tight font-raleway">
-                  Know Exactly Where
+                  Receipts → Ready-to-Use
                   <span className="bg-gradient-hero bg-clip-text text-transparent block mt-2">
-                    Your Money Goes
+                    Data in Seconds.
                   </span>
                 </h1>
                 <p className="text-xl text-muted-foreground leading-relaxed font-sans">
-                  Turn vague charges and messy receipts into clear, categorized expenses you can understand, track, and export.
+                  Upload receipts, get clean, categorized expense data you can understand, track, and export.
                 </p>
               </div>
               
@@ -94,7 +94,7 @@ const Landing = () => {
                     size="lg" 
                     className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-8 py-6 h-auto font-semibold"
                   >
-                    Get Started Free
+                    👉 Parse My First Receipt
                     <ArrowRight className="h-5 w-5 ml-2" />
                   </Button>
                 </Link>
@@ -254,13 +254,24 @@ const Landing = () => {
       {/* Trusted By Section */}
       <section className="py-8 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-sm text-muted-foreground mb-8 font-sans">Powered by enterprise-grade technology</p>
+          <p className="text-lg text-muted-foreground mb-8 font-sans">Trusted by small businesses, bookkeepers, and home budgeters.</p>
           
-          <div className="flex justify-center items-center gap-12 opacity-60">
+          <div className="flex justify-center items-center gap-8 mb-12">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm">MJ</div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-semibold text-sm">RK</div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">AL</div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-semibold text-sm">JS</div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center text-white font-semibold text-sm">TW</div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm">DM</div>
+          </div>
+
+          <p className="text-sm text-muted-foreground font-sans">Powered by enterprise-grade technology</p>
+          
+          <div className="flex justify-center items-center gap-12 opacity-60 mt-6">
             <div className="text-lg font-semibold text-muted-foreground font-sans">Google Cloud Vision</div>
-            <div className="w-1 h-1 bg-muted-foreground"></div>
+            <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
             <div className="text-lg font-semibold text-muted-foreground font-sans">OpenAI GPT</div>
-            <div className="w-1 h-1 bg-muted-foreground"></div>
+            <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
             <div className="text-lg font-semibold text-muted-foreground font-sans">Advanced OCR</div>
           </div>
         </div>
@@ -460,7 +471,7 @@ const Landing = () => {
                 <h3 className="font-bold font-raleway">ReceiptParser</h3>
               </div>
               <p className="text-sm text-muted-foreground font-sans">
-                Turn messy receipts into clear, categorized expenses.
+                Receipts Made Useful
               </p>
             </div>
             
@@ -491,7 +502,7 @@ const Landing = () => {
           </div>
           
           <div className="pt-8 border-t text-center text-sm text-muted-foreground">
-            <p className="font-sans">&copy; 2024 ReceiptParser. All rights reserved.</p>
+            <p className="font-sans">&copy; 2025 ReceiptParser. All rights reserved.</p>
           </div>
         </div>
       </footer>
