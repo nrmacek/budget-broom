@@ -71,7 +71,7 @@ const Landing = () => {
       </header>
 
       {/* Hero Section - Split Layout */}
-      <section className="py-20 px-4">
+      <section className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Side - Content */}
@@ -117,9 +117,9 @@ const Landing = () => {
       </section>
 
       {/* Pricing Section - Simplified */}
-      <section id="pricing" className="py-20 px-4 bg-gradient-subtle">
+      <section id="pricing" className="py-12 px-4 bg-gradient-subtle">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 font-raleway">Simple pricing for everyone</h2>
             <p className="text-xl text-muted-foreground font-sans">
               Choose the plan that fits your needs
@@ -252,7 +252,7 @@ const Landing = () => {
       </section>
 
       {/* Trusted By Section */}
-      <section className="py-16 px-4 overflow-hidden">
+      <section className="py-8 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-sm text-muted-foreground mb-8 font-sans">Powered by enterprise-grade technology</p>
           
@@ -267,9 +267,9 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4">
+      <section id="features" className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 font-raleway">Everything you need to track expenses</h2>
             <p className="text-xl text-muted-foreground font-sans">
               Powerful features designed for clarity and ease of use
@@ -321,9 +321,9 @@ const Landing = () => {
       </section>
 
       {/* Use Cases Section */}
-      <section className="py-20 px-4 bg-gradient-subtle">
+      <section className="py-12 px-4 bg-gradient-subtle">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 font-raleway">Perfect for every situation</h2>
             <p className="text-xl text-muted-foreground font-sans">
               Whether personal or business, ReceiptParser adapts to your needs
@@ -374,9 +374,9 @@ const Landing = () => {
       </section>
 
       {/* FAQs */}
-      <section id="faq" className="py-20 px-4">
+      <section id="faq" className="py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 font-raleway">Frequently Asked Questions</h2>
           </div>
           
@@ -421,7 +421,7 @@ const Landing = () => {
       </section>
 
       {/* Final CTA */}
-      <section id="final-cta" className="py-20 px-4">
+      <section id="final-cta" className="py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gradient-hero p-12 text-white shadow-glow">
             <h2 className="text-4xl font-bold mb-6 font-raleway">
@@ -449,7 +449,7 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t bg-muted/10">
+      <footer className="py-8 px-4 border-t bg-muted/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
