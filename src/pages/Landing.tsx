@@ -81,7 +81,7 @@ const Landing = () => {
                   <div className="text-5xl md:text-6xl lg:text-7xl text-foreground font-bold tracking-tight">
                     Receipts → Ready-to-Use
                   </div>
-                  <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-normal tracking-tight mt-2">
+                  <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-bold tracking-tight mt-2">
                     Data in Seconds.
                   </div>
                 </h1>
