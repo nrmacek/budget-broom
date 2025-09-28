@@ -2,6 +2,7 @@ import React from 'react';
 import { Receipt, Tag, Settings, Plus, History, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSidebar } from '@/components/ui/sidebar';
+import logo from '@/assets/BRP_Logo_Only.png';
 
 const menuItems = [
   { title: 'New Receipt', url: '/dashboard', icon: Plus },
@@ -43,9 +44,11 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
         {/* Header */}
         <div className="sidebar__header">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-hero shadow-glow shrink-0">
-              <Receipt className="h-5 w-5 text-white" />
-            </div>
+            <img 
+              src={logo} 
+              alt="Best Receipt Parser Logo" 
+              className="h-8 w-8 shrink-0"
+            />
             <span className="nav-item__label font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent overflow-hidden transition-all duration-200">
               ReceiptParser
             </span>

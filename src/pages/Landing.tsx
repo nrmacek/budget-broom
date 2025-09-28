@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import heroPlaceholder from '@/assets/hero-placeholder.jpg';
+import logo from '@/assets/BRP_Logo_Only.png';
 
 const Landing = () => {
   const [isYearly, setIsYearly] = useState(false);
@@ -37,9 +38,11 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto relative flex items-center justify-between">
           {/* Logo - Outside Pill */}
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-gradient-hero">
-              <Receipt className="h-5 w-5 text-white" />
-            </div>
+            <img 
+              src={logo} 
+              alt="Best Receipt Parser Logo" 
+              className="h-8 w-8"
+            />
             <h1 className="text-xl font-bold font-raleway"><span style={{ color: '#3498DB' }}>Best</span> Receipt Parser</h1>
           </div>
           
@@ -497,9 +500,11 @@ const Landing = () => {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="p-2 bg-gradient-hero">
-                  <Receipt className="h-5 w-5 text-white" />
-                </div>
+                <img 
+                  src={logo} 
+                  alt="Best Receipt Parser Logo" 
+                  className="h-6 w-6"
+                />
                 <h3 className="font-bold font-raleway">ReceiptParser</h3>
               </div>
               <p className="text-sm text-muted-foreground font-sans">
