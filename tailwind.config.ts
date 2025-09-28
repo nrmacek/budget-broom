@@ -75,6 +75,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        raleway: ['Raleway', 'sans-serif'],
       },
       boxShadow: {
         soft: "var(--shadow-soft)",
