@@ -78,7 +78,7 @@ const Landing = () => {
             <div className="space-y-8">
               <div className="space-y-6">
                 <h1 className="font-raleway leading-[1.15]">
-                  <div className="text-5xl md:text-6xl lg:text-7xl text-foreground font-normal tracking-tight">
+                  <div className="text-5xl md:text-6xl lg:text-7xl text-foreground font-bold tracking-tight">
                     Receipts → Ready-to-Use
                   </div>
                   <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-normal tracking-tight mt-2">
