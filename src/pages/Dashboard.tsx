@@ -209,7 +209,7 @@ const Dashboard = () => {
 
           <section className="py-8 px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className={`grid gap-8 ${extractedData ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
                 <div className="space-y-6">
                   {/* Toggle between single and bulk upload */}
                   <div className="flex gap-2 mb-6">
