@@ -507,7 +507,7 @@ const Landing = () => {
                   alt="Best Receipt Parser Logo" 
                   className="h-8 w-auto object-contain flex-shrink-0 rounded-none"
                 />
-                <h3 className="font-bold font-raleway"><span style={{ color: '#3498DB' }}>Best</span> Receipt Parser</h3>
+                <h3 className="font-bold font-raleway"><span style={{ color: '#1D75EF' }}>Best</span> Receipt Parser</h3>
               </div>
               <p className="text-sm text-muted-foreground font-sans">
                 Receipts Made Useful
