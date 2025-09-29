@@ -18,11 +18,92 @@ import {
   FileText,
   BarChart3,
   Lock,
-  Search
+  Search,
+  X
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import heroPlaceholder from '@/assets/hero-placeholder.jpg';
 import logo from '@/assets/BRP_Logo_Only.png';
+import { useSubscription, PRICING_CONFIG } from '@/hooks/useSubscription';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from '@/hooks/use-toast';
+
+// Checkout Button Components
+const PlusCheckoutButton = ({ isYearly }: { isYearly: boolean }) => {
+  const { createCheckout } = useSubscription();
+  const { user } = useAuth();
+  
+  const handleCheckout = async () => {
+    if (!user) {
+      window.location.href = '/auth?tab=signup';
+      return;
+    }
+    
+    try {
+      const priceId = isYearly ? PRICING_CONFIG.plus.yearly_price_id : PRICING_CONFIG.plus.monthly_price_id;
+      const url = await createCheckout(priceId);
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to create checkout session. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <Button onClick={handleCheckout} className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
+      Start Plus
+    </Button>
+  );
+};
+
+const ProCheckoutButton = ({ isYearly }: { isYearly: boolean }) => {
+  const { createCheckout } = useSubscription();
+  const { user } = useAuth();
+  
+  const handleCheckout = async () => {
+    if (!user) {
+      window.location.href = '/auth?tab=signup';
+      return;
+    }
+    
+    try {
+      const priceId = isYearly ? PRICING_CONFIG.pro.yearly_price_id : PRICING_CONFIG.pro.monthly_price_id;
+      const url = await createCheckout(priceId);
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to create checkout session. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <Button onClick={handleCheckout} className="w-full font-semibold">
+      Start Pro
+    </Button>
+  );
+};
 
 const Landing = () => {
   const [isYearly, setIsYearly] = useState(false);
@@ -121,13 +202,13 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing Section - Simplified */}
-      <section id="pricing" className="py-12 px-4 bg-gradient-subtle">
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 px-4 bg-gradient-subtle">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4 font-raleway">Simple pricing for everyone</h2>
+            <h2 className="text-4xl font-bold mb-4 font-raleway">Simple pricing, no surprises</h2>
             <p className="text-xl text-muted-foreground font-sans">
-              Choose the plan that fits your needs
+              Choose the plan that fits your receipts.
             </p>
             
             {/* Monthly/Yearly Toggle */}
@@ -147,23 +228,23 @@ const Landing = () => {
               </div>
               {isYearly && (
                 <Badge variant="secondary" className="bg-success/10 text-success border-success/20 animate-fade-in">
-                  Save up to 20%
+                  2 months free
                 </Badge>
               )}
             </div>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Basic Plan */}
+            {/* Free Plan */}
             <Card className="p-8 bg-white border border-border shadow-medium">
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold mb-2 font-raleway">Basic</h3>
+                  <h3 className="text-2xl font-bold mb-2 font-raleway">Free</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold font-raleway">$0</span>
-                    <span className="text-muted-foreground font-sans">/{isYearly ? 'year' : 'month'}</span>
+                    <span className="text-muted-foreground font-sans"> / month</span>
                   </div>
-                  <p className="text-muted-foreground font-sans">Perfect for getting started</p>
+                  <p className="text-muted-foreground font-sans">Try it out. For individuals with just a handful of receipts.</p>
                 </div>
                 
                 <div className="space-y-3">
@@ -173,11 +254,19 @@ const Landing = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span className="font-sans">Basic categorization</span>
+                    <span className="font-sans">Basic categorization only</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
-                    <span className="font-sans">Email support</span>
+                    <X className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-sans text-muted-foreground">No recategorization or custom categories</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <X className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-sans text-muted-foreground">No export</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <X className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-sans text-muted-foreground">No receipt history</span>
                   </div>
                 </div>
                 
@@ -189,31 +278,33 @@ const Landing = () => {
               </div>
             </Card>
 
-            {/* Standard Plan */}
+            {/* Plus Plan */}
             <Card className="p-8 bg-gradient-hero text-white shadow-glow relative border-0 scale-105">
-              <div className="absolute top-0 right-0 bg-warning text-warning-foreground px-3 py-1 text-sm font-semibold">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-warning text-warning-foreground px-4 py-1 text-sm font-semibold rounded-full">
                 Most Popular
               </div>
-              {isYearly && (
-                <div className="absolute top-0 left-0 bg-success text-success-foreground px-3 py-1 text-sm font-semibold">
-                  Save $22
-                </div>
-              )}
               
-              <div className="space-y-6">
+              <div className="space-y-6 mt-4">
                 <div>
-                  <h3 className="text-2xl font-bold mb-2 font-raleway">Standard</h3>
+                  <h3 className="text-2xl font-bold mb-2 font-raleway">Plus</h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold font-raleway">${isYearly ? '86' : '9'}</span>
-                    <span className="text-white/80 font-sans">/{isYearly ? 'year' : 'month'}</span>
+                    <span className="text-4xl font-bold font-raleway">${isYearly ? '120' : '12'}</span>
+                    <span className="text-white/80 font-sans"> / {isYearly ? 'year' : 'month'}</span>
                   </div>
-                  <p className="text-white/80 font-sans">For regular users</p>
+                  {isYearly && (
+                    <p className="text-sm text-white/90 font-sans mb-2">or $120 / year (2 months free)</p>
+                  )}
+                  <p className="text-white/80 font-sans">For regular users who need more control and organization.</p>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
-                    <span className="font-sans">50 receipts / month</span>
+                    <span className="font-sans">500 receipts / month</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="h-5 w-5 text-white" />
+                    <span className="font-sans">Advanced categorization (recategorization + custom categories)</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
@@ -221,47 +312,45 @@ const Landing = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
-                    <span className="font-sans">Advanced categorization</span>
+                    <span className="font-sans">90-day receipt history</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-white" />
-                    <span className="font-sans">Priority support</span>
+                    <span className="font-sans">Customer support access</span>
                   </div>
                 </div>
                 
-                <Link to="/auth?tab=signup" className="block">
-                  <Button className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
-                    Start Standard Plan
-                  </Button>
-                </Link>
+                <PlusCheckoutButton isYearly={isYearly} />
               </div>
             </Card>
 
-            {/* Enterprise Plan */}
+            {/* Pro Plan */}
             <Card className="p-8 bg-white border border-border shadow-medium relative">
-              {isYearly && (
-                <div className="absolute top-0 right-0 bg-success text-success-foreground px-3 py-1 text-sm font-semibold">
-                  Save $70
-                </div>
-              )}
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold mb-2 font-raleway">Enterprise</h3>
+                  <h3 className="text-2xl font-bold mb-2 font-raleway">Pro</h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold font-raleway">${isYearly ? '278' : '29'}</span>
-                    <span className="text-muted-foreground font-sans">/{isYearly ? 'year' : 'month'}</span>
+                    <span className="text-4xl font-bold font-raleway">${isYearly ? '390' : '39'}</span>
+                    <span className="text-muted-foreground font-sans"> / {isYearly ? 'year' : 'month'}</span>
                   </div>
-                  <p className="text-muted-foreground font-sans">For power users</p>
+                  {isYearly && (
+                    <p className="text-sm text-muted-foreground font-sans mb-2">or $390 / year (2 months free)</p>
+                  )}
+                  <p className="text-muted-foreground font-sans">For businesses, accountants, and power users.</p>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span className="font-sans">500 receipts / month</span>
+                    <span className="font-sans">2,500 receipts / month</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span className="font-sans">Multiple export formats</span>
+                    <span className="font-sans">Everything in Plus</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Check className="h-5 w-5 text-success" />
+                    <span className="font-sans">Multi-file export (CSV, PDF, QuickBooks)</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
@@ -269,21 +358,20 @@ const Landing = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span className="font-sans">Advanced analytics</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
-                    <span className="font-sans">Dedicated support</span>
+                    <span className="font-sans">Priority customer support</span>
                   </div>
                 </div>
                 
-                <Link to="/auth" className="block">
-                  <Button className="w-full font-semibold">
-                    Start Enterprise Plan
-                  </Button>
-                </Link>
+                <ProCheckoutButton isYearly={isYearly} />
               </div>
             </Card>
+          </div>
+          
+          {/* Footer under tiers */}
+          <div className="text-center mt-12">
+            <p className="text-sm text-muted-foreground font-sans">
+              No credits. No hidden fees. Just receipts.
+            </p>
           </div>
         </div>
       </section>
