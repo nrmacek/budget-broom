@@ -168,10 +168,10 @@ const Landing = () => {
               <div className="space-y-6">
                 <h1 className="font-raleway leading-[1.15]">
                   <div className="text-5xl md:text-6xl lg:text-7xl text-foreground font-bold tracking-tight">
-                    Receipts → Ready-to-Use
+                    Receipts → Ready-to-Use Data
                   </div>
                   <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-bold tracking-tight mt-2">
-                    Data <span className="italic">in Seconds.</span>
+                    <span className="italic">in Seconds.</span>
                   </div>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground/80 leading-relaxed font-sans font-medium max-w-2xl">
