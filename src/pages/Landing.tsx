@@ -3,24 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Receipt, 
-  Zap, 
-  Shield, 
-  Download, 
-  ArrowRight, 
-  Eye, 
-  Users, 
-  Building, 
-  Check, 
-  Star, 
-  Mail,
-  FileText,
-  BarChart3,
-  Lock,
-  Search,
-  X
-} from 'lucide-react';
+import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail, FileText, BarChart3, Lock, Search, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import heroPlaceholder from '@/assets/hero-placeholder.jpg';
 import logo from '@/assets/BRP_Logo_Only.png';
@@ -29,16 +12,22 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 
 // Checkout Button Components
-const PlusCheckoutButton = ({ isYearly }: { isYearly: boolean }) => {
-  const { createCheckout } = useSubscription();
-  const { user } = useAuth();
-  
+const PlusCheckoutButton = ({
+  isYearly
+}: {
+  isYearly: boolean;
+}) => {
+  const {
+    createCheckout
+  } = useSubscription();
+  const {
+    user
+  } = useAuth();
   const handleCheckout = async () => {
     if (!user) {
       window.location.href = '/auth?tab=signup';
       return;
     }
-    
     try {
       const priceId = isYearly ? PRICING_CONFIG.plus.yearly_price_id : PRICING_CONFIG.plus.monthly_price_id;
       const url = await createCheckout(priceId);
@@ -48,35 +37,37 @@ const PlusCheckoutButton = ({ isYearly }: { isYearly: boolean }) => {
         toast({
           title: "Error",
           description: "Failed to create checkout session. Please try again.",
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     } catch (error) {
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
-  return (
-    <Button onClick={handleCheckout} className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
+  return <Button onClick={handleCheckout} className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
       Coming Soon!
-    </Button>
-  );
+    </Button>;
 };
-
-const ProCheckoutButton = ({ isYearly }: { isYearly: boolean }) => {
-  const { createCheckout } = useSubscription();
-  const { user } = useAuth();
-  
+const ProCheckoutButton = ({
+  isYearly
+}: {
+  isYearly: boolean;
+}) => {
+  const {
+    createCheckout
+  } = useSubscription();
+  const {
+    user
+  } = useAuth();
   const handleCheckout = async () => {
     if (!user) {
       window.location.href = '/auth?tab=signup';
       return;
     }
-    
     try {
       const priceId = isYearly ? PRICING_CONFIG.pro.yearly_price_id : PRICING_CONFIG.pro.monthly_price_id;
       const url = await createCheckout(priceId);
@@ -86,34 +77,29 @@ const ProCheckoutButton = ({ isYearly }: { isYearly: boolean }) => {
         toast({
           title: "Error",
           description: "Failed to create checkout session. Please try again.",
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     } catch (error) {
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
-  return (
-    <Button onClick={handleCheckout} className="w-full font-semibold">
+  return <Button onClick={handleCheckout} className="w-full font-semibold">
       Coming Soon!
-    </Button>
-  );
+    </Button>;
 };
-
 const Landing = () => {
   const [isYearly, setIsYearly] = useState(false);
-
   const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById(id)?.scrollIntoView({
+      behavior: 'smooth'
+    });
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-background">
+  return <div className="min-h-screen bg-gradient-background">
       {/* Beta Notice */}
       <div className="text-center py-2 px-4">
         <p className="text-sm font-bold text-muted-foreground">Currently in Beta - Free Tier Only</p>
@@ -124,12 +110,10 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto relative flex items-center justify-between">
           {/* Logo - Outside Pill */}
           <div className="flex items-center gap-2">
-            <img 
-              src={logo} 
-              alt="Best Receipt Parser Logo" 
-              className="h-12 w-auto object-contain flex-shrink-0 rounded-none"
-            />
-            <h1 className="text-xl font-bold font-raleway"><span style={{ color: '#1D75EF' }}>Best</span> Receipt Parser</h1>
+            <img src={logo} alt="Best Receipt Parser Logo" className="h-12 w-auto object-contain flex-shrink-0 rounded-none" />
+            <h1 className="text-xl font-bold font-raleway"><span style={{
+              color: '#1D75EF'
+            }}>Best</span> Receipt Parser</h1>
           </div>
           
           {/* Center Pill Navigation - Absolutely Centered */}
@@ -167,9 +151,8 @@ const Landing = () => {
             <div className="space-y-8">
               <div className="space-y-6">
                 <h1 className="font-raleway leading-[1.15]">
-                  <div className="text-4xl md:text-5xl lg:text-6xl text-foreground font-bold tracking-tight">
-                    Receipts → Ready-to-Use Data
-                  </div>
+                  <div className="text-4xl md:text-5xl lg:text-6xl text-foreground font-bold tracking-tight">Receipts → 
+Ready-to-Use Data</div>
                   <div className="text-4xl md:text-5xl lg:text-6xl text-primary font-bold tracking-tight mt-2">
                     <span className="italic">in Seconds.</span>
                   </div>
@@ -181,10 +164,7 @@ const Landing = () => {
               
               <div className="flex flex-col items-start gap-3">
                 <Link to="/auth?tab=signup">
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-12 py-7 h-auto font-semibold"
-                  >
+                  <Button size="lg" className="bg-gradient-hero hover:opacity-90 transition-all shadow-glow text-lg px-12 py-7 h-auto font-semibold">
                     Parse My First Receipt
                     <ArrowRight className="h-5 w-5 ml-2" />
                   </Button>
@@ -197,11 +177,7 @@ const Landing = () => {
             
             {/* Right Side - Image */}
             <div className="relative">
-              <img 
-                src={heroPlaceholder}
-                alt="ReceiptParser Dashboard Interface"
-                className="w-4/5 h-auto shadow-large border border-border/50 mx-auto"
-              />
+              <img src={heroPlaceholder} alt="ReceiptParser Dashboard Interface" className="w-4/5 h-auto shadow-large border border-border/50 mx-auto" />
             </div>
           </div>
         </div>
@@ -222,20 +198,14 @@ const Landing = () => {
                 <span className={`text-sm font-medium transition-colors ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
                   Monthly
                 </span>
-                <Switch
-                  checked={isYearly}
-                  onCheckedChange={setIsYearly}
-                  className="data-[state=checked]:bg-primary"
-                />
+                <Switch checked={isYearly} onCheckedChange={setIsYearly} className="data-[state=checked]:bg-primary" />
                 <span className={`text-sm font-medium transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
                   Yearly
                 </span>
               </div>
-              {isYearly && (
-                <Badge variant="secondary" className="bg-success/10 text-success border-success/20 animate-fade-in">
+              {isYearly && <Badge variant="secondary" className="bg-success/10 text-success border-success/20 animate-fade-in">
                   2 months free
-                </Badge>
-              )}
+                </Badge>}
             </div>
           </div>
           
@@ -296,9 +266,7 @@ const Landing = () => {
                     <span className="text-4xl font-bold font-raleway">${isYearly ? '120' : '12'}</span>
                     <span className="text-white/80 font-sans"> / {isYearly ? 'year' : 'month'}</span>
                   </div>
-                  {isYearly && (
-                    <p className="text-sm text-white/90 font-sans mb-2">or $120 / year (2 months free)</p>
-                  )}
+                  {isYearly && <p className="text-sm text-white/90 font-sans mb-2">or $120 / year (2 months free)</p>}
                   <p className="text-white/80 font-sans">For regular users who need more control and organization.</p>
                 </div>
                 
@@ -338,9 +306,7 @@ const Landing = () => {
                     <span className="text-4xl font-bold font-raleway">${isYearly ? '390' : '39'}</span>
                     <span className="text-muted-foreground font-sans"> / {isYearly ? 'year' : 'month'}</span>
                   </div>
-                  {isYearly && (
-                    <p className="text-sm text-muted-foreground font-sans mb-2">or $390 / year (2 months free)</p>
-                  )}
+                  {isYearly && <p className="text-sm text-muted-foreground font-sans mb-2">or $390 / year (2 months free)</p>}
                   <p className="text-muted-foreground font-sans">For businesses, accountants, and power users.</p>
                 </div>
                 
@@ -573,10 +539,7 @@ const Landing = () => {
             </p>
             
             <Link to="/auth">
-              <Button 
-                size="lg" 
-                className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold shadow-large"
-              >
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold shadow-large">
                 Get Started Free
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
@@ -595,12 +558,10 @@ const Landing = () => {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img 
-                  src={logo} 
-                  alt="Best Receipt Parser Logo" 
-                  className="h-8 w-auto object-contain flex-shrink-0 rounded-none"
-                />
-                <h3 className="font-bold font-raleway"><span style={{ color: '#1D75EF' }}>Best</span> Receipt Parser</h3>
+                <img src={logo} alt="Best Receipt Parser Logo" className="h-8 w-auto object-contain flex-shrink-0 rounded-none" />
+                <h3 className="font-bold font-raleway"><span style={{
+                  color: '#1D75EF'
+                }}>Best</span> Receipt Parser</h3>
               </div>
               <p className="text-sm text-muted-foreground font-sans">
                 Receipts Made Useful
@@ -638,8 +599,6 @@ const Landing = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
