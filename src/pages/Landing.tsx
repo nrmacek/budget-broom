@@ -200,7 +200,7 @@ const Landing = () => {
               <img 
                 src={heroPlaceholder}
                 alt="ReceiptParser Dashboard Interface"
-                className="w-full h-auto shadow-large border border-border/50"
+                className="w-4/5 h-auto shadow-large border border-border/50 mx-auto"
               />
             </div>
           </div>
