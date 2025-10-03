@@ -62,7 +62,7 @@ const PlusCheckoutButton = ({ isYearly }: { isYearly: boolean }) => {
 
   return (
     <Button onClick={handleCheckout} className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
-      Start Plus
+      Coming Soon!
     </Button>
   );
 };
@@ -100,7 +100,7 @@ const ProCheckoutButton = ({ isYearly }: { isYearly: boolean }) => {
 
   return (
     <Button onClick={handleCheckout} className="w-full font-semibold">
-      Start Pro
+      Coming Soon!
     </Button>
   );
 };
