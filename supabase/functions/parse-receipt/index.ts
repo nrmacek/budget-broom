@@ -14,6 +14,7 @@ interface LineItem {
   total: number;
   category: string;
   confidence: number;
+  is_refund?: boolean;
 }
 
 interface Discount {
@@ -41,6 +42,7 @@ interface ReceiptData {
   additionalCharges?: AdditionalCharge[];
   total: number;
   lineItems: LineItem[];
+  isReturn?: boolean;
 }
 
 serve(async (req) => {
@@ -170,6 +172,18 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
           role: 'system',
           content: `You are an expert receipt parser with advanced categorization capabilities. Analyze the receipt image and extract comprehensive structured data.
 
+          **CRITICAL: RETURN/REFUND DETECTION**
+          First, determine if this is a RETURN/REFUND receipt by looking for:
+          - Keywords: "RETURN", "REFUND", "TOTAL REFUND", "CREDIT", "STORE CREDIT"
+          - Negative amounts (with minus signs "-")
+          - Return transaction patterns
+          
+          If this IS a return/refund receipt:
+          - Set "isReturn": true in the response
+          - PRESERVE negative amounts (do NOT convert to positive)
+          - Mark ALL line items with "is_refund": true
+          - Ensure total, subtotal, and line item amounts are NEGATIVE
+
           CATEGORY SYSTEM (Use exact category names):
           1. "groceries" - Food items, beverages, fresh produce, dairy, meat, bakery items, canned goods, snacks, household food
           2. "electronics" - Phones, computers, TVs, cameras, headphones, cables, batteries, tech accessories, appliances
@@ -195,20 +209,22 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
           {
             "storeName": "exact store name from receipt",
             "date": "YYYY-MM-DD format (if unclear, use today's date)",
-            "subtotal": number,
+            "subtotal": number (NEGATIVE if isReturn is true),
             "discounts": [{"description": "string", "amount": number}] (optional),
             "taxes": [{"description": "string", "rate": number, "amount": number}] (optional),
             "additionalCharges": [{"description": "string", "amount": number}] (optional),
-            "total": number,
+            "total": number (NEGATIVE if isReturn is true),
+            "isReturn": boolean (true if this is a return/refund receipt),
             "lineItems": [
               {
                 "id": "item_1, item_2, etc.",
                 "description": "exact item description from receipt",
                 "quantity": number,
-                "unitPrice": number,
-                "total": number,
+                "unitPrice": number (NEGATIVE if isReturn is true),
+                "total": number (NEGATIVE if isReturn is true),
                 "category": "category_slug_from_above_list",
-                "confidence": number (0.0-1.0 based on guidelines above)
+                "confidence": number (0.0-1.0 based on guidelines above),
+                "is_refund": boolean (true if this is a returned item)
               }
             ]
           }
@@ -220,6 +236,8 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
           - Ensure mathematical accuracy: subtotal - discounts + taxes + additionalCharges = total
           - For unclear dates, use reasonable estimates or today's date
           - Each line item must have realistic confidence score reflecting actual uncertainty
+          - FOR RETURNS: All amounts MUST be negative, isReturn MUST be true, all line items MUST have is_refund: true
+          - NEVER convert negative amounts to positive for returns - preserve the minus sign
 
           Return ONLY the JSON - no markdown, no explanations, no additional text.`
         },

@@ -28,6 +28,7 @@ interface ReceiptRecord {
   additional_charges?: any;
   original_filename?: string;
   processed_at: string;
+  is_return?: boolean;
 }
 
 const ReceiptHistory = () => {
@@ -298,7 +299,10 @@ const ReceiptHistory = () => {
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">
-                          {formatCurrency(receipts.reduce((sum, receipt) => sum + receipt.total, 0))}
+                          {formatCurrency(receipts.reduce((sum, receipt) => {
+                            // Returns have negative totals, so this naturally subtracts them
+                            return sum + receipt.total;
+                          }, 0))}
                         </div>
                       </CardContent>
                     </Card>
@@ -363,7 +367,16 @@ const ReceiptHistory = () => {
                                 </Badge>
                               </TableCell>
                               <TableCell className="font-medium">
-                                {formatCurrency(receipt.total)}
+                                <div className="flex items-center gap-2">
+                                  <span className={receipt.is_return ? 'text-destructive' : ''}>
+                                    {formatCurrency(receipt.total)}
+                                  </span>
+                                  {receipt.is_return && (
+                                    <Badge variant="destructive" className="text-xs">
+                                      REFUND
+                                    </Badge>
+                                  )}
+                                </div>
                               </TableCell>
                               <TableCell className="text-muted-foreground">
                                 {format(new Date(receipt.processed_at), 'MMM dd, yyyy HH:mm')}

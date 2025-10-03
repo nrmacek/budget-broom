@@ -128,6 +128,7 @@ const Dashboard = () => {
           image_bucket: 'receipt-images',
           image_path: filePath,
           mime_type: file.type,
+          is_return: data.isReturn || false,
           file_size: file.size,
         })
         .select()

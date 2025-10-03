@@ -20,6 +20,7 @@ interface LineItem {
   total: number;
   category: string;
   confidence: number;
+  is_refund?: boolean;
 }
 
 interface Discount {
@@ -47,6 +48,7 @@ interface ReceiptData {
   additionalCharges?: AdditionalCharge[];
   total: number;
   lineItems: LineItem[];
+  isReturn?: boolean;
 }
 
 interface ReceiptResultsProps {
@@ -262,11 +264,24 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
           <Card className="p-8 bg-gradient-card shadow-large">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-hero/10 backdrop-blur-sm border border-primary/20 rounded-full mb-4">
-                  <Receipt className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium text-primary">Parsing Complete</span>
+                <div className={`inline-flex items-center gap-2 px-4 py-2 backdrop-blur-sm border rounded-full mb-4 ${
+                  receiptData.isReturn 
+                    ? 'bg-destructive/10 border-destructive/20' 
+                    : 'bg-gradient-hero/10 border-primary/20'
+                }`}>
+                  <Receipt className={`h-4 w-4 ${receiptData.isReturn ? 'text-destructive' : 'text-primary'}`} />
+                  <span className={`text-sm font-medium ${receiptData.isReturn ? 'text-destructive' : 'text-primary'}`}>
+                    {receiptData.isReturn ? 'Return Receipt Processed' : 'Parsing Complete'}
+                  </span>
                 </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-raleway">Receipt Parsed Successfully</h1>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-raleway">
+                  {receiptData.isReturn ? 'Return Receipt Parsed' : 'Receipt Parsed Successfully'}
+                </h1>
+                {receiptData.isReturn && (
+                  <Badge variant="destructive" className="mt-2 text-sm">
+                    REFUND
+                  </Badge>
+                )}
               </div>
               <div className="flex gap-3">
                 <Button variant="outline" onClick={onStartOver} className="hover:scale-105 transition-transform">
@@ -307,12 +322,14 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
               </div>
               
               <div className="flex items-center gap-4 p-4 bg-gradient-subtle/50 rounded-xl">
-                <div className="p-3 rounded-xl bg-success shadow-glow">
+                <div className={`p-3 rounded-xl shadow-glow ${receiptData.isReturn ? 'bg-destructive' : 'bg-success'}`}>
                   <DollarSign className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total</p>
-                  <p className="font-bold text-2xl text-success">${receiptData.total.toFixed(2)}</p>
+                  <p className={`font-bold text-2xl ${receiptData.isReturn ? 'text-destructive' : 'text-success'}`}>
+                    ${receiptData.total.toFixed(2)}
+                  </p>
                   {hasDiscrepancy && (
                     <p className="text-xs text-warning font-medium">
                       ⚠ ${totalDiscrepancy.toFixed(2)} discrepancy
@@ -390,15 +407,22 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
                               >
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-3 mb-2">
-                                    <p className="font-medium truncate">{item.description}</p>
-                                    {item.confidence < 0.9 && (
+                                    <p className={`font-medium truncate ${item.is_refund ? 'text-destructive' : ''}`}>
+                                      {item.description}
+                                    </p>
+                                    {item.is_refund && (
+                                      <Badge variant="destructive" className="text-xs shrink-0">
+                                        REFUND
+                                      </Badge>
+                                    )}
+                                    {item.confidence < 0.9 && !item.is_refund && (
                                       <Badge variant="outline" className="text-xs bg-warning/10 text-warning border-warning/20 shrink-0">
                                         Low confidence
                                       </Badge>
                                     )}
                                   </div>
                                   <div className="flex items-center gap-4">
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className={`text-sm ${item.is_refund ? 'text-destructive' : 'text-muted-foreground'}`}>
                                       Qty: {item.quantity} × ${item.unitPrice.toFixed(2)} each
                                     </p>
                                     <Select
@@ -426,7 +450,9 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
                                   </div>
                                 </div>
                                 <div className="text-right ml-4 shrink-0">
-                                  <p className="font-semibold text-lg">${item.total.toFixed(2)}</p>
+                                  <p className={`font-semibold text-lg ${item.is_refund ? 'text-destructive' : ''}`}>
+                                    ${item.total.toFixed(2)}
+                                  </p>
                                 </div>
                               </div>
                             ))}

@@ -178,6 +178,7 @@ export type Database = {
           id: string
           image_bucket: string | null
           image_path: string | null
+          is_return: boolean
           line_items: Json
           mime_type: string | null
           original_filename: string | null
@@ -198,6 +199,7 @@ export type Database = {
           id?: string
           image_bucket?: string | null
           image_path?: string | null
+          is_return?: boolean
           line_items?: Json
           mime_type?: string | null
           original_filename?: string | null
@@ -218,6 +220,7 @@ export type Database = {
           id?: string
           image_bucket?: string | null
           image_path?: string | null
+          is_return?: boolean
           line_items?: Json
           mime_type?: string | null
           original_filename?: string | null

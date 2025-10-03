@@ -30,6 +30,7 @@ export interface Receipt {
   processed_at?: string;
   currency?: string;
   user_id?: string;
+  is_return?: boolean;
 }
 
 export interface CategoryAssignment {
