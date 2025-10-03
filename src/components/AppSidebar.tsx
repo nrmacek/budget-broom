@@ -49,8 +49,9 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
               alt="Best Receipt Parser Logo" 
               className="h-10 w-auto object-contain shrink-0 rounded-none"
             />
-            <span className="nav-item__label font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent overflow-hidden transition-all duration-200">
-              ReceiptParser
+            <span className="nav-item__label font-bold text-sm overflow-hidden transition-all duration-200">
+              <span className="text-primary">Best</span>{" "}
+              <span className="text-muted-foreground">Receipt Parser</span>
             </span>
           </div>
           <button 
