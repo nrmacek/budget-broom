@@ -162,11 +162,29 @@ export function BulkUpload({ onComplete }: BulkUploadProps) {
         i === index ? { ...f, status: 'processing', progress: 10 } : f
       ));
 
-      const formData = new FormData();
-      formData.append('file', file);
+      // Upload file to Supabase Storage first
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user!.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('receipt-images')
+        .upload(fileName, file);
 
+      if (uploadError) {
+        throw new Error(`Upload failed: ${uploadError.message}`);
+      }
+
+      setFiles(prev => prev.map((f, i) => 
+        i === index ? { ...f, progress: 30 } : f
+      ));
+
+      // Call parse-receipt with the stored image path
       const response = await supabase.functions.invoke('parse-receipt', {
-        body: formData,
+        body: {
+          imagePath: fileName,
+          mimeType: file.type,
+          fileName: file.name,
+        },
       });
 
       if (response.error) {
