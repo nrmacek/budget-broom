@@ -114,6 +114,11 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-background">
+      {/* Beta Notice */}
+      <div className="text-center py-2 px-4">
+        <p className="text-sm font-bold text-muted-foreground">Currently in Beta - Free Tier Only</p>
+      </div>
+
       {/* Header - Logo Outside Pill Navigation */}
       <header className="py-4 px-4">
         <div className="max-w-7xl mx-auto relative flex items-center justify-between">
@@ -153,11 +158,6 @@ const Landing = () => {
           </Link>
         </div>
       </header>
-
-      {/* Beta Notice */}
-      <div className="text-center py-2 px-4">
-        <p className="text-sm font-medium text-muted-foreground">Currently in Beta - Free Tier Only</p>
-      </div>
 
       {/* Hero Section - Split Layout */}
       <section className="py-12 px-4">
