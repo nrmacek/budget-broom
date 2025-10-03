@@ -214,7 +214,7 @@ const Dashboard = () => {
 
           <section className="py-8 px-4">
             <div className="max-w-6xl mx-auto">
-              <div className={`grid gap-8 ${extractedData ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
+              {!extractedData ? (
                 <div className="space-y-6">
                   {/* Toggle between single and bulk upload */}
                   <div className="flex gap-2 mb-6">
@@ -246,18 +246,16 @@ const Dashboard = () => {
                     estimatedTime={Math.max(10 - Math.floor(progress / 10), 1)}
                   />
                 </div>
-                
-                {extractedData && receiptId && (
-                  <div className="space-y-6">
-                    <ReceiptResults 
-                      receiptData={extractedData} 
-                      receiptId={receiptId}
-                      imagePath={imagePath}
-                      onStartOver={handleNewReceipt}
-                    />
-                  </div>
-                )}
-              </div>
+              ) : (
+                <div className="space-y-6">
+                  <ReceiptResults 
+                    receiptData={extractedData} 
+                    receiptId={receiptId}
+                    imagePath={imagePath}
+                    onStartOver={handleNewReceipt}
+                  />
+                </div>
+              )}
             </div>
           </section>
         </div>
