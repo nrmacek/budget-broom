@@ -48,7 +48,7 @@ const PlusCheckoutButton = ({
       });
     }
   };
-  return <Button onClick={handleCheckout} className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
+  return <Button disabled onClick={handleCheckout} className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
       Coming Soon!
     </Button>;
 };
@@ -88,7 +88,7 @@ const ProCheckoutButton = ({
       });
     }
   };
-  return <Button onClick={handleCheckout} className="w-full font-semibold">
+  return <Button disabled onClick={handleCheckout} className="w-full font-semibold">
       Coming Soon!
     </Button>;
 };
