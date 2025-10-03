@@ -170,6 +170,11 @@ const Dashboard = () => {
       title: "Bulk processing completed",
       description: `Successfully processed ${results.length} receipts with enhanced categorization.`,
     });
+    
+    // Navigate to receipt history to view all processed receipts
+    setTimeout(() => {
+      navigate('/receipt-history');
+    }, 1500);
   };
 
   const handleNewReceipt = () => {
