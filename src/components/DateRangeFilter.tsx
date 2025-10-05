@@ -10,11 +10,11 @@ interface DateRangeFilterProps {
 
 export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ value, onChange }) => {
   const options = [
-    { value: 'all' as DateRange, label: 'All Time' },
-    { value: '3months' as DateRange, label: 'Past 3 Months' },
-    { value: 'month' as DateRange, label: 'Past Month' },
     { value: 'week' as DateRange, label: 'Past Week' },
+    { value: 'month' as DateRange, label: 'Past Month' },
+    { value: '3months' as DateRange, label: 'Past 3 Months' },
     { value: 'year' as DateRange, label: 'Past Year' },
+    { value: 'all' as DateRange, label: 'All Time' },
   ];
 
   return (
