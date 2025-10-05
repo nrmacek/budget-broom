@@ -434,7 +434,7 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="z-50 bg-popover border shadow-lg">
-                                        {categories.map((cat) => {
+                                        {[...categories].sort((a, b) => a.display_name.localeCompare(b.display_name)).map((cat) => {
                                           const IconComponent = getCategoryIcon(cat.icon);
                                           return (
                                             <SelectItem key={cat.id} value={cat.id} className="text-xs">

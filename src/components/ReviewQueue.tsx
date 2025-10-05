@@ -288,7 +288,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ dateRange }) => {
                 <SelectValue placeholder="Select category..." />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((category) => {
+                {[...categories].sort((a, b) => a.display_name.localeCompare(b.display_name)).map((category) => {
                   const IconComponent = getCategoryIcon(category.icon);
                   return (
                     <SelectItem key={category.id} value={category.id}>
@@ -367,7 +367,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ dateRange }) => {
                         <SelectValue placeholder="Select category..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map((category) => {
+                        {[...categories].sort((a, b) => a.display_name.localeCompare(b.display_name)).map((category) => {
                           const IconComponent = getCategoryIcon(category.icon);
                           return (
                             <SelectItem key={category.id} value={category.id}>
