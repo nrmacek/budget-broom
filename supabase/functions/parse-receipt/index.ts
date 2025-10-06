@@ -94,7 +94,16 @@ serve(async (req) => {
         throw new Error('Unsupported file type. Please use image or CSV files.');
       }
       
-      console.log('Successfully parsed receipt:', extractedData);
+      console.log('Successfully parsed receipt:', {
+        storeName: extractedData.storeName,
+        date: extractedData.date,
+        isReturn: extractedData.isReturn || false,
+        itemCount: extractedData.lineItems.length,
+        subtotal: extractedData.subtotal,
+        total: extractedData.total,
+        avgConfidence: (extractedData.lineItems.reduce((sum, item) => sum + (item.confidence || 0), 0) / extractedData.lineItems.length).toFixed(2),
+        lowConfidenceItems: extractedData.lineItems.filter(item => (item.confidence || 0) < 0.7).length
+      });
       return new Response(JSON.stringify(extractedData), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -121,7 +130,16 @@ serve(async (req) => {
         throw new Error('Unsupported file type. Please use image, PDF, or CSV files.');
       }
       
-      console.log('Successfully parsed receipt:', extractedData);
+      console.log('Successfully parsed receipt:', {
+        storeName: extractedData.storeName,
+        date: extractedData.date,
+        isReturn: extractedData.isReturn || false,
+        itemCount: extractedData.lineItems.length,
+        subtotal: extractedData.subtotal,
+        total: extractedData.total,
+        avgConfidence: (extractedData.lineItems.reduce((sum, item) => sum + (item.confidence || 0), 0) / extractedData.lineItems.length).toFixed(2),
+        lowConfidenceItems: extractedData.lineItems.filter(item => (item.confidence || 0) < 0.7).length
+      });
       return new Response(JSON.stringify(extractedData), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -141,6 +159,148 @@ serve(async (req) => {
     );
   }
 });
+
+interface ValidationResult {
+  isValid: boolean;
+  discrepancy?: number;
+  expectedTotal?: number;
+  actualTotal?: number;
+  calculatedSubtotal?: number;
+  actualSubtotal?: number;
+  details?: string;
+}
+
+function validateReceiptMath(data: ReceiptData): ValidationResult {
+  // Calculate expected subtotal from line items
+  const calculatedSubtotal = data.lineItems.reduce((sum, item) => sum + (item.total || 0), 0);
+  
+  // Calculate expected total: subtotal - discounts + taxes + additionalCharges
+  const totalDiscounts = (data.discounts || []).reduce((sum, d) => sum + d.amount, 0);
+  const totalTaxes = (data.taxes || []).reduce((sum, t) => sum + t.amount, 0);
+  const totalCharges = (data.additionalCharges || []).reduce((sum, c) => sum + c.amount, 0);
+  
+  const expectedTotal = calculatedSubtotal - totalDiscounts + totalTaxes + totalCharges;
+  const discrepancy = Math.abs(expectedTotal - data.total);
+  
+  // Allow $0.50 tolerance for rounding
+  const isValid = discrepancy <= 0.50;
+  
+  const result: ValidationResult = {
+    isValid,
+    discrepancy,
+    expectedTotal,
+    actualTotal: data.total,
+    calculatedSubtotal,
+    actualSubtotal: data.subtotal,
+    details: isValid 
+      ? 'Math checks out within $0.50 tolerance' 
+      : `Discrepancy of $${discrepancy.toFixed(2)} detected. Expected total: $${expectedTotal.toFixed(2)}, Actual: $${data.total.toFixed(2)}. Calculated subtotal: $${calculatedSubtotal.toFixed(2)}, Actual: $${data.subtotal.toFixed(2)}. Found ${data.lineItems.length} items.`
+  };
+  
+  return result;
+}
+
+async function retryWithFocusedPrompt(file: File, apiKey: string, originalData: ReceiptData, validation: ValidationResult): Promise<ReceiptData> {
+  // Convert image to base64 again
+  const arrayBuffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(arrayBuffer);
+  
+  let binary = '';
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.slice(i, i + chunkSize);
+    binary += String.fromCharCode.apply(null, Array.from(chunk));
+  }
+  const base64 = btoa(binary);
+  const mimeType = file.type;
+
+  const focusedPrompt = `CORRECTION NEEDED: Previous parsing attempt found issues.
+
+Previous attempt found:
+- ${originalData.lineItems.length} items totaling $${validation.calculatedSubtotal?.toFixed(2)}
+- Receipt shows total: $${validation.actualTotal?.toFixed(2)}
+- Discrepancy: $${validation.discrepancy?.toFixed(2)}
+
+CRITICAL: Please re-examine this receipt VERY CAREFULLY and:
+1. Count EVERY item - scan each line multiple times
+2. Look for items on the SAME line separated by spaces
+3. Check for small/compact text that may have been missed
+4. Verify ALL negative amounts are preserved for returns
+5. Double-check discount handling (positive amounts that reduce refunds)
+
+${validation.calculatedSubtotal !== undefined && validation.actualSubtotal !== undefined && Math.abs(validation.calculatedSubtotal - validation.actualSubtotal) > 1 
+  ? `HINT: Calculated subtotal ($${validation.calculatedSubtotal.toFixed(2)}) differs from receipt subtotal ($${validation.actualSubtotal.toFixed(2)}), suggesting MISSING ITEMS.`
+  : ''}
+
+Return the COMPLETE, CORRECTED JSON with ALL items found.`;
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-5-2025-08-07',
+      max_completion_tokens: 4000,
+      temperature: 0,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert receipt parser. Re-examine this receipt and provide corrected structured data. Return ONLY valid JSON, no markdown.'
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: focusedPrompt
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType};base64,${base64}`
+              }
+            }
+          ]
+        }
+      ]
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Retry API call failed: ${response.status}`);
+  }
+
+  const result = await response.json();
+  const content = result.choices[0].message.content;
+
+  // Clean and parse
+  let cleanContent = content.trim();
+  if (cleanContent.startsWith('```json')) {
+    cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+  } else if (cleanContent.startsWith('```')) {
+    cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+  }
+  
+  const retryData = JSON.parse(cleanContent);
+  
+  // Apply same post-processing
+  if (typeof retryData.subtotal !== 'number') {
+    retryData.subtotal = retryData.lineItems.reduce((sum: number, item: any) => sum + (item.total || 0), 0);
+  }
+  
+  retryData.discounts = retryData.discounts || [];
+  retryData.taxes = retryData.taxes || [];
+  retryData.additionalCharges = retryData.additionalCharges || [];
+  
+  retryData.lineItems = retryData.lineItems.map((item: any, index: number) => ({
+    ...item,
+    id: item.id || `item_${index + 1}`
+  }));
+  
+  return retryData;
+}
 
 async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptData> {
   // Convert image to base64 using a more efficient method
@@ -165,8 +325,9 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4o',
-      max_tokens: 2000,
+      model: 'gpt-5-2025-08-07',
+      max_completion_tokens: 4000,
+      temperature: 0,
       messages: [
         {
           role: 'system',
@@ -183,6 +344,27 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
           - PRESERVE negative amounts (do NOT convert to positive)
           - Mark ALL line items with "is_refund": true
           - Ensure total, subtotal, and line item amounts are NEGATIVE
+
+          **SPECIAL ATTENTION FOR RETURN RECEIPTS:**
+          - Return receipts often have DENSE, COMPACT layouts with multiple items per line
+          - Carefully scan EVERY line for items, even if text is small or cramped
+          - Look for patterns like: "ITEM_NAME    -$X.XX  ITEM_NAME2   -$Y.YY" on single lines
+          - Count items carefully - if you see 11 items, parse ALL 11, not just 10
+          - Return discounts are typically shown as POSITIVE amounts that reduce the refund
+          - Cross-check: count of items × average price should roughly match subtotal
+
+          **TARGET RETURN RECEIPT SPECIFIC PATTERNS:**
+          Example format you might see:
+          "ITEM_NAME_1    -$3.00  ITEM_NAME_2    -$5.99"
+          "RETURN DISCOUNT         $2.00"
+          "SUBTOTAL               -$83.00"
+          "TOTAL REFUND           -$84.53"
+          
+          For Target returns:
+          - Items are often on SAME line, separated by spaces
+          - Each item has its own negative amount
+          - "RETURN DISCOUNT" is a POSITIVE amount that reduces your refund
+          - Carefully parse every item on every line
 
           CATEGORY SYSTEM (Use exact category names):
           1. "groceries" - Food items, beverages, fresh produce, dairy, meat, bakery items, canned goods, snacks, household food
@@ -238,6 +420,8 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
           - Each line item must have realistic confidence score reflecting actual uncertainty
           - FOR RETURNS: All amounts MUST be negative, isReturn MUST be true, all line items MUST have is_refund: true
           - NEVER convert negative amounts to positive for returns - preserve the minus sign
+          - NEVER miss items - if receipt shows 11 items, parse ALL 11 items
+          - For compact/dense layouts, scan EVERY line multiple times to catch all items
 
           Return ONLY the JSON - no markdown, no explanations, no additional text.`
         },
@@ -302,6 +486,36 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
       ...item,
       id: item.id || `item_${index + 1}`
     }));
+
+    // Post-processing validation
+    const validationResult = validateReceiptMath(parsedData);
+    
+    if (!validationResult.isValid) {
+      console.warn('⚠️  VALIDATION FAILED - Math discrepancy detected:', validationResult);
+      
+      // If discrepancy is significant (> $1.00), attempt retry with focused prompt
+      if (Math.abs(validationResult.discrepancy || 0) > 1.00) {
+        console.log('🔄 Attempting retry with focused correction prompt...');
+        
+        try {
+          const retryData = await retryWithFocusedPrompt(file, apiKey, parsedData, validationResult);
+          
+          // Validate retry result
+          const retryValidation = validateReceiptMath(retryData);
+          if (retryValidation.isValid || Math.abs(retryValidation.discrepancy || 0) < Math.abs(validationResult.discrepancy || 0)) {
+            console.log('✅ Retry improved accuracy:', retryValidation);
+            return retryData;
+          } else {
+            console.log('⚠️  Retry did not improve accuracy, using original parse');
+          }
+        } catch (retryError) {
+          console.error('Retry failed:', retryError);
+          // Continue with original parse
+        }
+      }
+    } else {
+      console.log('✅ Validation passed - math checks out');
+    }
 
     return parsedData;
   } catch (parseError) {
