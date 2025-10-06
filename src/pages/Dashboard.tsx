@@ -233,19 +233,21 @@ const Dashboard = () => {
                     </Button>
                   </div>
 
-                  {processingMode === 'single' ? (
-                    <ReceiptUpload onFileSelect={handleFileUpload} />
+                  {isProcessing ? (
+                    <ProcessingProgress 
+                      isProcessing={isProcessing} 
+                      progress={progress} 
+                      currentStep={currentStep}
+                      fileName={currentFileName}
+                      estimatedTime={Math.max(10 - Math.floor(progress / 10), 1)}
+                    />
                   ) : (
-                    <BulkUpload onComplete={handleBulkUpload} />
+                    processingMode === 'single' ? (
+                      <ReceiptUpload onFileSelect={handleFileUpload} />
+                    ) : (
+                      <BulkUpload onComplete={handleBulkUpload} />
+                    )
                   )}
-                  
-                  <ProcessingProgress 
-                    isProcessing={isProcessing} 
-                    progress={progress} 
-                    currentStep={currentStep}
-                    fileName={currentFileName}
-                    estimatedTime={Math.max(10 - Math.floor(progress / 10), 1)}
-                  />
                 </div>
               ) : (
                 <div className="space-y-6">
