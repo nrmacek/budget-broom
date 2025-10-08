@@ -5,7 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail, FileText, BarChart3, Lock, Search, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import heroPlaceholder from '@/assets/hero-placeholder.jpg';
+import heroPlaceholder from '@/assets/Hero_Final.png';
 import logo from '@/assets/BRP_Logo_Only.png';
 import { useSubscription, PRICING_CONFIG } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
