@@ -243,7 +243,6 @@ Return the COMPLETE, CORRECTED JSON with ALL items found.`;
     body: JSON.stringify({
       model: 'gpt-5-2025-08-07',
       max_completion_tokens: 4000,
-      temperature: 0,
       messages: [
         {
           role: 'system',
@@ -327,7 +326,6 @@ async function processImageReceipt(file: File, apiKey: string): Promise<ReceiptD
     body: JSON.stringify({
       model: 'gpt-5-2025-08-07',
       max_completion_tokens: 4000,
-      temperature: 0,
       messages: [
         {
           role: 'system',
