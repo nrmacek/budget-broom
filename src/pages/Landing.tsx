@@ -48,8 +48,8 @@ const PlusCheckoutButton = ({
       });
     }
   };
-  return <Button disabled onClick={handleCheckout} className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
-      Coming Soon!
+  return <Button onClick={handleCheckout} className="w-full bg-white text-primary hover:bg-white/90 font-semibold">
+      Get Started
     </Button>;
 };
 const ProCheckoutButton = ({
@@ -88,8 +88,8 @@ const ProCheckoutButton = ({
       });
     }
   };
-  return <Button disabled onClick={handleCheckout} className="w-full font-semibold">
-      Coming Soon!
+  return <Button onClick={handleCheckout} className="w-full font-semibold">
+      Get Started
     </Button>;
 };
 const Landing = () => {
@@ -100,10 +100,6 @@ const Landing = () => {
     });
   };
   return <div className="min-h-screen bg-gradient-background">
-      {/* Beta Notice */}
-      <div className="text-center py-2 px-4">
-        <p className="text-sm font-bold text-muted-foreground">Currently in Beta - Free Tier Only</p>
-      </div>
 
       {/* Header - Logo Outside Pill Navigation */}
       <header className="py-4 px-4">
