@@ -40,7 +40,7 @@ interface UsageData {
 
 const Dashboard = () => {
   const { user, signOut, session } = useAuth();
-  const { subscriptionData, refreshSubscription, createCheckout } = useSubscription();
+  const { subscriptionData, refreshSubscription, createCheckout, loading: subscriptionLoading } = useSubscription();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -58,8 +58,8 @@ const Dashboard = () => {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const { getSuggestionsForItem } = useSmartSuggestions();
 
-  // Check if user is on Pro tier
-  const isPro = subscriptionData?.product_id === PRICING_CONFIG.pro.product_id;
+  // Check if user is on Pro tier (don't show locked state while loading)
+  const isPro = subscriptionLoading ? true : subscriptionData?.product_id === PRICING_CONFIG.pro.product_id;
 
   // Check usage and return whether processing is allowed
   const checkUsageAllowed = async (): Promise<UsageData | null> => {
