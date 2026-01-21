@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Receipt, LogOut, User, Sparkles } from 'lucide-react';
+import { Receipt, LogOut, User, Sparkles, Lock } from 'lucide-react';
 import { UserProfileDropdown } from '@/components/UserProfileDropdown';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -23,6 +23,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface UsageData {
   allowed: boolean;
@@ -51,6 +57,9 @@ const Dashboard = () => {
   const [isCheckingUsage, setIsCheckingUsage] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const { getSuggestionsForItem } = useSmartSuggestions();
+
+  // Check if user is on Pro tier
+  const isPro = subscriptionData?.product_id === PRICING_CONFIG.pro.product_id;
 
   // Check usage and return whether processing is allowed
   const checkUsageAllowed = async (): Promise<UsageData | null> => {
@@ -395,12 +404,33 @@ const Dashboard = () => {
                     >
                       Single Upload
                     </Button>
-                    <Button
-                      variant={processingMode === 'bulk' ? 'default' : 'outline'}
-                      onClick={() => setProcessingMode('bulk')}
-                    >
-                      Bulk Upload
-                    </Button>
+                    
+                    {isPro ? (
+                      <Button
+                        variant={processingMode === 'bulk' ? 'default' : 'outline'}
+                        onClick={() => setProcessingMode('bulk')}
+                      >
+                        Bulk Upload
+                      </Button>
+                    ) : (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              disabled
+                              className="gap-2 opacity-60"
+                            >
+                              <Lock className="h-3.5 w-3.5" />
+                              Bulk Upload
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Pro feature - upgrade to unlock</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
                   </div>
 
                   {isProcessing ? (
@@ -412,7 +442,7 @@ const Dashboard = () => {
                       estimatedTime={Math.max(10 - Math.floor(progress / 10), 1)}
                     />
                   ) : (
-                    processingMode === 'single' ? (
+                    processingMode === 'single' || !isPro ? (
                       <ReceiptUpload onFileSelect={handleFileUpload} />
                     ) : (
                       <BulkUpload onComplete={handleBulkUpload} />
