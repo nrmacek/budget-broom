@@ -171,7 +171,7 @@ const Landing = () => {
         
         {/* Mobile/Tablet Navigation Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-card/95 backdrop-blur-md border-b shadow-lg z-50">
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-background border-b border-border shadow-lg z-50">
             <div className="flex flex-col p-4 gap-2">
               <button 
                 onClick={() => scrollToSection('pricing')} 
