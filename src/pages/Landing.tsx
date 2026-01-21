@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail, FileText, BarChart3, Lock, Search, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import heroPlaceholder from '@/assets/Hero_Final2.png';
 import logo from '@/assets/BRP_Logo_Only.png';
 import { useSubscription, PRICING_CONFIG } from '@/hooks/useSubscription';
@@ -94,6 +94,23 @@ const ProCheckoutButton = ({
 };
 const Landing = () => {
   const [isYearly, setIsYearly] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  // Handle canceled checkout feedback
+  useEffect(() => {
+    const canceled = searchParams.get('canceled');
+
+    if (canceled === 'true') {
+      toast({
+        title: "Checkout canceled",
+        description: "Ready to try again when you are!",
+      });
+
+      // Remove the query param from URL
+      window.history.replaceState({}, '', '/');
+    }
+  }, [searchParams]);
+
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({
       behavior: 'smooth'
