@@ -21,9 +21,10 @@ interface FileUploadState {
 
 interface BulkUploadProps {
   onComplete: (results: FileUploadResult[]) => void;
+  onBeforeProcess?: () => Promise<boolean>;
 }
 
-export function BulkUpload({ onComplete }: BulkUploadProps) {
+export function BulkUpload({ onComplete, onBeforeProcess }: BulkUploadProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [files, setFiles] = useState<FileUploadState[]>([]);
@@ -80,6 +81,14 @@ export function BulkUpload({ onComplete }: BulkUploadProps) {
 
   const processFiles = async () => {
     if (!user || files.length === 0) return;
+
+    // Check usage limits before processing if callback provided
+    if (onBeforeProcess) {
+      const allowed = await onBeforeProcess();
+      if (!allowed) {
+        return; // Parent component handles the upgrade modal
+      }
+    }
 
     setIsProcessing(true);
     let completedCount = 0;

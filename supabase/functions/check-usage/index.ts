@@ -66,10 +66,21 @@ Deno.serve(async (req) => {
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
     
     if (userError || !userData.user) {
-      console.error("Failed to get user:", userError);
+      // FAIL OPEN: User may be deleted but has valid JWT
+      // Allow the action with free tier limits, log for monitoring
+      console.warn("User not found in auth, allowing with free tier (fail open):", userId, userError);
       return new Response(
-        JSON.stringify({ error: "User not found" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({
+          allowed: true,
+          used: 0,
+          limit: TIER_LIMITS.free,
+          remaining: TIER_LIMITS.free,
+          tier: "free",
+        }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
       );
     }
 

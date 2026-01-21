@@ -456,7 +456,7 @@ const Dashboard = () => {
                     processingMode === 'single' || !isPro ? (
                       <ReceiptUpload onFileSelect={handleFileUpload} />
                     ) : (
-                      <BulkUpload onComplete={handleBulkUpload} />
+                      <BulkUpload onComplete={handleBulkUpload} onBeforeProcess={handleBulkUploadStart} />
                     )
                   )}
                 </div>

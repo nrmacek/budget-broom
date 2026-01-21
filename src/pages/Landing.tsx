@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail, FileText, BarChart3, Lock, Search, X } from 'lucide-react';
+import { Receipt, Zap, Shield, Download, ArrowRight, Eye, Users, Building, Check, Star, Mail, FileText, BarChart3, Lock, Search, X, Menu } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import heroPlaceholder from '@/assets/Hero_Final2.png';
 import logo from '@/assets/BRP_Logo_Only.png';
@@ -94,6 +94,7 @@ const ProCheckoutButton = ({
 };
 const Landing = () => {
   const [isYearly, setIsYearly] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchParams] = useSearchParams();
 
   // Handle canceled checkout feedback
@@ -112,6 +113,7 @@ const Landing = () => {
   }, [searchParams]);
 
   const scrollToSection = (id: string) => {
+    setMobileMenuOpen(false);
     document.getElementById(id)?.scrollIntoView({
       behavior: 'smooth'
     });
@@ -129,8 +131,8 @@ const Landing = () => {
             }}>Best</span> Receipt Parser</h1>
           </div>
           
-          {/* Center Pill Navigation - Absolutely Centered */}
-          <nav className="absolute left-1/2 transform -translate-x-1/2 bg-foreground/95 backdrop-blur-sm px-8 py-4 shadow-glow">
+          {/* Center Pill Navigation - Hidden on mobile */}
+          <nav className="hidden md:block absolute left-1/2 transform -translate-x-1/2 bg-foreground/95 backdrop-blur-sm px-8 py-4 shadow-glow rounded-full">
             <div className="flex items-center gap-8">
               <button onClick={() => scrollToSection('pricing')} className="text-white/80 hover:text-white transition-colors text-sm font-medium">
                 Pricing
@@ -147,13 +149,58 @@ const Landing = () => {
             </div>
           </nav>
           
-          {/* Sign In - Outside Pill */}
-          <Link to="/auth">
-            <Button variant="outline" className="font-medium border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-              Sign In
+          {/* Mobile menu button */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
-          </Link>
+            
+            {/* Sign In - Outside Pill */}
+            <Link to="/auth">
+              <Button variant="outline" className="font-medium border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                Sign In
+              </Button>
+            </Link>
+          </div>
         </div>
+        
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-card/95 backdrop-blur-md border-b shadow-lg z-50">
+            <div className="flex flex-col p-4 gap-2">
+              <button 
+                onClick={() => scrollToSection('pricing')} 
+                className="text-foreground hover:text-primary transition-colors text-sm font-medium py-3 px-4 text-left hover:bg-muted rounded-lg"
+              >
+                Pricing
+              </button>
+              <button 
+                onClick={() => scrollToSection('features')} 
+                className="text-foreground hover:text-primary transition-colors text-sm font-medium py-3 px-4 text-left hover:bg-muted rounded-lg"
+              >
+                Features
+              </button>
+              <button 
+                onClick={() => scrollToSection('faq')} 
+                className="text-foreground hover:text-primary transition-colors text-sm font-medium py-3 px-4 text-left hover:bg-muted rounded-lg"
+              >
+                FAQs
+              </button>
+              <Link 
+                to="/auth?tab=signup" 
+                className="text-primary font-medium py-3 px-4 text-left hover:bg-muted rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Get Started Free
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section - Split Layout */}
