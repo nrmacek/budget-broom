@@ -68,8 +68,6 @@ const Dashboard = () => {
   // FAIL OPEN: If we can't check usage, allow the action rather than blocking the user
   const checkUsageAllowed = async (): Promise<UsageData | null> => {
     if (!session) {
-      // No session = allow (will fail at auth level anyway)
-      console.warn('checkUsageAllowed: No session, allowing action');
       return { allowed: true, used: 0, limit: 25, remaining: 25, tier: 'free' };
     }
     
@@ -82,15 +80,11 @@ const Dashboard = () => {
       });
 
       if (error) {
-        // FAIL OPEN: Log error but allow the action
-        console.error('check-usage failed, allowing action (fail open):', error);
         return { allowed: true, used: 0, limit: 25, remaining: 25, tier: 'free' };
       }
 
       return data as UsageData;
-    } catch (error) {
-      // FAIL OPEN: Log error but allow the action
-      console.error('check-usage exception, allowing action (fail open):', error);
+    } catch {
       return { allowed: true, used: 0, limit: 25, remaining: 25, tier: 'free' };
     } finally {
       setIsCheckingUsage(false);
@@ -98,27 +92,18 @@ const Dashboard = () => {
   };
 
   // Increment usage after successful processing
-  // SILENT FAIL: If increment fails, log but don't show to user - receipt was already processed
+  // SILENT FAIL: If increment fails, don't show to user - receipt was already processed
   const incrementUsage = async () => {
-    if (!session) {
-      console.warn('incrementUsage: No session, skipping');
-      return;
-    }
+    if (!session) return;
     
     try {
-      const { error } = await supabase.functions.invoke('increment-usage', {
+      await supabase.functions.invoke('increment-usage', {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
       });
-
-      if (error) {
-        // Silent fail - receipt was already processed successfully
-        console.error('increment-usage failed (silent):', error);
-      }
-    } catch (error) {
+    } catch {
       // Silent fail - receipt was already processed successfully
-      console.error('increment-usage exception (silent):', error);
     }
   };
 
