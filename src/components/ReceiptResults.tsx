@@ -302,8 +302,8 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
       <div className="max-w-6xl mx-auto p-4">
         <div className="space-y-6">
           {/* Receipt Header */}
-          <Card className="p-8 bg-gradient-card shadow-large">
-            <div className="flex items-center justify-between mb-8">
+          <Card className="p-4 sm:p-8 bg-gradient-card shadow-large">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
               <div>
                 <div className={`inline-flex items-center gap-2 px-4 py-2 backdrop-blur-sm border rounded-full mb-4 ${
                   receiptData.isReturn 
@@ -315,7 +315,7 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
                     {receiptData.isReturn ? 'Return Receipt Processed' : 'Parsing Complete'}
                   </span>
                 </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-raleway">
+                <h1 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-raleway">
                   {receiptData.isReturn ? 'Return Receipt Parsed' : 'Receipt Parsed Successfully'}
                 </h1>
                 {receiptData.isReturn && (
@@ -324,7 +324,7 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
                   </Badge>
                 )}
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3 w-full sm:w-auto">
                 <Button variant="outline" onClick={onStartOver} className="hover:scale-105 transition-transform">
                   Parse Another Receipt
                 </Button>
