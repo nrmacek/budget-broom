@@ -144,7 +144,7 @@ const Landing = () => {
                 FAQs
               </button>
               <Link to="/auth?tab=signup">
-                <Button size="sm" variant="secondary" className="bg-white text-foreground hover:bg-white/90 font-semibold">
+                <Button size="sm" variant="secondary" className="bg-white text-foreground hover:bg-white/90 font-semibold rounded-full px-6">
                   Get Started Free
                 </Button>
               </Link>
