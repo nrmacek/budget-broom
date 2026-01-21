@@ -429,7 +429,7 @@ Ready-to-Use Data</div>
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 font-raleway">Perfect for every situation</h2>
             <p className="text-xl text-muted-foreground font-sans">
-              Whether personal or business, ReceiptParser adapts to your needs
+              Whether personal or business, Best Receipt Parser adapts to your needs
             </p>
           </div>
           
@@ -515,7 +515,7 @@ Ready-to-Use Data</div>
               <div className="space-y-3">
                 <h3 className="font-semibold text-lg font-raleway">Is there a free plan?</h3>
                 <p className="text-muted-foreground font-sans">
-                  Yes! Try ReceiptParser free with up to 5 receipts per month. No credit card required to start.
+                  Yes! Try Best Receipt Parser free with up to 5 receipts per month. No credit card required to start.
                 </p>
               </div>
             </Card>
@@ -591,7 +591,7 @@ Ready-to-Use Data</div>
           </div>
           
           <div className="pt-8 border-t text-center text-sm text-muted-foreground">
-            <p className="font-sans">&copy; 2025 ReceiptParser. All rights reserved.</p>
+            <p className="font-sans">&copy; 2025 Best Receipt Parser. All rights reserved.</p>
           </div>
         </div>
       </footer>

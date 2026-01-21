@@ -157,7 +157,7 @@ const Auth = () => {
               alt="Best Receipt Parser Logo" 
               className="h-12 w-auto object-contain flex-shrink-0"
             />
-            <h1 className="text-xl font-bold font-raleway">ReceiptParser</h1>
+            <h1 className="text-xl font-bold font-raleway"><span className="text-primary">Best</span> Receipt Parser</h1>
           </div>
           <p className="text-muted-foreground">
             {activeTab === 'signup' ? 'Sign up to start analyzing receipts' : 'Sign in to access your receipt processing dashboard'}
