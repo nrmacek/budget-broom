@@ -58,12 +58,20 @@ const Dashboard = () => {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const { getSuggestionsForItem } = useSmartSuggestions();
 
-  // Check if user is on Pro tier (don't show locked state while loading)
-  const isPro = subscriptionLoading ? true : subscriptionData?.product_id === PRICING_CONFIG.pro.product_id;
+  // Check if user is on Pro tier for feature gating
+  // FAIL CLOSED for features: Show free tier (locked) while loading to prevent flash of premium
+  const isPro = subscriptionLoading 
+    ? false 
+    : subscriptionData?.product_id === PRICING_CONFIG.pro.product_id;
 
   // Check usage and return whether processing is allowed
+  // FAIL OPEN: If we can't check usage, allow the action rather than blocking the user
   const checkUsageAllowed = async (): Promise<UsageData | null> => {
-    if (!session) return null;
+    if (!session) {
+      // No session = allow (will fail at auth level anyway)
+      console.warn('checkUsageAllowed: No session, allowing action');
+      return { allowed: true, used: 0, limit: 25, remaining: 25, tier: 'free' };
+    }
     
     setIsCheckingUsage(true);
     try {
@@ -74,27 +82,28 @@ const Dashboard = () => {
       });
 
       if (error) {
-        console.error('Failed to check usage:', error);
-        toast({
-          title: "Usage check failed",
-          description: "Unable to verify your usage limits. Please try again.",
-          variant: "destructive",
-        });
-        return null;
+        // FAIL OPEN: Log error but allow the action
+        console.error('check-usage failed, allowing action (fail open):', error);
+        return { allowed: true, used: 0, limit: 25, remaining: 25, tier: 'free' };
       }
 
       return data as UsageData;
     } catch (error) {
-      console.error('Error checking usage:', error);
-      return null;
+      // FAIL OPEN: Log error but allow the action
+      console.error('check-usage exception, allowing action (fail open):', error);
+      return { allowed: true, used: 0, limit: 25, remaining: 25, tier: 'free' };
     } finally {
       setIsCheckingUsage(false);
     }
   };
 
   // Increment usage after successful processing
+  // SILENT FAIL: If increment fails, log but don't show to user - receipt was already processed
   const incrementUsage = async () => {
-    if (!session) return;
+    if (!session) {
+      console.warn('incrementUsage: No session, skipping');
+      return;
+    }
     
     try {
       const { error } = await supabase.functions.invoke('increment-usage', {
@@ -104,10 +113,12 @@ const Dashboard = () => {
       });
 
       if (error) {
-        console.error('Failed to increment usage:', error);
+        // Silent fail - receipt was already processed successfully
+        console.error('increment-usage failed (silent):', error);
       }
     } catch (error) {
-      console.error('Error incrementing usage:', error);
+      // Silent fail - receipt was already processed successfully
+      console.error('increment-usage exception (silent):', error);
     }
   };
 
@@ -172,11 +183,11 @@ const Dashboard = () => {
   const handleFileUpload = async (file: File) => {
     if (!user) return;
 
-    // Check usage before processing
+    // Check usage before processing (fail open approach)
     const usage = await checkUsageAllowed();
-    if (!usage) return;
-
-    if (!usage.allowed) {
+    
+    // usage will never be null due to fail-open, but check allowed flag
+    if (usage && !usage.allowed) {
       setUsageData(usage);
       setPendingFile(file);
       setShowUpgradeModal(true);

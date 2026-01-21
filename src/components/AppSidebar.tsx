@@ -40,6 +40,7 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
   const [isLoadingUsage, setIsLoadingUsage] = useState(true);
 
   // Fetch usage data on mount
+  // SILENT FAIL: If fetch fails, just don't show usage indicator - not critical
   useEffect(() => {
     const fetchUsage = async () => {
       if (!session) {
@@ -54,11 +55,18 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
           },
         });
 
-        if (!error && data) {
+        if (error) {
+          // Silent fail - usage indicator is nice-to-have, not critical
+          console.error('AppSidebar: check-usage failed (silent):', error);
+          return;
+        }
+
+        if (data) {
           setUsageData(data as UsageData);
         }
       } catch (error) {
-        console.error('Failed to fetch usage:', error);
+        // Silent fail - usage indicator is nice-to-have, not critical
+        console.error('AppSidebar: check-usage exception (silent):', error);
       } finally {
         setIsLoadingUsage(false);
       }
