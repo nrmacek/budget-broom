@@ -10,15 +10,18 @@ import { BulkUpload } from '@/components/BulkUpload';
 import { useSmartSuggestions } from '@/hooks/useSmartSuggestions';
 import { ReceiptResults } from '@/components/ReceiptResults';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription, PRICING_CONFIG } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FileUploadResult } from '@/types';
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { subscriptionData, refreshSubscription } = useSubscription();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState('');
@@ -28,6 +31,43 @@ const Dashboard = () => {
   const [processingMode, setProcessingMode] = useState<'single' | 'bulk'>('single');
   const [currentFileName, setCurrentFileName] = useState<string>('');
   const { getSuggestionsForItem } = useSmartSuggestions();
+
+  // Handle checkout success/cancel feedback
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+
+    if (success === 'true') {
+      // Refresh subscription to get the latest plan info
+      refreshSubscription().then(() => {
+        // Determine plan name from subscription data
+        let planName = 'your plan';
+        if (subscriptionData.product_id === PRICING_CONFIG.plus.product_id) {
+          planName = 'Plus';
+        } else if (subscriptionData.product_id === PRICING_CONFIG.pro.product_id) {
+          planName = 'Pro';
+        }
+
+        toast({
+          title: `🎉 Welcome to ${planName}!`,
+          description: "Your subscription is now active.",
+        });
+      });
+
+      // Remove the query param from URL
+      window.history.replaceState({}, '', '/dashboard');
+    }
+
+    if (canceled === 'true') {
+      toast({
+        title: "Checkout canceled",
+        description: "You can upgrade anytime from your profile menu.",
+      });
+
+      // Remove the query param from URL
+      window.history.replaceState({}, '', '/dashboard');
+    }
+  }, [searchParams]);
 
   const handleFileUpload = async (file: File) => {
     if (!user) return;
