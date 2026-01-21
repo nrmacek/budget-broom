@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Receipt, LogOut, User } from 'lucide-react';
+import { Receipt, LogOut, User, Sparkles } from 'lucide-react';
 import { UserProfileDropdown } from '@/components/UserProfileDropdown';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -15,10 +15,26 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FileUploadResult } from '@/types';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+
+interface UsageData {
+  allowed: boolean;
+  used: number;
+  limit: number;
+  remaining: number;
+  tier: 'free' | 'plus' | 'pro';
+}
 
 const Dashboard = () => {
-  const { user, signOut } = useAuth();
-  const { subscriptionData, refreshSubscription } = useSubscription();
+  const { user, signOut, session } = useAuth();
+  const { subscriptionData, refreshSubscription, createCheckout } = useSubscription();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -30,7 +46,82 @@ const Dashboard = () => {
   const [imagePath, setImagePath] = useState<string | null>(null);
   const [processingMode, setProcessingMode] = useState<'single' | 'bulk'>('single');
   const [currentFileName, setCurrentFileName] = useState<string>('');
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [usageData, setUsageData] = useState<UsageData | null>(null);
+  const [isCheckingUsage, setIsCheckingUsage] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const { getSuggestionsForItem } = useSmartSuggestions();
+
+  // Check usage and return whether processing is allowed
+  const checkUsageAllowed = async (): Promise<UsageData | null> => {
+    if (!session) return null;
+    
+    setIsCheckingUsage(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('check-usage', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Failed to check usage:', error);
+        toast({
+          title: "Usage check failed",
+          description: "Unable to verify your usage limits. Please try again.",
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      return data as UsageData;
+    } catch (error) {
+      console.error('Error checking usage:', error);
+      return null;
+    } finally {
+      setIsCheckingUsage(false);
+    }
+  };
+
+  // Increment usage after successful processing
+  const incrementUsage = async () => {
+    if (!session) return;
+    
+    try {
+      const { error } = await supabase.functions.invoke('increment-usage', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Failed to increment usage:', error);
+      }
+    } catch (error) {
+      console.error('Error incrementing usage:', error);
+    }
+  };
+
+  // Get the next tier name for upgrade prompt
+  const getNextTierName = (currentTier: string): string => {
+    if (currentTier === 'free') return 'Plus';
+    if (currentTier === 'plus') return 'Pro';
+    return 'Pro';
+  };
+
+  // Handle upgrade button click
+  const handleUpgrade = async () => {
+    const tier = usageData?.tier || 'free';
+    const priceId = tier === 'free' 
+      ? PRICING_CONFIG.plus.monthly_price_id 
+      : PRICING_CONFIG.pro.monthly_price_id;
+    
+    const url = await createCheckout(priceId);
+    if (url) {
+      window.open(url, '_blank');
+    }
+    setShowUpgradeModal(false);
+  };
 
   // Handle checkout success/cancel feedback
   useEffect(() => {
@@ -70,6 +161,23 @@ const Dashboard = () => {
   }, [searchParams]);
 
   const handleFileUpload = async (file: File) => {
+    if (!user) return;
+
+    // Check usage before processing
+    const usage = await checkUsageAllowed();
+    if (!usage) return;
+
+    if (!usage.allowed) {
+      setUsageData(usage);
+      setPendingFile(file);
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    await processFile(file);
+  };
+
+  const processFile = async (file: File) => {
     if (!user) return;
 
     setIsProcessing(true);
@@ -184,6 +292,9 @@ const Dashboard = () => {
       setReceiptId(savedReceipt.id);
       setImagePath(filePath);
 
+      // Increment usage after successful processing
+      await incrementUsage();
+
       toast({
         title: "Receipt processed successfully",
         description: `Extracted ${data.lineItems?.length || 0} items from ${data.storeName}`,
@@ -207,6 +318,11 @@ const Dashboard = () => {
   };
 
   const handleBulkUpload = async (results: FileUploadResult[]) => {
+    // Increment usage for each successfully processed receipt
+    for (let i = 0; i < results.length; i++) {
+      await incrementUsage();
+    }
+
     toast({
       title: "Bulk processing completed",
       description: `Successfully processed ${results.length} receipts with enhanced categorization.`,
@@ -216,6 +332,20 @@ const Dashboard = () => {
     setTimeout(() => {
       navigate('/receipt-history');
     }, 1500);
+  };
+
+  // Check usage before allowing bulk upload
+  const handleBulkUploadStart = async () => {
+    const usage = await checkUsageAllowed();
+    if (!usage) return false;
+
+    if (!usage.allowed) {
+      setUsageData(usage);
+      setShowUpgradeModal(true);
+      return false;
+    }
+
+    return true;
   };
 
   const handleNewReceipt = () => {
@@ -303,6 +433,42 @@ const Dashboard = () => {
           </section>
         </div>
       </div>
+
+      {/* Upgrade Modal */}
+      <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              Monthly Limit Reached
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              You've used all {usageData?.limit || 0} receipts this month on the {usageData?.tier || 'free'} plan.
+              {usageData?.tier !== 'pro' && (
+                <span className="block mt-2">
+                  Upgrade to <strong>{getNextTierName(usageData?.tier || 'free')}</strong> for {usageData?.tier === 'free' ? '500' : '2,500'} receipts per month!
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowUpgradeModal(false);
+                setPendingFile(null);
+              }}
+            >
+              Maybe Later
+            </Button>
+            {usageData?.tier !== 'pro' && (
+              <Button onClick={handleUpgrade}>
+                Upgrade Now
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   );
 };
