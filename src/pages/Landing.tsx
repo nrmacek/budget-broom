@@ -221,7 +221,7 @@ Ready-to-Use Data</div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
-                    <span className="font-sans">3 receipts / month</span>
+                    <span className="font-sans">25 receipts / month</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-success" />
@@ -515,7 +515,7 @@ Ready-to-Use Data</div>
               <div className="space-y-3">
                 <h3 className="font-semibold text-lg font-raleway">Is there a free plan?</h3>
                 <p className="text-muted-foreground font-sans">
-                  Yes! Try Best Receipt Parser free with up to 5 receipts per month. No credit card required to start.
+                  Yes! Try Best Receipt Parser free with up to 25 receipts per month. No credit card required to start.
                 </p>
               </div>
             </Card>
