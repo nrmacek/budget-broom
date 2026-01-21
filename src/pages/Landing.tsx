@@ -193,10 +193,12 @@ const Landing = () => {
               </button>
               <Link 
                 to="/auth?tab=signup" 
-                className="text-primary font-medium py-3 px-4 text-left hover:bg-muted rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
+                className="w-full"
               >
-                Get Started Free
+                <Button className="w-full">
+                  Get Started Free
+                </Button>
               </Link>
             </div>
           </div>
