@@ -83,11 +83,13 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
   const { updateLineItemCategory, getCategoryAssignments, loading: assignmentLoading } = useCategoryAssignments();
   const { subscriptionData, createCheckout, loading: subscriptionLoading } = useSubscription();
 
-  // Check if user can export (Plus or Pro tier) - don't show locked while loading
-  const canExport = subscriptionLoading ? true : (
-    subscriptionData?.product_id === PRICING_CONFIG.plus.product_id || 
-    subscriptionData?.product_id === PRICING_CONFIG.pro.product_id
-  );
+  // Check if user can export (Plus or Pro tier)
+  // FAIL CLOSED for feature gating: While loading, show free tier behavior (locked)
+  // Once loaded, if error or no data, default to free tier (locked)
+  const canExport = subscriptionLoading 
+    ? false // Show locked while loading to prevent flash of premium features
+    : (subscriptionData?.product_id === PRICING_CONFIG.plus.product_id || 
+       subscriptionData?.product_id === PRICING_CONFIG.pro.product_id);
 
   const handleExportClick = (exportFn: () => void) => {
     if (canExport) {
