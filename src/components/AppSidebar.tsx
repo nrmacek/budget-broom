@@ -3,6 +3,7 @@ import { Receipt, Tag, Settings, Plus, History, ChevronsLeft, ChevronsRight, Spa
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useSidebar } from '@/components/ui/sidebar';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import logo from '@/assets/BRP_Logo_Only.png';
@@ -36,11 +37,15 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
   const location = useLocation();
   const isCollapsed = state === 'collapsed';
   const [usageData, setUsageData] = useState<UsageData | null>(null);
+  const [isLoadingUsage, setIsLoadingUsage] = useState(true);
 
   // Fetch usage data on mount
   useEffect(() => {
     const fetchUsage = async () => {
-      if (!session) return;
+      if (!session) {
+        setIsLoadingUsage(false);
+        return;
+      }
 
       try {
         const { data, error } = await supabase.functions.invoke('check-usage', {
@@ -54,6 +59,8 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
         }
       } catch (error) {
         console.error('Failed to fetch usage:', error);
+      } finally {
+        setIsLoadingUsage(false);
       }
     };
 
@@ -137,8 +144,19 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
           ))}
         </nav>
 
-        {/* Usage Indicator */}
-        {usageData && !isCollapsed && (
+        {/* Usage Indicator - Loading State */}
+        {isLoadingUsage && !isCollapsed && (
+          <div className="px-3 py-2 mx-2 mt-auto mb-2 rounded-lg bg-muted/50 border border-border/50">
+            <div className="flex items-center justify-between mb-1.5">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-2.5 w-12" />
+            </div>
+            <Skeleton className="h-1.5 w-full rounded-full" />
+          </div>
+        )}
+
+        {/* Usage Indicator - Loaded */}
+        {!isLoadingUsage && usageData && !isCollapsed && (
           <div className="px-3 py-2 mx-2 mt-auto mb-2 rounded-lg bg-muted/50 border border-border/50">
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
               <span>{usageData.used} / {usageData.limit} receipts</span>
@@ -162,8 +180,15 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
           </div>
         )}
 
-        {/* Collapsed Usage Indicator */}
-        {usageData && isCollapsed && (
+        {/* Collapsed Usage Indicator - Loading */}
+        {isLoadingUsage && isCollapsed && (
+          <div className="px-2 py-2 mx-1 mt-auto mb-2">
+            <Skeleton className="h-1.5 w-full rounded-full" />
+          </div>
+        )}
+
+        {/* Collapsed Usage Indicator - Loaded */}
+        {!isLoadingUsage && usageData && isCollapsed && (
           <div className="px-2 py-2 mx-1 mt-auto mb-2">
             <div 
               className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted"
