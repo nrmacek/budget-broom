@@ -1,5 +1,6 @@
 import React from 'react';
 import { User, Settings, CreditCard, Bell, HelpCircle, LogOut, ChevronDown } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -22,6 +23,8 @@ interface UserProfileDropdownProps {
 }
 
 export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProps) => {
+  const { openCustomerPortal } = useSubscription();
+  
   // Guard clause for safety
   if (!user?.email) return null;
   
@@ -75,7 +78,7 @@ export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProp
           <span>Profile</span>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors hover:text-foreground focus:text-foreground">
+        <DropdownMenuItem onClick={openCustomerPortal} className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors hover:text-foreground focus:text-foreground">
           <CreditCard className="h-4 w-4 mr-3" />
           <span>Billing & Subscription</span>
         </DropdownMenuItem>
