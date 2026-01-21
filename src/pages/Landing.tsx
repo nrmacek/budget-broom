@@ -286,23 +286,23 @@ Ready-to-Use Data</div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-success" strokeWidth={2} />
                     <span className="font-sans">25 receipts / month</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-success" strokeWidth={2} />
                     <span className="font-sans">Basic categorization only</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <X className="h-5 w-5 text-muted-foreground" />
+                    <X className="h-5 w-5 flex-shrink-0 text-muted-foreground" strokeWidth={2} />
                     <span className="font-sans text-muted-foreground">No recategorization or custom categories</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <X className="h-5 w-5 text-muted-foreground" />
+                    <X className="h-5 w-5 flex-shrink-0 text-muted-foreground" strokeWidth={2} />
                     <span className="font-sans text-muted-foreground">No export</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <X className="h-5 w-5 text-muted-foreground" />
+                    <X className="h-5 w-5 flex-shrink-0 text-muted-foreground" strokeWidth={2} />
                     <span className="font-sans text-muted-foreground">No receipt history</span>
                   </div>
                 </div>
@@ -334,23 +334,23 @@ Ready-to-Use Data</div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-white" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-white" strokeWidth={2} />
                     <span className="font-sans">500 receipts / month</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-white" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-white" strokeWidth={2} />
                     <span className="font-sans">Advanced categorization (recategorization + custom categories)</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-white" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-white" strokeWidth={2} />
                     <span className="font-sans">CSV export</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-white" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-white" strokeWidth={2} />
                     <span className="font-sans">90-day receipt history</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-white" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-white" strokeWidth={2} />
                     <span className="font-sans">Customer support access</span>
                   </div>
                 </div>
@@ -374,23 +374,23 @@ Ready-to-Use Data</div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-success" strokeWidth={2} />
                     <span className="font-sans">2,500 receipts / month</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-success" strokeWidth={2} />
                     <span className="font-sans">Everything in Plus</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-success" strokeWidth={2} />
                     <span className="font-sans">Multi-file export (CSV, PDF, QuickBooks)</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-success" strokeWidth={2} />
                     <span className="font-sans">Bulk upload</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-success" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-success" strokeWidth={2} />
                     <span className="font-sans">Priority customer support</span>
                   </div>
                 </div>
