@@ -621,9 +621,7 @@ Ready-to-Use Data</div>
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <img src={logo} alt="Best Receipt Parser Logo" className="h-8 w-auto object-contain flex-shrink-0 rounded-none" />
-                <h3 className="font-bold font-raleway"><span style={{
-                  color: '#1D75EF'
-                }}>Best</span> Receipt Parser</h3>
+                <h3 className="font-bold font-raleway"><span className="text-primary">Best</span> Receipt Parser</h3>
               </div>
               <p className="text-sm text-muted-foreground font-sans">
                 Receipts Made Useful
@@ -657,7 +655,7 @@ Ready-to-Use Data</div>
           </div>
           
           <div className="pt-8 border-t text-center text-sm text-muted-foreground">
-            <p className="font-sans">&copy; 2025 Best Receipt Parser. All rights reserved.</p>
+            <p className="font-sans">&copy; {new Date().getFullYear()} Best Receipt Parser. All rights reserved.</p>
           </div>
         </div>
       </footer>
