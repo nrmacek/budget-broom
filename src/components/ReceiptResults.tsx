@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Store, Calendar, DollarSign, Receipt, ChevronDown, ChevronRight, Lock } from 'lucide-react';
+import { Download, Store, Calendar, DollarSign, Receipt, ChevronDown, ChevronRight, Lock, Sparkles } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
@@ -633,8 +633,8 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-primary" />
-              Export Feature
+              <Sparkles className="h-5 w-5 text-primary" />
+              Unlock Export Features
             </DialogTitle>
             <DialogDescription className="pt-2">
               CSV and PDF export is available on Plus and Pro plans. Upgrade to export your receipt data for accounting, budgeting, or record-keeping.
