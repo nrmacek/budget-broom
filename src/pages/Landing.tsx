@@ -131,8 +131,8 @@ const Landing = () => {
             }}>Best</span> Receipt Parser</h1>
           </div>
           
-          {/* Center Pill Navigation - Hidden on mobile */}
-          <nav className="hidden md:block absolute left-1/2 transform -translate-x-1/2 bg-foreground/95 backdrop-blur-sm px-8 py-4 shadow-glow rounded-full">
+          {/* Center Pill Navigation - Hidden on mobile and tablet */}
+          <nav className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 bg-foreground/95 backdrop-blur-sm px-8 py-4 shadow-glow rounded-full">
             <div className="flex items-center gap-8">
               <button onClick={() => scrollToSection('pricing')} className="text-white/80 hover:text-white transition-colors text-sm font-medium">
                 Pricing
@@ -154,7 +154,7 @@ const Landing = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="lg:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -169,9 +169,9 @@ const Landing = () => {
           </div>
         </div>
         
-        {/* Mobile Navigation Menu */}
+        {/* Mobile/Tablet Navigation Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-card/95 backdrop-blur-md border-b shadow-lg z-50">
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-card/95 backdrop-blur-md border-b shadow-lg z-50">
             <div className="flex flex-col p-4 gap-2">
               <button 
                 onClick={() => scrollToSection('pricing')} 
