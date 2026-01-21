@@ -3,14 +3,29 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Store, Calendar, DollarSign, Receipt, ChevronDown, ChevronRight } from 'lucide-react';
+import { Download, Store, Calendar, DollarSign, Receipt, ChevronDown, ChevronRight, Lock } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
 import { useCategoryAssignments } from '@/hooks/useCategoryAssignments';
+import { useSubscription, PRICING_CONFIG } from '@/hooks/useSubscription';
 import { CategoryAssignment } from '@/types';
 import { CSVExporter } from '@/lib/csvExport';
 import { PDFGenerator } from '@/lib/pdfGenerator';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface LineItem {
   id: string;
@@ -62,9 +77,31 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
   const [items, setItems] = useState<LineItem[]>(receiptData.lineItems);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [categoryAssignments, setCategoryAssignments] = useState<Record<number, string>>({});
+  const [showExportUpgradeModal, setShowExportUpgradeModal] = useState(false);
   
   const { categories, loading: categoriesLoading } = useCategories();
   const { updateLineItemCategory, getCategoryAssignments, loading: assignmentLoading } = useCategoryAssignments();
+  const { subscriptionData, createCheckout } = useSubscription();
+
+  // Check if user can export (Plus or Pro tier)
+  const canExport = subscriptionData?.product_id === PRICING_CONFIG.plus.product_id || 
+                    subscriptionData?.product_id === PRICING_CONFIG.pro.product_id;
+
+  const handleExportClick = (exportFn: () => void) => {
+    if (canExport) {
+      exportFn();
+    } else {
+      setShowExportUpgradeModal(true);
+    }
+  };
+
+  const handleUpgrade = async () => {
+    const url = await createCheckout(PRICING_CONFIG.plus.monthly_price_id);
+    if (url) {
+      window.open(url, '_blank');
+    }
+    setShowExportUpgradeModal(false);
+  };
 
   useEffect(() => {
     // Load existing category assignments if receiptId is provided
@@ -288,15 +325,55 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
                   Parse Another Receipt
                 </Button>
                 {imagePath && (
-                  <Button onClick={downloadReceiptPDF} variant="default" className="hover:scale-105 transition-transform">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download Receipt PDF
-                  </Button>
+                  canExport ? (
+                    <Button onClick={downloadReceiptPDF} variant="default" className="hover:scale-105 transition-transform">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Receipt PDF
+                    </Button>
+                  ) : (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            className="gap-2 opacity-60"
+                            onClick={() => setShowExportUpgradeModal(true)}
+                          >
+                            <Lock className="h-3.5 w-3.5" />
+                            Download PDF
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Plus/Pro feature - upgrade to unlock</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )
                 )}
-                <Button onClick={exportToCSV} variant="hero" className="shadow-glow hover:scale-105 transition-all duration-200">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export CSV
-                </Button>
+                {canExport ? (
+                  <Button onClick={exportToCSV} variant="hero" className="shadow-glow hover:scale-105 transition-all duration-200">
+                    <Download className="h-4 w-4 mr-2" />
+                    Export CSV
+                  </Button>
+                ) : (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          className="gap-2 opacity-60"
+                          onClick={() => setShowExportUpgradeModal(true)}
+                        >
+                          <Lock className="h-3.5 w-3.5" />
+                          Export CSV
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Plus/Pro feature - upgrade to unlock</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </div>
             
@@ -546,6 +623,32 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
           )}
         </div>
       </div>
+
+      {/* Export Upgrade Modal */}
+      <Dialog open={showExportUpgradeModal} onOpenChange={setShowExportUpgradeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-primary" />
+              Export Feature
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              CSV and PDF export is available on Plus and Pro plans. Upgrade to export your receipt data for accounting, budgeting, or record-keeping.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setShowExportUpgradeModal(false)}
+            >
+              Maybe Later
+            </Button>
+            <Button onClick={handleUpgrade}>
+              Upgrade to Plus
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
