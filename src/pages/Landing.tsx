@@ -121,7 +121,7 @@ const Landing = () => {
   return <div className="min-h-screen bg-gradient-background">
 
       {/* Header - Logo Outside Pill Navigation */}
-      <header className="py-4 px-4">
+      <header className="relative py-4 px-4">
         <div className="max-w-7xl mx-auto relative flex items-center justify-between">
           {/* Logo - Outside Pill */}
           <div className="flex items-center gap-2">
@@ -171,7 +171,7 @@ const Landing = () => {
         
         {/* Mobile/Tablet Navigation Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-background border-b border-border shadow-lg z-50">
+          <div className="lg:hidden absolute top-full left-0 w-full z-50 bg-background border-b border-border shadow-lg">
             <div className="flex flex-col p-4 gap-2">
               <button 
                 onClick={() => scrollToSection('pricing')} 
