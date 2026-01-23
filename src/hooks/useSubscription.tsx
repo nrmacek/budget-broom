@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 interface SubscriptionData {
   subscribed: boolean;
@@ -43,6 +44,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData>({ subscribed: false });
   const [loading, setLoading] = useState(true);
   const { user, session } = useAuth();
+  const { toast } = useToast();
 
   const refreshSubscription = async () => {
     if (!user || !session) {
@@ -102,6 +104,11 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const openCustomerPortal = async () => {
     if (!session) {
       console.error('User not authenticated');
+      toast({
+        title: 'Not authenticated',
+        description: 'Please sign in to manage your subscription.',
+        variant: 'destructive',
+      });
       return;
     }
 
@@ -114,12 +121,33 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
       if (error) {
         console.error('Error opening customer portal:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to open billing portal. Please try again.',
+          variant: 'destructive',
+        });
         return;
       }
 
-      window.open(data.url, '_blank');
+      // Check if the response indicates no customer found
+      if (data.error === 'no_customer') {
+        toast({
+          title: 'No billing history',
+          description: data.message || 'Subscribe to a plan first to manage your subscription.',
+        });
+        return;
+      }
+
+      if (data.url) {
+        window.open(data.url, '_blank');
+      }
     } catch (error) {
       console.error('Error in openCustomerPortal:', error);
+      toast({
+        title: 'Error',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 
