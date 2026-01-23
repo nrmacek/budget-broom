@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Settings, CreditCard, HelpCircle, LogOut, ChevronDown } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -24,7 +25,8 @@ interface UserProfileDropdownProps {
 }
 
 export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProps) => {
-  const { openCustomerPortal } = useSubscription();
+  const navigate = useNavigate();
+  const { subscriptionData, openCustomerPortal } = useSubscription();
   const [showProfileModal, setShowProfileModal] = useState(false);
   
   // Guard clause for safety
@@ -46,6 +48,16 @@ export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProp
 
   const handleSupportClick = () => {
     window.open('mailto:support@bestreceiptparser.com', '_blank');
+  };
+
+  const handleBillingClick = () => {
+    if (subscriptionData.subscribed) {
+      // User has active subscription - open Stripe portal
+      openCustomerPortal();
+    } else {
+      // Free user - navigate to billing page
+      navigate('/billing');
+    }
   };
 
   const displayName = getDisplayName();
@@ -88,7 +100,7 @@ export const UserProfileDropdown = ({ user, onSignOut }: UserProfileDropdownProp
             <span>Profile</span>
           </DropdownMenuItem>
           
-          <DropdownMenuItem onClick={openCustomerPortal} className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors hover:text-foreground focus:text-foreground">
+          <DropdownMenuItem onClick={handleBillingClick} className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 transition-colors hover:text-foreground focus:text-foreground">
             <CreditCard className="h-4 w-4 mr-3" />
             <span>Billing & Subscription</span>
           </DropdownMenuItem>
