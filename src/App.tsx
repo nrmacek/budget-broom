@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import ReceiptHistory from "./pages/ReceiptHistory";
 import Categories from "./pages/Categories";
+import Billing from "./pages/Billing";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,11 @@ const App = () => (
             <Route path="/categories" element={
               <ProtectedRoute>
                 <Categories />
+              </ProtectedRoute>
+            } />
+            <Route path="/billing" element={
+              <ProtectedRoute>
+                <Billing />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
