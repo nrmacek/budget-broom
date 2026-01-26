@@ -175,72 +175,73 @@ export function AppSidebar({ onNewReceipt }: AppSidebarProps) {
             ))}
           </nav>
 
-          {/* Usage Indicator - Loading State */}
-          {isLoadingUsage && !isCollapsed && (
-            <div className="px-3 py-2 mx-2 mt-auto mb-2 rounded-lg bg-muted/50 border border-border/50">
-              <div className="flex items-center justify-between mb-1.5">
-                <Skeleton className="h-3 w-20" />
-                <Skeleton className="h-2.5 w-12" />
-              </div>
-              <Skeleton className="h-1.5 w-full rounded-full" />
-            </div>
-          )}
-
-          {/* Usage Indicator - Loaded */}
-          {!isLoadingUsage && usageData && !isCollapsed && (
-            <div className="px-3 py-2 mx-2 mt-auto mb-2 rounded-lg bg-muted/50 border border-border/50">
-              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-                <span>{usageData.used} / {usageData.limit} receipts</span>
-                <span className="text-[10px] uppercase tracking-wide">{getTierDisplayName(usageData.tier)}</span>
-              </div>
-              <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                <div 
-                  className={`h-full transition-all duration-300 ${getProgressColor()}`}
-                  style={{ width: `${getUsagePercentage()}%` }}
-                />
-              </div>
-              {shouldShowUpgrade && (
-                <button 
-                  onClick={() => setShowUpgradeModal(true)}
-                  className="flex items-center gap-1 text-[10px] text-primary hover:underline mt-1.5"
-                >
-                  <Sparkles className="h-3 w-3" />
-                  Upgrade for more
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Collapsed Usage Indicator - Loading */}
-          {isLoadingUsage && isCollapsed && (
-            <div className="px-2 py-2 mx-1 mt-auto mb-2">
-              <Skeleton className="h-1.5 w-full rounded-full" />
-            </div>
-          )}
-
-          {/* Collapsed Usage Indicator - Loaded */}
-          {!isLoadingUsage && usageData && isCollapsed && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="px-2 py-2 mx-1 mt-auto mb-2 cursor-default">
-                    <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                      <div 
-                        className={`h-full transition-all duration-300 ${getProgressColor()}`}
-                        style={{ width: `${getUsagePercentage()}%` }}
-                      />
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>{usageData.used} / {usageData.limit} receipts ({getTierDisplayName(usageData.tier)})</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-
-          {/* Footer Navigation */}
+          {/* Footer Section - Usage + Settings */}
           <div className="sidebar__footer">
+            {/* Usage Indicator - Loading State */}
+            {isLoadingUsage && !isCollapsed && (
+              <div className="px-3 py-2 mx-2 mb-2 rounded-lg bg-muted/50 border border-border/50">
+                <div className="flex items-center justify-between mb-1.5">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-2.5 w-12" />
+                </div>
+                <Skeleton className="h-1.5 w-full rounded-full" />
+              </div>
+            )}
+
+            {/* Usage Indicator - Loaded */}
+            {!isLoadingUsage && usageData && !isCollapsed && (
+              <div className="px-3 py-2 mx-2 mb-2 rounded-lg bg-muted/50 border border-border/50">
+                <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
+                  <span>{usageData.used} / {usageData.limit} receipts</span>
+                  <span className="text-[10px] uppercase tracking-wide">{getTierDisplayName(usageData.tier)}</span>
+                </div>
+                <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div 
+                    className={`h-full transition-all duration-300 ${getProgressColor()}`}
+                    style={{ width: `${getUsagePercentage()}%` }}
+                  />
+                </div>
+                {shouldShowUpgrade && (
+                  <button 
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="flex items-center gap-1 text-[10px] text-primary hover:underline mt-1.5"
+                  >
+                    <Sparkles className="h-3 w-3" />
+                    Upgrade for more
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Collapsed Usage Indicator - Loading */}
+            {isLoadingUsage && isCollapsed && (
+              <div className="px-2 py-2 mx-1 mb-2">
+                <Skeleton className="h-1.5 w-full rounded-full" />
+              </div>
+            )}
+
+            {/* Collapsed Usage Indicator - Loaded */}
+            {!isLoadingUsage && usageData && isCollapsed && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="px-2 py-2 mx-1 mb-2 cursor-default">
+                      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div 
+                          className={`h-full transition-all duration-300 ${getProgressColor()}`}
+                          style={{ width: `${getUsagePercentage()}%` }}
+                        />
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>{usageData.used} / {usageData.limit} receipts ({getTierDisplayName(usageData.tier)})</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+
+            {/* Settings Navigation */}
             {bottomItems.map((item) => (
               <button
                 key={item.title}
