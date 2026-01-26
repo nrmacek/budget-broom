@@ -71,9 +71,30 @@ serve(async (req) => {
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
-      // Subscription tier is the product ID
+      
+      // Safely parse subscription end date
+      try {
+        const periodEnd = subscription.current_period_end;
+        if (periodEnd != null) {
+          // Stripe returns Unix timestamp in seconds
+          const timestamp = typeof periodEnd === 'number' ? periodEnd : Number(periodEnd);
+          if (!isNaN(timestamp)) {
+            subscriptionEnd = new Date(timestamp * 1000).toISOString();
+          }
+        }
+      } catch (dateError) {
+        logStep("Warning: Could not parse subscription end date", { 
+          raw: subscription.current_period_end,
+          error: String(dateError)
+        });
+      }
+      
+      logStep("Active subscription found", { 
+        subscriptionId: subscription.id, 
+        endDate: subscriptionEnd 
+      });
+      
+      // Get product and price IDs from subscription items
       productId = subscription.items.data[0].price.product;
       priceId = subscription.items.data[0].price.id;
       logStep("Determined subscription tier", { productId, priceId });
