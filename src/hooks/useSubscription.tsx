@@ -20,12 +20,12 @@ interface SubscriptionContextType {
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
-// Pricing configuration
+// Pricing configuration - product_ids arrays handle monthly/yearly having different Stripe product IDs
 export const PRICING_CONFIG = {
   plus: {
     monthly_price_id: 'price_1SCgy7Acgun5IiHBgXyrMu86',
     yearly_price_id: 'price_1SCgyZAcgun5IiHBswBIGO2F',
-    product_id: 'prod_T8yvk9SURXeAPl',
+    product_ids: ['prod_T8yvk9SURXeAPl', 'prod_T8ywUzjReAIeog'],
     name: 'Plus',
     monthly_price: 12,
     yearly_price: 120,
@@ -33,12 +33,26 @@ export const PRICING_CONFIG = {
   pro: {
     monthly_price_id: 'price_1SCgyMAcgun5IiHBebAxrygY',
     yearly_price_id: 'price_1SCgykAcgun5IiHBWjp9meQq',
-    product_id: 'prod_T8ywO3nikG5DRf',
+    product_ids: ['prod_T8yw9XDaHv2RIv', 'prod_T8ywO3nikG5DRf'],
     name: 'Pro',
     monthly_price: 39,
     yearly_price: 390,
   }
 };
+
+// Helper function to determine subscription tier from product ID
+export function getTierByProductId(productId: string | undefined): 'free' | 'plus' | 'pro' {
+  if (!productId) return 'free';
+  
+  if (PRICING_CONFIG.plus.product_ids.includes(productId)) {
+    return 'plus';
+  }
+  if (PRICING_CONFIG.pro.product_ids.includes(productId)) {
+    return 'pro';
+  }
+  
+  return 'free';
+}
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData>({ subscribed: false });

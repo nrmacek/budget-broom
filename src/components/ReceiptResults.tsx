@@ -8,7 +8,7 @@ import * as Icons from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
 import { useCategoryAssignments } from '@/hooks/useCategoryAssignments';
-import { useSubscription, PRICING_CONFIG } from '@/hooks/useSubscription';
+import { useSubscription, getTierByProductId, PRICING_CONFIG } from '@/hooks/useSubscription';
 import { CategoryAssignment } from '@/types';
 import { CSVExporter } from '@/lib/csvExport';
 import { PDFGenerator } from '@/lib/pdfGenerator';
@@ -86,10 +86,10 @@ export function ReceiptResults({ receiptData, receiptId, onStartOver, imagePath 
   // Check if user can export (Plus or Pro tier)
   // FAIL CLOSED for feature gating: While loading, show free tier behavior (locked)
   // Once loaded, if error or no data, default to free tier (locked)
+  const currentTier = getTierByProductId(subscriptionData?.product_id);
   const canExport = subscriptionLoading 
     ? false // Show locked while loading to prevent flash of premium features
-    : (subscriptionData?.product_id === PRICING_CONFIG.plus.product_id || 
-       subscriptionData?.product_id === PRICING_CONFIG.pro.product_id);
+    : (currentTier === 'plus' || currentTier === 'pro');
 
   const handleExportClick = (exportFn: () => void) => {
     if (canExport) {
