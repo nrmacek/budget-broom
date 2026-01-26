@@ -12,10 +12,10 @@ const TIER_LIMITS = {
   pro: 2500,
 };
 
-// Product IDs from Stripe
+// Product IDs from Stripe - arrays to handle monthly/yearly having different product IDs
 const PRODUCT_IDS = {
-  plus: "prod_T8yvk9SURXeAPl",
-  pro: "prod_T8ywO3nikG5DRf",
+  plus: ["prod_T8yvk9SURXeAPl", "prod_T8ywUzjReAIeog"],
+  pro: ["prod_T8yw9XDaHv2RIv", "prod_T8ywO3nikG5DRf"],
 };
 
 Deno.serve(async (req) => {
@@ -120,9 +120,9 @@ Deno.serve(async (req) => {
             const subscription = subscriptionData.data[0];
             productId = subscription.items.data[0]?.price?.product || null;
 
-            if (productId === PRODUCT_IDS.pro) {
+            if (PRODUCT_IDS.pro.includes(productId)) {
               tier = "pro";
-            } else if (productId === PRODUCT_IDS.plus) {
+            } else if (PRODUCT_IDS.plus.includes(productId)) {
               tier = "plus";
             }
           }

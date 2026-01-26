@@ -10,7 +10,7 @@ import { BulkUpload } from '@/components/BulkUpload';
 import { useSmartSuggestions } from '@/hooks/useSmartSuggestions';
 import { ReceiptResults } from '@/components/ReceiptResults';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription, PRICING_CONFIG } from '@/hooks/useSubscription';
+import { useSubscription, getTierByProductId, PRICING_CONFIG } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -60,9 +60,10 @@ const Dashboard = () => {
 
   // Check if user is on Pro tier for feature gating
   // FAIL CLOSED for features: Show free tier (locked) while loading to prevent flash of premium
+  const currentTier = getTierByProductId(subscriptionData?.product_id);
   const isPro = subscriptionLoading 
     ? false 
-    : subscriptionData?.product_id === PRICING_CONFIG.pro.product_id;
+    : currentTier === 'pro';
 
   // Check usage and return whether processing is allowed
   // FAIL OPEN: If we can't check usage, allow the action rather than blocking the user
@@ -136,13 +137,9 @@ const Dashboard = () => {
     if (success === 'true') {
       // Refresh subscription to get the latest plan info
       refreshSubscription().then(() => {
-        // Determine plan name from subscription data
-        let planName = 'your plan';
-        if (subscriptionData.product_id === PRICING_CONFIG.plus.product_id) {
-          planName = 'Plus';
-        } else if (subscriptionData.product_id === PRICING_CONFIG.pro.product_id) {
-          planName = 'Pro';
-        }
+        // Determine plan name from subscription data using centralized helper
+        const tier = getTierByProductId(subscriptionData.product_id);
+        const planName = tier === 'free' ? 'your plan' : PRICING_CONFIG[tier]?.name || 'your plan';
 
         toast({
           title: `🎉 Welcome to ${planName}!`,

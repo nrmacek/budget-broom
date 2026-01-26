@@ -9,7 +9,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { UserProfileDropdown } from '@/components/UserProfileDropdown';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription, PRICING_CONFIG } from '@/hooks/useSubscription';
+import { useSubscription, PRICING_CONFIG, getTierByProductId } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/use-toast';
 
 const Billing = () => {
@@ -78,6 +78,9 @@ const Billing = () => {
     navigate('/');
   };
 
+  // Determine current tier from subscription product_id
+  const currentTier = getTierByProductId(subscriptionData.product_id);
+
   const plans = [
     {
       id: 'free',
@@ -94,8 +97,8 @@ const Billing = () => {
         { text: 'Bulk upload', included: false },
         { text: 'Priority support', included: false },
       ],
-      cta: 'Current Plan',
-      disabled: true,
+      cta: currentTier === 'free' ? 'Current Plan' : 'Downgrade',
+      disabled: currentTier === 'free',
       highlight: false,
     },
     {
@@ -113,9 +116,9 @@ const Billing = () => {
         { text: 'Bulk upload', included: false },
         { text: 'Priority support', included: false },
       ],
-      cta: 'Upgrade to Plus',
-      disabled: false,
-      highlight: true,
+      cta: currentTier === 'plus' ? 'Current Plan' : currentTier === 'pro' ? 'Downgrade' : 'Upgrade to Plus',
+      disabled: currentTier === 'plus',
+      highlight: currentTier === 'free',
     },
     {
       id: 'pro',
@@ -132,9 +135,9 @@ const Billing = () => {
         { text: 'Priority support', included: true },
         { text: 'Early access to features', included: true },
       ],
-      cta: 'Upgrade to Pro',
-      disabled: false,
-      highlight: false,
+      cta: currentTier === 'pro' ? 'Current Plan' : 'Upgrade to Pro',
+      disabled: currentTier === 'pro',
+      highlight: currentTier === 'plus',
     },
   ];
 
