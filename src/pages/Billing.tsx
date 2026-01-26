@@ -118,7 +118,7 @@ const Billing = () => {
       ],
       cta: currentTier === 'plus' ? 'Current Plan' : currentTier === 'pro' ? 'Downgrade' : 'Upgrade to Plus',
       disabled: currentTier === 'plus',
-      highlight: currentTier === 'free',
+      highlight: true,
     },
     {
       id: 'pro',
@@ -137,7 +137,7 @@ const Billing = () => {
       ],
       cta: currentTier === 'pro' ? 'Current Plan' : 'Upgrade to Pro',
       disabled: currentTier === 'pro',
-      highlight: currentTier === 'plus',
+      highlight: false,
     },
   ];
 
