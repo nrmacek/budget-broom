@@ -1,132 +1,148 @@
 
-## Fix Stripe Product Config Mismatch
+# Fix Plan: Stripe Checkout Return Issues
 
-### Problem Identified
-The Stripe account has **4 different product IDs** for what should be 2 tiers:
+## Problems Identified
 
-| Price | Current Product ID | Expected Tier |
-|-------|-------------------|---------------|
-| Plus Monthly ($12/mo) | `prod_T8yvk9SURXeAPl` | Plus |
-| Plus Yearly ($120/yr) | `prod_T8ywUzjReAIeog` | Plus (but different product!) |
-| Pro Monthly ($39/mo) | `prod_T8yw9XDaHv2RIv` | Pro (but different product!) |
-| Pro Yearly ($390/yr) | `prod_T8ywO3nikG5DRf` | Pro |
+### Problem 1: "Invalid time value" Error
+The `check-subscription` edge function crashes when processing an active subscription because `subscription.current_period_end` is either:
+- A Stripe Timestamp object (not a raw number) in the newer API version
+- Potentially undefined for certain subscription states
 
-The `check-subscription` edge function determines the tier by matching the `product_id` from the subscription. With 4 different product IDs, tier detection will be inconsistent.
-
----
-
-### Solution: Support Multiple Product IDs Per Tier
-
-Update `PRICING_CONFIG` to include arrays of product IDs per tier, and modify the tier detection logic to check against all valid product IDs.
-
----
-
-### Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/hooks/useSubscription.tsx` | Update `PRICING_CONFIG` to include all product IDs per tier; add helper function `getTierByProductId` |
-| `src/pages/Billing.tsx` | Update tier detection to use the new helper function |
-| Any component using tier detection | Use the centralized helper function |
-
----
-
-### Updated PRICING_CONFIG Structure
-
+**Error location:** Line 74 in `supabase/functions/check-subscription/index.ts`
 ```typescript
-export const PRICING_CONFIG = {
-  plus: {
-    monthly_price_id: 'price_1SCgy7Acgun5IiHBgXyrMu86',
-    yearly_price_id: 'price_1SCgyZAcgun5IiHBswBIGO2F',
-    // All product IDs that correspond to Plus tier
-    product_ids: ['prod_T8yvk9SURXeAPl', 'prod_T8ywUzjReAIeog'],
-    name: 'Plus',
-    monthly_price: 12,
-    yearly_price: 120,
-  },
-  pro: {
-    monthly_price_id: 'price_1SCgyMAcgun5IiHBebAxrygY',
-    yearly_price_id: 'price_1SCgykAcgun5IiHBWjp9meQq',
-    // All product IDs that correspond to Pro tier
-    product_ids: ['prod_T8yw9XDaHv2RIv', 'prod_T8ywO3nikG5DRf'],
-    name: 'Pro',
-    monthly_price: 39,
-    yearly_price: 390,
-  }
-};
+subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
 ```
 
+### Problem 2: Redirect to Sign Up After Checkout
+After Stripe checkout success, returning to `/dashboard?success=true` triggers:
+1. Auth state rehydration (brief loading state)
+2. `check-subscription` call that fails with 500 error
+3. `ProtectedRoute` may see `user = null` briefly and redirect to `/auth`
+
 ---
 
-### Add Helper Function for Tier Detection
+## Solution
+
+### Fix 1: Robust Date Handling in check-subscription Edge Function
+
+Update the edge function to safely handle the `current_period_end` field:
 
 ```typescript
-export function getTierByProductId(productId: string | undefined): 'free' | 'plus' | 'pro' {
-  if (!productId) return 'free';
+if (hasActiveSub) {
+  const subscription = subscriptions.data[0];
   
-  if (PRICING_CONFIG.plus.product_ids.includes(productId)) {
-    return 'plus';
-  }
-  if (PRICING_CONFIG.pro.product_ids.includes(productId)) {
-    return 'pro';
+  // Safely handle current_period_end - it could be a number, 
+  // a Stripe Timestamp, or undefined
+  try {
+    const periodEnd = subscription.current_period_end;
+    if (periodEnd && typeof periodEnd === 'number') {
+      subscriptionEnd = new Date(periodEnd * 1000).toISOString();
+    } else if (periodEnd) {
+      // Handle case where it might be a different format
+      subscriptionEnd = new Date(periodEnd).toISOString();
+    }
+  } catch (dateError) {
+    logStep("Warning: Could not parse subscription end date", { 
+      periodEnd: subscription.current_period_end 
+    });
+    // Continue without the end date - subscription is still valid
+    subscriptionEnd = null;
   }
   
-  return 'free';
+  logStep("Active subscription found", { 
+    subscriptionId: subscription.id, 
+    endDate: subscriptionEnd 
+  });
+  
+  productId = subscription.items.data[0].price.product;
+  priceId = subscription.items.data[0].price.id;
+  logStep("Determined subscription tier", { productId, priceId });
+}
+```
+
+**Key changes:**
+- Wrap date parsing in try-catch to prevent crashes
+- Check type of `current_period_end` before multiplying
+- Log warning instead of crashing if date parsing fails
+- Return valid response even without `subscription_end`
+
+### Fix 2: No Frontend Changes Needed
+
+The frontend already handles errors gracefully:
+- `useSubscription` sets `subscribed: false` on error (line 80, 86)
+- `ProtectedRoute` only checks `loading` and `user` from `useAuth`, not subscription
+- The auth state listener properly rehydrates session from storage
+
+The real issue is the edge function crash returning 500, not the frontend handling.
+
+---
+
+## Files to Modify
+
+| File | Change |
+|------|--------|
+| `supabase/functions/check-subscription/index.ts` | Add robust date parsing with try-catch |
+
+---
+
+## Implementation Details
+
+**File: `supabase/functions/check-subscription/index.ts`**
+
+Replace lines 72-82 with safer date handling:
+
+```typescript
+if (hasActiveSub) {
+  const subscription = subscriptions.data[0];
+  
+  // Safely parse subscription end date
+  try {
+    const periodEnd = subscription.current_period_end;
+    if (periodEnd != null) {
+      // Stripe returns Unix timestamp in seconds
+      const timestamp = typeof periodEnd === 'number' ? periodEnd : Number(periodEnd);
+      if (!isNaN(timestamp)) {
+        subscriptionEnd = new Date(timestamp * 1000).toISOString();
+      }
+    }
+  } catch (dateError) {
+    logStep("Warning: Could not parse subscription end date", { 
+      raw: subscription.current_period_end,
+      error: String(dateError)
+    });
+  }
+  
+  logStep("Active subscription found", { 
+    subscriptionId: subscription.id, 
+    endDate: subscriptionEnd 
+  });
+  
+  // Get product and price IDs from subscription items
+  productId = subscription.items.data[0].price.product;
+  priceId = subscription.items.data[0].price.id;
+  logStep("Determined subscription tier", { productId, priceId });
 }
 ```
 
 ---
 
-### Update Billing.tsx Tier Detection
+## Testing Plan
 
-Replace the current tier detection logic that checks single product IDs:
+After the fix is deployed:
 
-```typescript
-// Before
-const isCurrentPlan = subscriptionData.product_id === PRICING_CONFIG.plus.product_id;
-
-// After
-const currentTier = getTierByProductId(subscriptionData.product_id);
-const isCurrentPlan = currentTier === 'plus';
-```
+1. **Navigate to /billing** and click "Upgrade" on Plus plan
+2. **Complete Stripe checkout** with test card `4242 4242 4242 4242`
+3. **Verify redirect** goes to `/dashboard?success=true` (not `/auth`)
+4. **Verify success toast** shows "Welcome to Plus!"
+5. **Verify subscription status** - check-subscription should return `subscribed: true`
+6. **Verify billing page** shows "Current Plan" badge on Plus
 
 ---
 
-### Implementation Steps
-
-1. **Update `src/hooks/useSubscription.tsx`:**
-   - Change `product_id` to `product_ids` (array) in `PRICING_CONFIG`
-   - Add `getTierByProductId()` helper function
-   - Export the helper function for use in other components
-
-2. **Update `src/pages/Billing.tsx`:**
-   - Import `getTierByProductId` from `useSubscription`
-   - Use it to determine current tier and show appropriate badges/states
-
-3. **Verify edge function compatibility:**
-   - The `check-subscription` edge function returns `product_id` from Stripe
-   - The frontend helper function handles mapping to tier
-
----
-
-### Technical Details
-
-**File: `src/hooks/useSubscription.tsx`**
-- Lines 24-41: Update `PRICING_CONFIG` to use `product_ids` arrays
-- Add new export `getTierByProductId()` function after the config
-
-**File: `src/pages/Billing.tsx`**
-- Import the `getTierByProductId` helper
-- Update the plan card rendering logic to use tier detection
-
----
-
-### Outcome
+## Expected Outcome
 
 After this fix:
-- Plus Monthly subscribers will be correctly identified as "Plus" tier
-- Plus Yearly subscribers will be correctly identified as "Plus" tier
-- Pro Monthly subscribers will be correctly identified as "Pro" tier
-- Pro Yearly subscribers will be correctly identified as "Pro" tier
-- Feature gating (bulk upload, export limits, etc.) will work correctly regardless of billing cycle
-
+- The `check-subscription` function will handle any date format without crashing
+- Users returning from Stripe checkout will stay logged in
+- Subscription status will correctly show as active
+- The success toast will display with the correct plan name
